@@ -8,18 +8,21 @@ import {
 import {
   createUser,
   findUserById,
-  findUserByIdentity
+  findUserByIdentity,
+  upsertInternalUserByEmail
 } from "@/features/users/user.repository";
 
 vi.mock("@/features/users/user.repository", () => ({
   createUser: vi.fn(),
   findUserById: vi.fn(),
-  findUserByIdentity: vi.fn()
+  findUserByIdentity: vi.fn(),
+  upsertInternalUserByEmail: vi.fn()
 }));
 
 const mockedFindUserByIdentity = vi.mocked(findUserByIdentity);
 const mockedCreateUser = vi.mocked(createUser);
 const mockedFindUserById = vi.mocked(findUserById);
+const mockedUpsertInternalUserByEmail = vi.mocked(upsertInternalUserByEmail);
 
 function buildUser(overrides?: Partial<User>): User {
   return {
@@ -102,6 +105,33 @@ describe("auth service", () => {
     expect(result.user.email).toBe("superadmin@ajs.local");
     expect(result.user.role).toBe("SUPER_ADMIN");
     expect(result.session.scope).toBe("admin");
+  });
+
+  it("bootstraps the configured superadmin when the account is missing", async () => {
+    mockedFindUserByIdentity.mockResolvedValueOnce(null);
+    mockedUpsertInternalUserByEmail.mockResolvedValueOnce(
+      buildUser({
+        email: "superadmin@ajs.local",
+        fullName: "Super Admin AJS",
+        role: "SUPER_ADMIN",
+        passwordHash: hashPassword("Superadmin123!")
+      })
+    );
+
+    const result = await loginAdmin({
+      email: "superadmin@ajs.local",
+      password: "Superadmin123!"
+    });
+
+    expect(mockedUpsertInternalUserByEmail).toHaveBeenCalledWith({
+      email: "superadmin@ajs.local",
+      fullName: "Super Admin AJS",
+      role: "SUPER_ADMIN",
+      passwordHash: expect.any(String),
+      isActive: true
+    });
+    expect(result.user.email).toBe("superadmin@ajs.local");
+    expect(result.user.role).toBe("SUPER_ADMIN");
   });
 
   it("rejects login for a non-admin role", async () => {

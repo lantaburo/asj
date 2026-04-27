@@ -1,3 +1,5 @@
+import type { Role } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
 
 type FindUserIdentityParams = {
@@ -39,6 +41,33 @@ export async function createUser(input: {
       email: input.email,
       phone: input.phone,
       fullName: input.fullName
+    }
+  });
+}
+
+export async function upsertInternalUserByEmail(input: {
+  email: string;
+  fullName: string;
+  role: Role;
+  passwordHash: string;
+  isActive?: boolean;
+}) {
+  return prisma.user.upsert({
+    where: {
+      email: input.email
+    },
+    update: {
+      fullName: input.fullName,
+      role: input.role,
+      passwordHash: input.passwordHash,
+      isActive: input.isActive ?? true
+    },
+    create: {
+      email: input.email,
+      fullName: input.fullName,
+      role: input.role,
+      passwordHash: input.passwordHash,
+      isActive: input.isActive ?? true
     }
   });
 }

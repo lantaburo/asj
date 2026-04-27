@@ -3,7 +3,8 @@ import { Role } from "@prisma/client";
 
 import { AppError } from "@/lib/app-error";
 import { getCurrentSessionPayload } from "@/lib/auth-session";
-import { verifyPassword } from "@/lib/password";
+import { env } from "@/lib/env";
+import { hashPassword, verifyPassword } from "@/lib/password";
 import {
   adminLoginSchema,
   magicLinkRequestSchema
@@ -11,7 +12,8 @@ import {
 import {
   createUser,
   findUserById,
-  findUserByIdentity
+  findUserByIdentity,
+  upsertInternalUserByEmail
 } from "@/features/users/user.repository";
 import {
   adminRoles,
@@ -25,6 +27,10 @@ function normalizeEmail(email?: string) {
 
 function normalizePhone(phone?: string) {
   return phone?.replace(/\s+/g, "");
+}
+
+function getConfiguredSuperAdminEmail() {
+  return env.AJS_SUPERADMIN_EMAIL.trim().toLowerCase();
 }
 
 function buildFallbackEmail(phone?: string) {
@@ -53,6 +59,32 @@ function mapAuthenticatedUser(user: User) {
     role: user.role,
     isActive: user.isActive
   };
+}
+
+async function resolveAdminLoginUser(email?: string) {
+  if (!email) {
+    return null;
+  }
+
+  const user = await findUserByIdentity({
+    email
+  });
+
+  if (email !== getConfiguredSuperAdminEmail()) {
+    return user;
+  }
+
+  if (user?.role === Role.SUPER_ADMIN && user.passwordHash && user.isActive) {
+    return user;
+  }
+
+  return upsertInternalUserByEmail({
+    email,
+    fullName: env.AJS_SUPERADMIN_NAME.trim(),
+    role: Role.SUPER_ADMIN,
+    passwordHash: hashPassword(env.AJS_SUPERADMIN_PASSWORD),
+    isActive: true
+  });
 }
 
 export async function requestMagicLink(payload: unknown) {
@@ -93,9 +125,7 @@ export async function loginAdmin(payload: unknown) {
   const parsed = adminLoginSchema.parse(payload);
   const email = normalizeEmail(parsed.email);
 
-  const user = await findUserByIdentity({
-    email
-  });
+  const user = await resolveAdminLoginUser(email);
 
   if (!user || !verifyPassword(parsed.password, user.passwordHash)) {
     throw new AppError("Email atau password admin tidak valid.", {
