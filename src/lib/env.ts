@@ -1,10 +1,19 @@
 import { z } from "zod";
 
+const optionalNonEmptyString = z.preprocess((value) => {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length === 0 ? undefined : trimmed;
+}, z.string().min(1).optional());
+
 const envSchema = z.object({
-  DATABASE_URL: z.string().min(1).optional(),
+  DATABASE_URL: optionalNonEmptyString,
   AUTH_SESSION_SECRET: z.string().min(32),
   NEXT_PUBLIC_APP_NAME: z.string().default("AJS Learning Hub"),
-  NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
+  NEXT_PUBLIC_SITE_URL: optionalNonEmptyString.pipe(z.string().url().optional()),
   AJS_SUPERADMIN_EMAIL: z.string().email().default("superadmin@ajs.local"),
   AJS_SUPERADMIN_NAME: z.string().min(3).default("Super Admin AJS"),
   AJS_SUPERADMIN_PASSWORD: z.string().min(8)
