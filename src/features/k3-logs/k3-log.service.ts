@@ -22,8 +22,13 @@ function mapK3Log(log: Awaited<ReturnType<typeof listK3Logs>>[number]) {
     evidenceUrl: log.evidenceUrl,
     gpsWatermark: log.gpsWatermark,
     timestamp: log.timestamp.toISOString(),
-    enrollment: log.enrollment,
-    verifiedBy: log.verifiedBy
+    enrollment: {
+      id: log.enrollment.id
+    },
+    verifiedBy: log.verifiedBy ? {
+      id: log.verifiedBy.id,
+      fullName: log.verifiedBy.fullName
+    } : null
   };
 }
 

@@ -41,11 +41,19 @@ function mapEnrollment(enrollment: Awaited<ReturnType<typeof listEnrollmentsAdmi
     qrVerifyCode: enrollment.qrVerifyCode,
     registrationDocs: enrollment.registrationDocs,
     createdAt: enrollment.createdAt.toISOString(),
-    user: enrollment.user,
+    user: {
+      id: enrollment.user.id,
+      fullName: enrollment.user.fullName,
+      email: enrollment.user.email,
+    },
     batch: {
-      ...enrollment.batch,
+      id: enrollment.batch.id,
+      status: enrollment.batch.status,
       startDate: enrollment.batch.startDate.toISOString(),
-      endDate: enrollment.batch.endDate.toISOString()
+      endDate: enrollment.batch.endDate.toISOString(),
+      program: {
+        title: enrollment.batch.program.title,
+      }
     },
     k3LogCount: enrollment._count.k3Logs
   };
@@ -163,11 +171,19 @@ export async function getEnrollmentDetail(enrollmentId: string) {
     qrVerifyCode: enrollment.qrVerifyCode,
     registrationDocs: enrollment.registrationDocs,
     createdAt: enrollment.createdAt.toISOString(),
-    user: enrollment.user,
+    user: {
+      id: enrollment.user.id,
+      fullName: enrollment.user.fullName,
+      email: enrollment.user.email,
+    },
     batch: {
-      ...enrollment.batch,
+      id: enrollment.batch.id,
+      status: enrollment.batch.status,
       startDate: enrollment.batch.startDate.toISOString(),
-      endDate: enrollment.batch.endDate.toISOString()
+      endDate: enrollment.batch.endDate.toISOString(),
+      program: {
+        title: enrollment.batch.program.title,
+      }
     },
     k3LogCount: enrollment._count.k3Logs,
     k3Logs: enrollment.k3Logs.map((log) => ({
@@ -177,7 +193,10 @@ export async function getEnrollmentDetail(enrollmentId: string) {
       evidenceUrl: log.evidenceUrl,
       gpsWatermark: log.gpsWatermark,
       timestamp: log.timestamp.toISOString(),
-      verifiedBy: log.verifiedBy
+      verifiedBy: log.verifiedBy ? {
+        id: log.verifiedBy.id,
+        fullName: log.verifiedBy.fullName
+      } : null
     }))
   };
 }
@@ -233,8 +252,16 @@ export async function getCertificateVerification(qrCode: string) {
     assessmentStatus: enrollment.assessmentStatus,
     certificateNum: enrollment.certificateNum,
     expiryDate: enrollment.expiryDate?.toISOString() ?? null,
-    participant: enrollment.user,
-    program: enrollment.batch.program,
+    participant: {
+      id: enrollment.user.id,
+      fullName: enrollment.user.fullName,
+      email: enrollment.user.email,
+    },
+    program: {
+      title: enrollment.batch.program.title,
+      category: enrollment.batch.program.category,
+      industryType: enrollment.batch.program.industryType,
+    },
     batch: {
       id: enrollment.batch.id,
       startDate: enrollment.batch.startDate.toISOString(),
