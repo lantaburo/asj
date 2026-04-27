@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
+
 import { AJSLogo } from "@/features/landing-page/logo";
 
 import { AdminLoginForm } from "@/features/auth/admin-login-form";
@@ -68,7 +70,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
               <div className="britsafe-card" style={{ padding: '40px' }}>
                 <h2 className="britsafe-card__title" style={{ marginBottom: '24px' }}>Login Admin</h2>
-                <AdminLoginForm />
+                <Suspense fallback={<div style={{ padding: "20px", textAlign: "center", color: "var(--ajs-muted)", fontSize: "14px" }}>Memuat form...</div>}>
+                  <AdminLoginForm />
+                </Suspense>
                 <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--ajs-border)', fontSize: '13px', color: 'var(--ajs-muted)' }}>
                   Lupa password atau butuh akses baru? Hubungi tim IT Support ARKAMA JAYA.
                 </div>

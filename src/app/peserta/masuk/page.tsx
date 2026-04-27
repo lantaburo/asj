@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import { AJSLogo } from "@/features/landing-page/logo";
 import { ParticipantLoginForm } from "@/features/auth/participant-login-form";
@@ -83,7 +84,9 @@ export default async function ParticipantLoginPage({
                 <h2 className="britsafe-card__title" style={{ marginBottom: "24px" }}>
                   Login Peserta
                 </h2>
-                <ParticipantLoginForm />
+                <Suspense fallback={<div style={{ padding: "20px", textAlign: "center", color: "var(--ajs-muted)", fontSize: "14px" }}>Memuat form...</div>}>
+                  <ParticipantLoginForm />
+                </Suspense>
                 <div
                   style={{
                     marginTop: "24px",
