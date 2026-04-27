@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { AJSLogo } from "@/features/landing-page/logo";
 import { getCertificateVerification } from "@/features/enrollments/enrollment.service";
 import { formatDateRange } from "@/features/landing-page/landing-page.service";
+import { AppError } from "@/lib/app-error";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +15,17 @@ type VerificationPageProps = {
 
 export default async function VerificationPage({ params }: VerificationPageProps) {
   const { qrCode } = await params;
-  const certificate = await getCertificateVerification(qrCode);
+
+  let certificate: Awaited<ReturnType<typeof getCertificateVerification>>;
+
+  try {
+    certificate = await getCertificateVerification(qrCode);
+  } catch (error) {
+    if (error instanceof AppError && error.statusCode === 404) {
+      notFound();
+    }
+    throw error;
+  }
 
   return (
     <div className="britsafe-site">
