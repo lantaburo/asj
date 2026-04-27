@@ -76,12 +76,12 @@ export function AdminLoginForm() {
           type="email"
           name="email"
           autoComplete="email"
-          placeholder="superadmin@ajs.local"
+          placeholder="admin@perusahaan.com"
           autoFocus
           required
         />
         <span className="field-helper">
-          Gunakan akun internal yang sudah tersimpan di database aplikasi.
+          Gunakan email admin internal yang dikonfigurasi untuk environment ini.
         </span>
       </label>
 
