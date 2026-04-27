@@ -1,4 +1,5 @@
 import {
+  compareDateStrings,
   countAvailableSeats,
   countOpenBatches,
   formatCurrency,
@@ -60,5 +61,16 @@ describe("landing-page service helpers", () => {
     expect(
       formatDateRange("2026-05-01T00:00:00.000Z", "2026-05-10T00:00:00.000Z")
     ).toContain("2026");
+  });
+
+  it("returns a safe fallback for invalid dates", () => {
+    expect(formatDateRange("invalid-date", "2026-05-10T00:00:00.000Z")).toBe(
+      "Jadwal akan diumumkan"
+    );
+  });
+
+  it("sorts invalid dates after valid dates", () => {
+    expect(compareDateStrings("2026-05-01T00:00:00.000Z", "invalid-date")).toBeLessThan(0);
+    expect(compareDateStrings("invalid-date", "2026-05-01T00:00:00.000Z")).toBeGreaterThan(0);
   });
 });

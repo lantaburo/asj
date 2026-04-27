@@ -44,7 +44,7 @@ Catatan:
 
 Perubahan yang sudah dibuat:
 
-- Menambahkan `POST /api/auth/magic-link` dengan alur dummy magic link.
+- Menambahkan `POST /api/auth/magic-link` sebagai bootstrap session peserta MVP berbasis cookie HTTP-only.
 - Menambahkan `GET /api/public/programs` untuk kebutuhan landing page publik.
 - Menambahkan `POST /api/enrollment` dengan pengecekan batch terbuka, user aktif, duplicate enrollment, dan sisa kuota.
 - Menambahkan `POST /api/attendance/scan` dengan validasi keterdaftaran peserta pada batch session terkait.
@@ -248,7 +248,7 @@ Catatan:
 
 Perubahan yang sudah dibuat:
 
-- Mengubah flow auth peserta agar `POST /api/auth/magic-link` juga membentuk session cookie HTTP-only untuk user publik.
+- Mengubah flow auth peserta agar `POST /api/auth/magic-link` membentuk session cookie HTTP-only untuk user publik tanpa bergantung pada pengiriman link eksternal.
 - Menghapus `userId` dari payload client untuk:
   - `POST /api/enrollment`
   - `POST /api/attendance/scan`
@@ -382,9 +382,48 @@ Perubahan yang sudah dibuat:
   - menampilkan ringkasan enrollment, log praktik, sertifikat, dan unit skema terkait program peserta
 - Menambahkan menu navigasi baru agar akses lebih jelas:
   - nav admin: `Unit Skema`
-  - nav publik: `Portal Peserta` (home, daftar, absen, masuk)
+  - nav publik: `Dashboard Peserta` (home, daftar, absen, masuk)
   - success state form daftar sekarang punya tombol cepat ke `/peserta`
 
 Catatan:
 
 - `npm run db:generate` dan `npm run db:migrate:deploy` berhasil untuk model Unit Skema.
+
+## Update 15 - Penyelarasan Istilah Auth Peserta untuk MVP
+
+Perubahan yang sudah dibuat:
+
+- Merapikan istilah auth peserta agar sesuai perilaku sistem saat ini:
+  - teks `magic link` pada UI publik diganti menjadi `login otomatis` atau `session peserta`
+  - label navigasi `Portal Peserta` diseragamkan menjadi `Dashboard Peserta`
+- Menyelaraskan metadata backend `POST /api/auth/magic-link`:
+  - response success kini menjelaskan aktivasi sesi peserta
+  - `tokenType` dan durasi respons disesuaikan dengan flow session MVP yang aktif di browser
+- Memperbarui dokumentasi kontrak API:
+  - route `/api/auth/magic-link` tetap dipertahankan sebagai nama legacy untuk kompatibilitas
+  - dokumentasi sekarang menyebut route ini sebagai bootstrap session peserta otomatis
+
+Catatan:
+
+- Pada tahap ini tidak ada perubahan route atau mekanisme login inti.
+- Flow MVP tetap memakai session cookie HTTP-only tanpa integrasi email, SMS, atau WhatsApp API.
+
+## Update 16 - Hardening Halaman Publik terhadap Runtime Error
+
+Perubahan yang sudah dibuat:
+
+- Memperkuat helper landing page agar tidak mudah gagal saat menerima data publik yang tidak rapi:
+  - `formatDateRange` sekarang punya fallback aman jika tanggal tidak valid
+  - sort tanggal publik memakai helper pembanding yang tahan terhadap nilai invalid
+  - `formatCurrency` dan agregasi kursi dibuat lebih defensif
+- Menambahkan fallback server-side untuk halaman publik:
+  - landing page `/` sekarang menampilkan state pemulihan jika render data publik gagal
+  - halaman `/daftar` sekarang tetap terbuka walau katalog batch publik gagal dimuat penuh
+- Menambahkan logging terstruktur untuk kegagalan render halaman publik:
+  - scope `public-home`
+  - scope `public-register`
+
+Catatan:
+
+- Hardening ini ditujukan agar kegagalan data/render di production tidak langsung berubah menjadi `HTTP 500` pada halaman publik.
+- Endpoint API publik tidak diubah.

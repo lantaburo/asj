@@ -1,30 +1,50 @@
 import Link from "next/link";
 import { AJSLogo } from "@/features/landing-page/logo";
+import { compareDateStrings } from "@/features/landing-page/landing-page.service";
 import { getPublicPrograms } from "@/features/programs/program.service";
 import { RegisterForm } from "@/features/enrollments/register-form";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
 export default async function RegisterPage() {
-  const programs = await getPublicPrograms();
-  
-  // Extract all open batches
-  const upcomingBatches = programs
-    .flatMap((program) =>
-      program.openBatches.map((batch) => ({
-        id: batch.id,
-        startDate: batch.startDate,
-        endDate: batch.endDate,
-        quotaRemaining: batch.quotaRemaining,
-        price: batch.price,
-        programTitle: program.title,
-        industryType: program.industryType
-      }))
-    )
-    .sort(
-      (left, right) =>
-        new Date(left.startDate).getTime() - new Date(right.startDate).getTime()
-    );
+  let upcomingBatches: {
+    id: string;
+    startDate: string;
+    endDate: string;
+    quotaRemaining: number;
+    price: number | null;
+    programTitle: string;
+    industryType: string;
+  }[] = [];
+  let pageNotice: string | null = null;
+
+  try {
+    const programs = await getPublicPrograms();
+
+    // Extract all open batches
+    upcomingBatches = programs
+      .flatMap((program) =>
+        program.openBatches.map((batch) => ({
+          id: batch.id,
+          startDate: batch.startDate,
+          endDate: batch.endDate,
+          quotaRemaining: batch.quotaRemaining,
+          price: batch.price,
+          programTitle: program.title,
+          industryType: program.industryType
+        }))
+      )
+      .sort((left, right) => compareDateStrings(left.startDate, right.startDate));
+  } catch (error) {
+    logger.error({
+      scope: "public-register",
+      message: "Failed to render public register page.",
+      error
+    });
+    pageNotice =
+      "Data batch publik sementara belum dapat dimuat penuh. Anda masih bisa membuka formulir, tetapi jadwal yang tersedia mungkin belum lengkap.";
+  }
 
   return (
     <div className="britsafe-site">
@@ -35,7 +55,7 @@ export default async function RegisterPage() {
           </Link>
           <nav className="britsafe-nav">
             <Link href="/" className="btn btn-outline" style={{ color: 'var(--ajs-navy)', borderColor: 'var(--ajs-border)' }}>Kembali ke Beranda</Link>
-            <Link href="/peserta">Portal Peserta</Link>
+            <Link href="/peserta">Dashboard Peserta</Link>
             <Link href="/masuk" className="britsafe-btn-auth">
               Masuk Admin
             </Link>
@@ -60,6 +80,23 @@ export default async function RegisterPage() {
 
         <section className="section-padding">
           <div className="container">
+            {pageNotice ? (
+              <div
+                className="britsafe-card"
+                style={{
+                  marginBottom: "24px",
+                  padding: "18px 20px",
+                  borderTop: "4px solid var(--ajs-orange)"
+                }}
+              >
+                <strong style={{ display: "block", marginBottom: "8px", color: "var(--ajs-navy)" }}>
+                  Katalog pendaftaran sedang dipulihkan
+                </strong>
+                <p style={{ margin: 0, color: "var(--ajs-muted)", fontSize: "14px" }}>
+                  {pageNotice}
+                </p>
+              </div>
+            ) : null}
             <div
               style={{
                 display: "grid",
@@ -78,7 +115,7 @@ export default async function RegisterPage() {
                   <div style={{ display: 'grid', gap: '16px', fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>
                     <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
                       <strong style={{ color: 'var(--ajs-orange)', display: 'block', marginBottom: '4px' }}>Verifikasi Identitas</strong>
-                      Pastikan email dan nomor yang Anda masukkan aktif, karena tautan akses ke logbook akan dikirimkan ke sana.
+                      Pastikan email dan nomor yang Anda masukkan aktif, karena data tersebut dipakai untuk membuka sesi peserta dan menelusuri progres pelatihan Anda.
                     </div>
                     <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
                       <strong style={{ color: 'var(--ajs-orange)', display: 'block', marginBottom: '4px' }}>Kuota Terbatas</strong>

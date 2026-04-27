@@ -41,7 +41,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <nav className="britsafe-nav">
             <Link href="/">Home</Link>
             <Link href="/daftar">Flow Daftar</Link>
-            <Link href="/peserta">Portal Peserta</Link>
+            <Link href="/peserta">Dashboard Peserta</Link>
           </nav>
         </div>
       </header>

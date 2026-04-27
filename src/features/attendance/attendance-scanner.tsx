@@ -45,7 +45,7 @@ export function AttendanceScanner({ sessions }: { sessions: Session[] }) {
         }
       });
 
-      // 2. Resolve peserta dan bentuk session login dummy
+      // 2. Resolve peserta dan bentuk sesi peserta MVP
       const authRes = await fetch("/api/auth/magic-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

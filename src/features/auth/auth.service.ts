@@ -7,7 +7,7 @@ import { env } from "@/lib/env";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import {
   adminLoginSchema,
-  magicLinkRequestSchema
+  participantSessionRequestSchema
 } from "@/features/auth/auth.schema";
 import {
   createUser,
@@ -87,8 +87,8 @@ async function resolveAdminLoginUser(email?: string) {
   });
 }
 
-export async function requestMagicLink(payload: unknown) {
-  const parsed = magicLinkRequestSchema.parse(payload);
+export async function startParticipantSession(payload: unknown) {
+  const parsed = participantSessionRequestSchema.parse(payload);
   const email = normalizeEmail(parsed.email);
   const phone = normalizePhone(parsed.phone);
 
@@ -113,10 +113,10 @@ export async function requestMagicLink(payload: unknown) {
     auth: {
       channel,
       destination,
-      tokenType: "dummy-magic-link",
-      expiresInMinutes: 10,
+      tokenType: "mvp-auto-session",
+      expiresInMinutes: 720,
       instruction:
-        "Token dummy siap dikirim. Sambungkan service ini ke email atau OTP provider pada phase auth production."
+        "Sesi peserta aktif otomatis di browser ini. Gunakan data yang sama untuk melanjutkan pendaftaran, absensi, atau membuka Dashboard Peserta."
     }
   };
 }

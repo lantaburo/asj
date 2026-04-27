@@ -3,7 +3,7 @@ import type { User } from "@prisma/client";
 import { hashPassword } from "@/lib/password";
 import {
   loginAdmin,
-  requestMagicLink
+  startParticipantSession
 } from "@/features/auth/auth.service";
 import {
   createUser,
@@ -45,14 +45,14 @@ describe("auth service", () => {
     mockedFindUserById.mockResolvedValue(null);
   });
 
-  it("returns dummy instructions for an existing email user", async () => {
+  it("returns session info for an existing email user", async () => {
     mockedFindUserByIdentity.mockResolvedValueOnce(
       buildUser({
         email: "existing@ajs.local"
       })
     );
 
-    const result = await requestMagicLink({
+    const result = await startParticipantSession({
       email: "Existing@AJS.local"
     });
 
@@ -74,7 +74,7 @@ describe("auth service", () => {
       })
     );
 
-    const result = await requestMagicLink({
+    const result = await startParticipantSession({
       phone: "+628111222333",
       fullName: "Peserta Baru"
     });

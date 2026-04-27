@@ -77,7 +77,7 @@ export default async function PesertaDashboardPage() {
             className="britsafe-card"
             style={{ padding: "32px", borderTop: "4px solid var(--ajs-teal)" }}
           >
-            <span className="britsafe-card__category">Portal Peserta</span>
+            <span className="britsafe-card__category">Dashboard Peserta</span>
             <h1
               className="britsafe-card__title"
               style={{ fontSize: "28px", margin: "10px 0" }}

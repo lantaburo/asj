@@ -40,7 +40,7 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
     setError(null);
 
     try {
-      // 1. Dapatkan magic link dummy sekaligus session peserta
+      // 1. Bentuk sesi peserta MVP di browser ini
       const authRes = await fetch("/api/auth/magic-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,11 +85,11 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
         <div style={{ fontSize: '48px', color: 'var(--ajs-green)', marginBottom: '16px' }}>✓</div>
         <h2 className="britsafe-card__title" style={{ fontSize: '28px', marginBottom: '16px' }}>Pendaftaran Berhasil!</h2>
         <p className="britsafe-card__copy" style={{ marginBottom: '32px' }}>
-          Data Anda telah masuk ke sistem. Silakan periksa email atau SMS Anda untuk tautan login (Magic Link) dan instruksi pembayaran/verifikasi selanjutnya.
+          Data Anda telah masuk ke sistem dan sesi peserta sudah aktif di browser ini. Lanjutkan dari Dashboard Peserta untuk memantau progres pendaftaran dan aktivitas pelatihan Anda.
         </p>
         <div style={{ display: "flex", justifyContent: "center", gap: "10px", flexWrap: "wrap" }}>
           <Link href="/peserta" className="btn btn-primary">
-            Buka Dashboard Peserta
+            Buka Dashboard Saya
           </Link>
           <Link href="/" className="btn btn-outline" style={{ color: 'var(--ajs-navy)', borderColor: 'var(--ajs-border)' }}>
             Kembali ke Beranda

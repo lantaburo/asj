@@ -12,8 +12,9 @@ Dokumen ringkas ini merangkum kontrak endpoint utama yang sudah ada di sistem.
 ## Auth
 
 - `POST /api/auth/magic-link`
+  - Catatan: nama route dipertahankan untuk kompatibilitas MVP, tetapi perilakunya adalah bootstrap session peserta otomatis
   - Input: `email` atau `phone`, opsional `fullName`
-  - Output: instruksi magic link dummy, data user, dan session cookie HTTP-only
+  - Output: data user, info session peserta otomatis, dan session cookie HTTP-only
 - `POST /api/auth/admin/login`
   - Input: `email`, `password`
   - Output: data user admin dan session cookie HTTP-only
@@ -24,7 +25,7 @@ Dokumen ringkas ini merangkum kontrak endpoint utama yang sudah ada di sistem.
 
 - `POST /api/enrollment`
   - Input: `batchId`, opsional `registrationDocs`
-  - Auth: user diambil dari session cookie hasil `POST /api/auth/magic-link`
+  - Auth: user diambil dari session cookie hasil bootstrap session peserta via `POST /api/auth/magic-link`
   - Validasi: batch terbuka, user aktif, kuota tersedia, tidak duplicate
 - `GET /api/enrollments`
   - Akses: role verifikator (`SUPER_ADMIN`, `ADMIN`, `ASSESSOR`, `INSTRUCTOR`)
@@ -41,7 +42,7 @@ Dokumen ringkas ini merangkum kontrak endpoint utama yang sudah ada di sistem.
 
 - `POST /api/attendance/scan`
   - Input: `sessionId`, `gpsCoordinates`, opsional `selfieUrl`, `deviceInfo`, `status`
-  - Auth: user diambil dari session cookie hasil `POST /api/auth/magic-link`
+  - Auth: user diambil dari session cookie hasil bootstrap session peserta via `POST /api/auth/magic-link`
   - Validasi: user terdaftar di batch session terkait dan belum absen pada sesi yang sama
 
 ## Master Data Internal
