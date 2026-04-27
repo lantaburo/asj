@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  INSTRUCTOR
+  ASSESSOR
+  TRAINEE
+  CLIENT_HR
+  AUDITOR
+}
+
+enum ProgramCategory {
+  BNSP
+  KEMENAKER
+}
+
+enum BatchStatus {
+  OPEN
+  ONGOING
+  COMPLETED
+}
+
+enum AssessmentStatus {
+  PENDING
+  KOMPETEN
+  BELUM_KOMPETEN
+}
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  ABSENT
+}
+
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  phone        String?        @unique
+  fullName     String
+  passwordHash String?
+  role         Role           @default(TRAINEE)
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  enrollments  Enrollment[]
+  instructed   Batch[]        @relation("InstructorBatches")
+  sessions     ClassSession[] @relation("SessionInstructor")
+  attendances  Attendance[]
+  verifiedLogs K3Log[]        @relation("LogVerifier")
+}
+
+model Program {
+  id           String          @id @default(uuid())
+  title        String
+  category     ProgramCategory
+  industryType String          @default("Umum")
+  description  String?
+  curriculum   Json?
+  isActive     Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  batches      Batch[]
+}
+
+model Batch {
+  id           String        @id @default(uuid())
+  programId    String
+  instructorId String?
+  startDate    DateTime
+  endDate      DateTime
+  quota        Int
+  price        Int?
+  status       BatchStatus   @default(OPEN)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  program      Program       @relation(fields: [programId], references: [id])
+  instructor   User?         @relation("InstructorBatches", fields: [instructorId], references: [id])
+  enrollments  Enrollment[]
+  sessions     ClassSession[]
+}
+
+model Enrollment {
+  id               String           @id @default(uuid())
+  batchId          String
+  userId           String
+  registrationDocs Json?
+  assessmentStatus AssessmentStatus @default(PENDING)
+  certificateNum   String?          @unique
+  expiryDate       DateTime?
+  qrVerifyCode     String           @unique @default(uuid())
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  batch            Batch            @relation(fields: [batchId], references: [id])
+  user             User             @relation(fields: [userId], references: [id])
+  k3Logs           K3Log[]
+
+  @@unique([batchId, userId])
+}
+
+model Classroom {
+  id          String         @id @default(uuid())
+  roomName    String
+  capacity    Int
+  facilities  Json?
+  isAvailable Boolean        @default(true)
+  sessions    ClassSession[]
+}
+
+model ClassSession {
+  id           String        @id @default(uuid())
+  batchId      String
+  classroomId  String?
+  instructorId String?
+  title        String
+  sessionDate  DateTime
+  startTime    DateTime
+  endTime      DateTime
+  locationType String        @default("Classroom")
+  createdAt    DateTime      @default(now())
+  batch        Batch         @relation(fields: [batchId], references: [id])
+  classroom    Classroom?    @relation(fields: [classroomId], references: [id])
+  instructor   User?         @relation("SessionInstructor", fields: [instructorId], references: [id])
+  attendances  Attendance[]
+}
+
+model Attendance {
+  id             String           @id @default(uuid())
+  sessionId      String
+  userId         String
+  checkInTime    DateTime         @default(now())
+  gpsCoordinates Json?
+  selfieUrl      String?
+  status         AttendanceStatus @default(PRESENT)
+  deviceInfo     String?
+  session        ClassSession     @relation(fields: [sessionId], references: [id])
+  user           User             @relation(fields: [userId], references: [id])
+
+  @@unique([sessionId, userId])
+}
+
+model K3Log {
+  id           String      @id @default(uuid())
+  enrollmentId String
+  activityName String
+  safetyScore  Int?
+  verifiedById String?
+  evidenceUrl  String?
+  gpsWatermark Json?
+  timestamp    DateTime    @default(now())
+  enrollment   Enrollment  @relation(fields: [enrollmentId], references: [id])
+  verifiedBy   User?       @relation("LogVerifier", fields: [verifiedById], references: [id])
+}
