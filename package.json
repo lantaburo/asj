@@ -15,7 +15,8 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:status": "prisma migrate status",
-    "ops:readiness": "tsx scripts/check-readiness.ts"
+    "ops:readiness": "tsx scripts/check-readiness.ts",
+    "ops:bootstrap:superadmin": "tsx scripts/bootstrap-superadmin.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
