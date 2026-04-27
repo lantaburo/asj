@@ -45,6 +45,20 @@ export function handleApiError(error: unknown) {
     });
   }
 
+  if (error instanceof SyntaxError) {
+    logger.warn({
+      scope: "api",
+      message: "Request body is not valid JSON.",
+      meta: { detail: error.message }
+    });
+
+    return errorResponse({
+      message: "Request body harus berformat JSON yang valid.",
+      status: 400,
+      code: "INVALID_JSON"
+    });
+  }
+
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2002") {
       logger.warn({
