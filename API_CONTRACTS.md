@@ -20,12 +20,16 @@ Dokumen ringkas ini merangkum kontrak endpoint utama yang sudah ada di sistem.
   - Output: data user admin dan session cookie HTTP-only
 - `POST /api/auth/logout`
   - Output: session cookie dibersihkan
+- `POST /api/auth/participant/login`
+  - Input: `email` atau `phone`
+  - Output: data user peserta dan session cookie HTTP-only untuk membuka kembali Dashboard Peserta
 
 ## Enrollment
 
 - `POST /api/enrollment`
   - Input: `batchId`, opsional `registrationDocs`
   - Auth: user diambil dari session cookie hasil bootstrap session peserta via `POST /api/auth/magic-link`
+  - Jika `registrationDocs` tidak dikirim dari form, sistem otomatis membuat snapshot dari dokumen yang tersimpan pada akun peserta
   - Validasi: batch terbuka, user aktif, kuota tersedia, tidak duplicate
 - `GET /api/enrollments`
   - Akses: role verifikator (`SUPER_ADMIN`, `ADMIN`, `ASSESSOR`, `INSTRUCTOR`)
@@ -44,6 +48,19 @@ Dokumen ringkas ini merangkum kontrak endpoint utama yang sudah ada di sistem.
   - Input: `sessionId`, `gpsCoordinates`, opsional `selfieUrl`, `deviceInfo`, `status`
   - Auth: user diambil dari session cookie hasil bootstrap session peserta via `POST /api/auth/magic-link`
   - Validasi: user terdaftar di batch session terkait dan belum absen pada sesi yang sama
+
+## Dokumen Peserta
+
+- `GET /api/participant-documents`
+  - Akses: akun peserta (`TRAINEE`)
+  - Output: daftar dokumen yang disimpan pada akun peserta
+- `POST /api/participant-documents`
+  - Akses: akun peserta
+  - Input `multipart/form-data`: `type`, `file`, opsional `customLabel`, `expiryDate`
+  - Format file: PDF, JPG, PNG, WEBP
+- `DELETE /api/participant-documents/[documentId]`
+  - Akses: akun peserta
+  - Output: dokumen dihapus dari akun peserta
 
 ## Master Data Internal
 

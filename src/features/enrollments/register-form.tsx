@@ -57,8 +57,7 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          batchId: selectedBatchId,
-          registrationDocs: { status: "pending" } // Dummy docs
+          batchId: selectedBatchId
         }),
       });
 
@@ -185,7 +184,7 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
 
       <div className="auth-form-meta" style={{ marginTop: '16px' }}>
         <span className="status-dot"></span>
-        Data yang dikirim akan secara otomatis masuk ke sistem evaluasi internal AJS.
+        Data yang dikirim akan otomatis masuk ke sistem evaluasi internal AJS. Dokumen yang pernah Anda simpan di Dashboard Peserta juga akan ikut dipakai saat tersedia.
       </div>
 
       <button

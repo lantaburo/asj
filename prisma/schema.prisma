@@ -57,6 +57,7 @@ model User {
   phone        String?        @unique
   fullName     String
   passwordHash String?
+  participantDocuments Json?
   role         Role           @default(TRAINEE)
   instructorLevel InstructorLevel?
   isActive     Boolean        @default(true)

@@ -33,6 +33,7 @@ function buildUser(overrides?: Partial<User>): User {
     fullName: "Peserta Demo",
     role: "TRAINEE",
     passwordHash: null,
+    participantDocuments: null,
     isActive: true,
     createdAt: new Date("2026-01-01T00:00:00.000Z"),
     updatedAt: new Date("2026-01-01T00:00:00.000Z"),

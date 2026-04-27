@@ -9,6 +9,7 @@ import {
   listEnrollmentsAdmin,
   updateEnrollmentAssessment
 } from "@/features/enrollments/enrollment.repository";
+import { buildParticipantDocumentRegistrationSnapshot } from "@/features/participant-documents/participant-document.service";
 import {
   ensureActiveUser,
   ensureVerifierUser
@@ -31,6 +32,10 @@ vi.mock("@/features/users/user.service", () => ({
   ensureVerifierUser: vi.fn()
 }));
 
+vi.mock("@/features/participant-documents/participant-document.service", () => ({
+  buildParticipantDocumentRegistrationSnapshot: vi.fn()
+}));
+
 const mockedSyncBatchStatuses = vi.mocked(syncBatchStatuses);
 const mockedCreateEnrollmentInOpenBatch = vi.mocked(createEnrollmentInOpenBatch);
 const mockedFindEnrollmentById = vi.mocked(findEnrollmentById);
@@ -39,6 +44,9 @@ const mockedListEnrollmentsAdmin = vi.mocked(listEnrollmentsAdmin);
 const mockedUpdateEnrollmentAssessment = vi.mocked(updateEnrollmentAssessment);
 const mockedEnsureActiveUser = vi.mocked(ensureActiveUser);
 const mockedEnsureVerifierUser = vi.mocked(ensureVerifierUser);
+const mockedBuildParticipantDocumentRegistrationSnapshot = vi.mocked(
+  buildParticipantDocumentRegistrationSnapshot
+);
 
 const BATCH_ID = "11111111-1111-4111-8111-111111111111";
 
@@ -64,6 +72,13 @@ describe("enrollment service", () => {
     mockedListEnrollmentsAdmin.mockResolvedValue([]);
     mockedUpdateEnrollmentAssessment.mockResolvedValue(null);
     mockedEnsureVerifierUser.mockResolvedValue(buildUser());
+    mockedBuildParticipantDocumentRegistrationSnapshot.mockResolvedValue({
+      status: "pending",
+      source: "participant-document-bank",
+      snapshotAt: "2026-01-01T00:00:00.000Z",
+      documentCount: 0,
+      documents: []
+    });
   });
 
   it("registers the authenticated session user into an open batch", async () => {
@@ -112,6 +127,75 @@ describe("enrollment service", () => {
     });
     expect(result.quota.remainingAfterRegistration).toBe(19);
     expect(result.enrollment.user.id).toBe("user-1");
+  });
+
+  it("uses participant document snapshot when registration docs are not sent from the form", async () => {
+    mockedEnsureActiveUser.mockResolvedValueOnce(buildUser());
+    mockedCreateEnrollmentInOpenBatch.mockResolvedValueOnce({
+      status: "created",
+      enrollment: {
+        id: "enrollment-2",
+        batch: {
+          id: BATCH_ID,
+          status: "OPEN",
+          program: {
+            title: "Petugas K3"
+          }
+        },
+        user: {
+          id: "user-1",
+          fullName: "Peserta Demo",
+          email: "peserta@ajs.local"
+        }
+      },
+      quota: {
+        total: 20,
+        remainingAfterRegistration: 18
+      }
+    });
+    mockedBuildParticipantDocumentRegistrationSnapshot.mockResolvedValueOnce({
+      status: "ready",
+      source: "participant-document-bank",
+      snapshotAt: "2026-01-01T00:00:00.000Z",
+      documentCount: 2,
+      documents: [
+        {
+          id: "doc-1",
+          type: "KTP",
+          fileName: "ktp.pdf",
+          fileUrl: "/uploads/participant-documents/user-1/doc-1-ktp.pdf"
+        }
+      ]
+    });
+
+    await registerEnrollment(
+      {
+        batchId: BATCH_ID
+      },
+      "user-1"
+    );
+
+    expect(mockedBuildParticipantDocumentRegistrationSnapshot).toHaveBeenCalledWith(
+      "user-1"
+    );
+    expect(mockedCreateEnrollmentInOpenBatch).toHaveBeenCalledWith({
+      batchId: BATCH_ID,
+      userId: "user-1",
+      registrationDocs: {
+        status: "ready",
+        source: "participant-document-bank",
+        snapshotAt: "2026-01-01T00:00:00.000Z",
+        documentCount: 2,
+        documents: [
+          {
+            id: "doc-1",
+            type: "KTP",
+            fileName: "ktp.pdf",
+            fileUrl: "/uploads/participant-documents/user-1/doc-1-ktp.pdf"
+          }
+        ]
+      }
+    });
   });
 
   it("rejects registration when the batch quota is already full", async () => {

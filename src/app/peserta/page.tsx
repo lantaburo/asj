@@ -6,6 +6,8 @@ import { formatDateRange } from "@/features/landing-page/landing-page.service";
 import { getCurrentSessionUser } from "@/features/auth/auth.service";
 import { ParticipantLogoutButton } from "@/features/auth/participant-logout-button";
 import { getParticipantEnrollments } from "@/features/enrollments/enrollment.service";
+import { ParticipantDocumentsPanel } from "@/features/participant-documents/participant-documents-panel";
+import { getParticipantDocuments } from "@/features/participant-documents/participant-document.service";
 import { getParticipantUnitSchemaCatalog } from "@/features/unit-schemas/unit-schema.service";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +44,10 @@ export default async function PesertaDashboardPage() {
     redirect("/admin");
   }
 
-  const enrollments = await getParticipantEnrollments(currentUser.id);
+  const [enrollments, participantDocuments] = await Promise.all([
+    getParticipantEnrollments(currentUser.id),
+    getParticipantDocuments(currentUser.id)
+  ]);
   const programIds = Array.from(
     new Set(enrollments.map((enrollment) => enrollment.program.id))
   );
@@ -192,6 +197,22 @@ export default async function PesertaDashboardPage() {
                 {unitSchemas.length}
               </strong>
             </article>
+            <article className="britsafe-card" style={{ padding: "20px" }}>
+              <div
+                style={{
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  color: "var(--ajs-muted)",
+                  marginBottom: "8px"
+                }}
+              >
+                Dokumen Tersimpan
+              </div>
+              <strong style={{ fontSize: "28px", color: "var(--ajs-orange)" }}>
+                {participantDocuments.length}
+              </strong>
+            </article>
           </section>
 
           <section
@@ -332,6 +353,8 @@ export default async function PesertaDashboardPage() {
               )}
             </article>
           </section>
+
+          <ParticipantDocumentsPanel initialDocuments={participantDocuments} />
         </div>
       </main>
     </div>

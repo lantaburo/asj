@@ -444,3 +444,32 @@ Catatan:
 
 - Flow ini ditujukan untuk peserta yang pernah membuat sesi lewat pendaftaran atau absensi.
 - Peserta baru tetap memulai dari `/daftar`.
+
+## Update 18 - Bank Dokumen Peserta dan Reuse Saat Pendaftaran
+
+Perubahan yang sudah dibuat:
+
+- Menambahkan field baru `User.participantDocuments` pada Prisma untuk menyimpan metadata bank dokumen peserta.
+- Menambahkan migration `20260428013000_add_user_participant_documents` dan menerapkannya ke database lokal.
+- Menambahkan backend dokumen peserta:
+  - `src/features/participant-documents/participant-document.repository.ts`
+  - `src/features/participant-documents/participant-document.service.ts`
+  - `src/features/participant-documents/participant-document.types.ts`
+- Menambahkan endpoint API peserta:
+  - `GET /api/participant-documents`
+  - `POST /api/participant-documents`
+  - `DELETE /api/participant-documents/[documentId]`
+- Menambahkan panel `Dokumen Saya` di dashboard peserta:
+  - upload file PDF/JPG/PNG/WEBP
+  - label dokumen
+  - tanggal berlaku opsional
+  - hapus dokumen
+- Mengubah flow `POST /api/enrollment` agar jika form daftar tidak mengirim `registrationDocs`, sistem otomatis membuat snapshot dari bank dokumen peserta lalu menyimpannya ke `Enrollment.registrationDocs`.
+- Menghapus `registrationDocs` dummy dari form daftar publik agar reuse dokumen benar-benar aktif.
+- Menambahkan test enrollment untuk memastikan snapshot dokumen peserta dipakai otomatis saat pendaftaran.
+
+Catatan:
+
+- Penyimpanan file saat ini memakai filesystem aplikasi pada folder `public/uploads/participant-documents`.
+- Metadata reuse tetap disimpan di PostgreSQL, sedangkan file fisik disajikan lewat URL publik aplikasi.
+- Untuk production jangka panjang, storage file idealnya dipindahkan ke object storage agar tidak bergantung pada disk instance aplikasi.

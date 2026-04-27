@@ -6,6 +6,7 @@ import {
 } from "@/features/batches/batch.repository";
 import { enrollmentAssessmentUpdateSchema } from "@/features/enrollments/enrollment-assessment.schema";
 import { enrollmentCreateSchema } from "@/features/enrollments/enrollment.schema";
+import { buildParticipantDocumentRegistrationSnapshot } from "@/features/participant-documents/participant-document.service";
 import {
   createEnrollmentInOpenBatch,
   findEnrollmentById,
@@ -86,12 +87,15 @@ export async function registerEnrollment(payload: unknown, currentUserId: string
   const parsed = enrollmentCreateSchema.parse(payload);
   await syncBatchStatuses();
   const user = await ensureActiveUser(currentUserId);
+  const registrationDocs = parsed.registrationDocs
+    ? (parsed.registrationDocs as Prisma.InputJsonValue)
+    : (await buildParticipantDocumentRegistrationSnapshot(user.id)) as Prisma.InputJsonValue;
 
   try {
     const result = await createEnrollmentInOpenBatch({
       batchId: parsed.batchId,
       userId: user.id,
-      registrationDocs: parsed.registrationDocs as Prisma.InputJsonValue | undefined
+      registrationDocs
     });
 
     if (result.status === "batch_not_open") {
