@@ -22,9 +22,15 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hasOpenBatch = batches.some((batch) => batch.quotaRemaining > 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasOpenBatch) {
+      setError("Belum ada batch terbuka saat ini. Silakan cek kembali nanti.");
+      return;
+    }
+
     if (!selectedBatchId) {
       setError("Silakan pilih batch pelatihan terlebih dahulu.");
       return;
@@ -62,8 +68,12 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
       }
 
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (requestError: unknown) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Terjadi kendala saat memproses pendaftaran."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -77,9 +87,14 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
         <p className="britsafe-card__copy" style={{ marginBottom: '32px' }}>
           Data Anda telah masuk ke sistem. Silakan periksa email atau SMS Anda untuk tautan login (Magic Link) dan instruksi pembayaran/verifikasi selanjutnya.
         </p>
-        <Link href="/" className="btn btn-outline" style={{ color: 'var(--ajs-navy)', borderColor: 'var(--ajs-border)' }}>
-          Kembali ke Beranda
-        </Link>
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px", flexWrap: "wrap" }}>
+          <Link href="/peserta" className="btn btn-primary">
+            Buka Dashboard Peserta
+          </Link>
+          <Link href="/" className="btn btn-outline" style={{ color: 'var(--ajs-navy)', borderColor: 'var(--ajs-border)' }}>
+            Kembali ke Beranda
+          </Link>
+        </div>
       </div>
     );
   }
@@ -88,11 +103,23 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
     <form className="britsafe-card" style={{ padding: '40px' }} onSubmit={handleSubmit}>
       <h2 className="britsafe-card__title" style={{ marginBottom: '24px' }}>Formulir Pendaftaran</h2>
 
-      {error && (
-        <div className="error-banner">
-          {error}
+      {error ? <div className="error-banner">{error}</div> : null}
+
+      {!hasOpenBatch ? (
+        <div
+          style={{
+            border: "1px solid rgba(227,30,36,0.25)",
+            background: "rgba(227,30,36,0.08)",
+            color: "var(--ajs-red)",
+            borderRadius: "var(--radius-sm)",
+            padding: "10px 12px",
+            fontSize: "13px",
+            marginBottom: "16px"
+          }}
+        >
+          Saat ini belum ada batch dengan kuota tersedia.
         </div>
-      )}
+      ) : null}
 
       <div className="field-group">
         <label className="field-label">Pilih Program & Batch</label>
@@ -100,6 +127,7 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
           className="text-input" 
           value={selectedBatchId} 
           onChange={(e) => setSelectedBatchId(e.target.value)}
+          disabled={!hasOpenBatch}
           required
         >
           <option value="">-- Pilih Batch --</option>
@@ -124,7 +152,13 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: "16px"
+        }}
+      >
         <div className="field-group">
           <label className="field-label">Alamat Email Aktif</label>
           <input 
@@ -154,7 +188,11 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
         Data yang dikirim akan secara otomatis masuk ke sistem evaluasi internal AJS.
       </div>
 
-      <button type="submit" className="cta-primary" disabled={isSubmitting}>
+      <button
+        type="submit"
+        className="cta-primary"
+        disabled={isSubmitting || !hasOpenBatch}
+      >
         {isSubmitting ? "Memproses Pendaftaran..." : "Daftar Pelatihan"}
       </button>
     </form>

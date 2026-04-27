@@ -18,6 +18,8 @@ describe("GET /api/public/programs", () => {
         id: "program-1",
         title: "Ahli K3 Umum",
         category: "KEMENAKER",
+        customCategory: null,
+        categoryLabel: "KEMENAKER",
         industryType: "Umum",
         description: "Program inti",
         openBatches: []

@@ -17,6 +17,8 @@ export default async function AbsenPage() {
           </Link>
           <nav className="britsafe-nav">
             <Link href="/" className="btn btn-outline" style={{ color: 'var(--ajs-navy)', borderColor: 'var(--ajs-border)' }}>Kembali ke Beranda</Link>
+            <Link href="/daftar">Daftar</Link>
+            <Link href="/peserta">Portal Peserta</Link>
           </nav>
         </div>
       </header>

@@ -225,16 +225,21 @@ Perubahan yang sudah dibuat:
 
 Cara pakai sekarang:
 
-1. Jalankan migration dan seed database.
-2. Buka `/masuk`.
-3. Login memakai `AJS_SUPERADMIN_EMAIL` dan `AJS_SUPERADMIN_PASSWORD`.
-4. Setelah login, buka `/admin`, `/admin/master-data`, atau `/admin/sertifikasi`.
+1. Jika PostgreSQL lokal belum berjalan, jalankan `npm run db:local:prepare`.
+2. Jika database sudah aktif, jalankan migration dan seed dengan `npm run db:migrate:deploy` lalu `npm run db:seed`.
+3. Buka `/masuk`.
+4. Login memakai `AJS_SUPERADMIN_EMAIL` dan `AJS_SUPERADMIN_PASSWORD`.
+5. Setelah login, buka `/admin`, `/admin/master-data`, atau `/admin/sertifikasi`.
 
 Catatan:
 
 - Nilai default development saat ini:
   - email: `superadmin@ajs.local`
   - password: `Superadmin123!`
+- Helper lokal tambahan:
+  - `npm run db:local:start` untuk menyalakan PostgreSQL lokal sementara via `pkgx`
+  - `npm run db:local:status` untuk cek status instance lokal
+  - `npm run db:local:stop` untuk mematikan instance lokal
 - Untuk staging/production, nilai secret session dan password superadmin wajib diganti dari default.
 - `npm test` berhasil dengan 11 test lulus.
 - `npm run build` berhasil setelah penambahan auth admin, guard halaman, dan guard API internal.
@@ -270,3 +275,116 @@ Catatan:
 
 - `npm test` berhasil dengan 18 test lulus.
 - `npm run build` berhasil setelah perubahan auth session publik, hardening enrollment, dan perapihan panel sertifikasi.
+
+## Update 11 - Aktivasi Operasional API dari UI Admin
+
+Perubahan yang sudah dibuat:
+
+- Menambahkan panel baru `API Operations` di halaman `/admin/master-data`:
+  - flow bertahap 4 step agar UI tidak menumpuk (`Program -> Batch -> Classroom -> Session`)
+  - satu form aktif per langkah, dengan auto-lanjut ke langkah berikutnya setelah create berhasil
+  - form `Create Program` (`POST /api/programs`)
+  - form `Create Batch` (`POST /api/batches`)
+  - form `Create Classroom` (`POST /api/classrooms`)
+  - form `Create Session` (`POST /api/sessions`)
+- Menambahkan quick check endpoint operasional:
+  - `GET /api/health`
+  - `GET /api/readiness`
+- Menambahkan normalisasi input schema agar payload ala form browser lebih toleran:
+  - angka string untuk `capacity` dan `quota`
+  - nilai `""` pada UUID opsional (`classroomId`, `instructorId`) diperlakukan sebagai `null`
+- Menambahkan test schema baru untuk menjaga perilaku validasi ini tetap stabil.
+
+Catatan:
+
+- `npm test` berhasil dengan 22 test lulus.
+- `npm run build` berhasil setelah penambahan panel operasi API.
+
+## Update 12 - Setup Form Pendaftaran Internal dan Kategori Lanjutan
+
+Perubahan yang sudah dibuat:
+
+- Menambahkan endpoint baru member internal:
+  - `GET /api/internal-members`
+  - `POST /api/internal-members`
+- Menambahkan setup form pendaftaran member internal pada panel API Operations:
+  - field `fullName`, `email`, `phone`, `role`, `isActive`
+  - field `instructorLevel` wajib jika role `INSTRUCTOR`
+  - field `password` wajib jika role `SUPER_ADMIN` atau `ADMIN`
+- Menambahkan dukungan level instruktur pada model user:
+  - enum `InstructorLevel` (`JUNIOR`, `MADYA`, `SENIOR`, `MASTER`)
+  - kolom `User.instructorLevel`
+- Menambahkan dukungan kategori program yang lebih luas:
+  - enum tambahan `INHOUSE`, `SERTIFIKASI`, `AUDIT`, `LAINNYA`
+  - kolom `Program.customCategory` untuk label kategori custom saat memilih `LAINNYA`
+- Menambahkan migration:
+  - `20260427223000_add_program_custom_category_and_instructor_level`
+- Menambahkan test validasi baru:
+  - `src/features/users/internal-member.schema.test.ts`
+
+Catatan:
+
+- `npm run db:generate`, `npm run db:migrate:deploy`, `npm run db:seed`, `npm test`, dan `npm run build` berhasil.
+- Smoke test API berhasil untuk:
+  - `POST /api/programs` dengan `category = LAINNYA` + `customCategory`
+  - `POST /api/internal-members` dengan role `INSTRUCTOR` + `instructorLevel`
+
+## Update 13 - Setup Form Pendaftaran Peserta (Publik) dan Stabilitas Runtime
+
+Perubahan yang sudah dibuat:
+
+- Merapikan layout halaman `/daftar` agar tidak menumpuk di layar kecil:
+  - grid utama diubah menjadi responsif (`repeat(auto-fit, minmax(280px, 1fr))`)
+- Memperkuat komponen `RegisterForm`:
+  - menampilkan notifikasi khusus jika belum ada batch terbuka
+  - select batch dan tombol submit otomatis dinonaktifkan ketika kuota belum tersedia
+  - grid field kontak dibuat responsif (`repeat(auto-fit, minmax(220px, 1fr))`)
+  - handling error submit diperbaiki (tanpa `any`)
+- Menstabilkan runtime lokal setelah perubahan enum Prisma:
+  - regenerasi Prisma Client (`npm run db:generate`)
+  - restart dev server agar schema enum baru terbaca penuh
+
+Catatan:
+
+- Verifikasi operasional pada 27 April 2026:
+  - `GET /api/health` sukses
+  - `GET /api/readiness` sukses (database `up`)
+  - `GET /api/public/programs` sukses setelah regenerate + restart server
+  - flow pendaftaran publik sukses:
+    - `POST /api/auth/magic-link`
+    - `POST /api/enrollment`
+  - flow pendaftaran member internal sukses:
+    - `POST /api/auth/admin/login`
+    - `POST /api/internal-members`
+
+## Update 14 - Modul Unit Skema, Dashboard Peserta, dan Navigasi Akses
+
+Perubahan yang sudah dibuat:
+
+- Menambahkan modul database unit skema:
+  - tabel `UnitSchema` (master skema kompetensi)
+  - tabel `SchemaUnit` (detail unit per skema)
+  - relasi optional `UnitSchema.programId -> Program.id`
+  - migration baru: `20260427234000_add_unit_schema_models`
+- Menambahkan backend Unit Skema:
+  - `src/features/unit-schemas/unit-schema.schema.ts`
+  - `src/features/unit-schemas/unit-schema.repository.ts`
+  - `src/features/unit-schemas/unit-schema.service.ts`
+- Menambahkan endpoint API Unit Skema:
+  - `GET/POST /api/unit-schemas`
+  - `GET/PATCH /api/unit-schemas/[schemaId]`
+  - `POST /api/unit-schemas/[schemaId]/units`
+- Menambahkan halaman admin Unit Skema:
+  - `GET /admin/unit-skema`
+  - panel create skema + add unit pada satu halaman operasional
+- Menambahkan halaman peserta:
+  - `GET /peserta`
+  - menampilkan ringkasan enrollment, log praktik, sertifikat, dan unit skema terkait program peserta
+- Menambahkan menu navigasi baru agar akses lebih jelas:
+  - nav admin: `Unit Skema`
+  - nav publik: `Portal Peserta` (home, daftar, absen, masuk)
+  - success state form daftar sekarang punya tombol cepat ke `/peserta`
+
+Catatan:
+
+- `npm run db:generate` dan `npm run db:migrate:deploy` berhasil untuk model Unit Skema.

@@ -8,6 +8,8 @@ import { getClassroomList } from "@/features/classrooms/classroom.service";
 import { formatCurrency, formatDateRange } from "@/features/landing-page/landing-page.service";
 import { getAdminPrograms } from "@/features/programs/program.service";
 import { getSessionList } from "@/features/sessions/session.service";
+import { MasterDataApiPanel } from "@/features/admin/master-data-api-panel";
+import { getInternalMemberList } from "@/features/users/internal-member.service";
 
 export const dynamic = "force-dynamic";
 
@@ -22,11 +24,12 @@ export default async function AdminMasterDataPage() {
     redirect("/admin");
   }
 
-  const [programs, batches, classrooms, sessions] = await Promise.all([
+  const [programs, batches, classrooms, sessions, internalMembers] = await Promise.all([
     getAdminPrograms(),
     getAdminBatches(),
     getClassroomList(),
-    getSessionList()
+    getSessionList(),
+    getInternalMemberList()
   ]);
   const activeProgramCount = programs.filter((program) => program.isActive).length;
   const openQuotaBatchCount = batches.filter((batch) => batch.quotaRemaining > 0).length;
@@ -97,12 +100,44 @@ export default async function AdminMasterDataPage() {
               <strong style={{ fontFamily: 'monospace', color: 'var(--ajs-navy)' }}>GET/POST /api/sessions</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid var(--ajs-border)' }}>
+              <span style={{ color: 'var(--ajs-muted)' }}>Internal Members</span>
+              <strong style={{ fontFamily: 'monospace', color: 'var(--ajs-navy)' }}>GET/POST /api/internal-members</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid var(--ajs-border)' }}>
+              <span style={{ color: 'var(--ajs-muted)' }}>Unit Skema</span>
+              <strong style={{ fontFamily: 'monospace', color: 'var(--ajs-navy)' }}>GET/POST /api/unit-schemas</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid var(--ajs-border)' }}>
               <span style={{ color: 'var(--ajs-muted)' }}>Update aman</span>
               <strong style={{ fontFamily: 'monospace', color: 'var(--ajs-navy)' }}>PATCH /api/*/[id]</strong>
             </div>
           </div>
         </div>
       </section>
+
+      <MasterDataApiPanel
+        programs={programs.map((program) => ({
+          id: program.id,
+          title: program.title,
+          isActive: program.isActive
+        }))}
+        batches={batches.map((batch) => ({
+          id: batch.id,
+          status: batch.status,
+          programTitle: batch.program.title
+        }))}
+        classrooms={classrooms.map((classroom) => ({
+          id: classroom.id,
+          roomName: classroom.roomName,
+          isAvailable: classroom.isAvailable
+        }))}
+        internalMembers={internalMembers.map((member) => ({
+          id: member.id,
+          fullName: member.fullName,
+          role: member.role,
+          instructorLevel: member.instructorLevel
+        }))}
+      />
 
       <section className="britsafe-card" style={{ padding: '40px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
@@ -121,7 +156,7 @@ export default async function AdminMasterDataPage() {
                 <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '700', background: program.isActive ? 'rgba(0,166,81,0.1)' : 'rgba(227,30,36,0.1)', color: program.isActive ? 'var(--ajs-green)' : 'var(--ajs-red)' }}>
                   {program.isActive ? "Aktif" : "Nonaktif"}
                 </span>
-                <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '700', background: 'var(--ajs-gray)', color: 'var(--ajs-navy)' }}>{program.category}</span>
+                <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '700', background: 'var(--ajs-gray)', color: 'var(--ajs-navy)' }}>{program.categoryLabel}</span>
                 <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '700', background: 'var(--ajs-gray)', color: 'var(--ajs-navy)' }}>{program.industryType}</span>
               </div>
               <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '12px', color: 'var(--ajs-navy)' }}>{program.title}</h3>
@@ -218,4 +253,3 @@ export default async function AdminMasterDataPage() {
     </div>
   );
 }
-

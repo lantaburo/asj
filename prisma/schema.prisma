@@ -20,6 +20,17 @@ enum Role {
 enum ProgramCategory {
   BNSP
   KEMENAKER
+  INHOUSE
+  SERTIFIKASI
+  AUDIT
+  LAINNYA
+}
+
+enum InstructorLevel {
+  JUNIOR
+  MADYA
+  SENIOR
+  MASTER
 }
 
 enum BatchStatus {
@@ -47,6 +58,7 @@ model User {
   fullName     String
   passwordHash String?
   role         Role           @default(TRAINEE)
+  instructorLevel InstructorLevel?
   isActive     Boolean        @default(true)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
@@ -61,6 +73,7 @@ model Program {
   id           String          @id @default(uuid())
   title        String
   category     ProgramCategory
+  customCategory String?
   industryType String          @default("Umum")
   description  String?
   curriculum   Json?
@@ -68,6 +81,37 @@ model Program {
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
   batches      Batch[]
+  unitSchemas  UnitSchema[]
+}
+
+model UnitSchema {
+  id          String      @id @default(uuid())
+  programId   String?
+  code        String      @unique
+  title       String
+  level       String?
+  description String?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  program     Program?    @relation(fields: [programId], references: [id])
+  units       SchemaUnit[]
+}
+
+model SchemaUnit {
+  id           String     @id @default(uuid())
+  unitSchemaId String
+  unitCode     String
+  title        String
+  orderIndex   Int        @default(1)
+  isMandatory  Boolean    @default(true)
+  criteria     Json?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  unitSchema   UnitSchema @relation(fields: [unitSchemaId], references: [id], onDelete: Cascade)
+
+  @@unique([unitSchemaId, unitCode])
+  @@index([unitSchemaId, orderIndex])
 }
 
 model Batch {

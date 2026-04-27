@@ -47,6 +47,8 @@ Dokumen ringkas ini merangkum kontrak endpoint utama yang sudah ada di sistem.
 ## Master Data Internal
 
 - `GET/POST /api/programs`
+  - `category` mendukung: `BNSP`, `KEMENAKER`, `INHOUSE`, `SERTIFIKASI`, `AUDIT`, `LAINNYA`
+  - Jika `category = LAINNYA`, kirim `customCategory`
 - `GET/PATCH /api/programs/[programId]`
 - `GET/POST /api/batches`
 - `GET/PATCH /api/batches/[batchId]`
@@ -54,6 +56,15 @@ Dokumen ringkas ini merangkum kontrak endpoint utama yang sudah ada di sistem.
 - `GET/PATCH /api/classrooms/[classroomId]`
 - `GET/POST /api/sessions`
 - `GET/PATCH /api/sessions/[sessionId]`
+- `GET/POST /api/internal-members`
+  - Input utama: `fullName`, `email`, `role`, opsional `phone`, `isActive`
+  - Jika `role = INSTRUCTOR`, `instructorLevel` wajib (`JUNIOR`, `MADYA`, `SENIOR`, `MASTER`)
+  - Jika `role = SUPER_ADMIN` atau `ADMIN`, `password` wajib
+- `GET/POST /api/unit-schemas`
+  - Input utama: `code`, `title`, opsional `programId`, `level`, `description`, `isActive`
+- `GET/PATCH /api/unit-schemas/[schemaId]`
+- `POST /api/unit-schemas/[schemaId]/units`
+  - Input utama: `unitCode`, `title`, opsional `orderIndex`, `isMandatory`, `criteria`
 - Akses seluruh endpoint master data: `SUPER_ADMIN` atau `ADMIN`
 
 ## K3 Logbook

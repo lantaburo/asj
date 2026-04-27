@@ -15,6 +15,8 @@ export type PublicProgramDto = {
   id: string;
   title: string;
   category: ProgramCategory;
+  customCategory: string | null;
+  categoryLabel: string;
   industryType: string;
   description: string | null;
   openBatches: PublicBatchDto[];

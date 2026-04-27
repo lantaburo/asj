@@ -11,6 +11,8 @@ describe("landing-page service helpers", () => {
       id: "program-1",
       title: "Ahli K3 Umum",
       category: "KEMENAKER" as const,
+      customCategory: null,
+      categoryLabel: "KEMENAKER",
       industryType: "Umum",
       description: null,
       openBatches: [

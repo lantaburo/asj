@@ -1,6 +1,16 @@
 import { z } from "zod";
 
-const optionalUuid = z.string().uuid().nullable().optional();
+const optionalUuid = z.preprocess((value) => {
+  if (value === undefined || value === null) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim() === "") {
+    return null;
+  }
+
+  return value;
+}, z.string().uuid().nullable().optional());
 
 const sessionBaseSchema = z.object({
   batchId: z.string().uuid(),

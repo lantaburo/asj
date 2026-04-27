@@ -26,6 +26,12 @@ const masterDataLink = {
   description: "Program, batch, classroom, dan session."
 } as const;
 
+const unitSkemaLink = {
+  href: "/admin/unit-skema",
+  label: "Unit Skema",
+  description: "Skema kompetensi dan unit asesmen."
+} as const;
+
 function isActivePath(pathname: string, href: string) {
   if (href === "/admin") {
     return pathname === href;
@@ -37,7 +43,7 @@ function isActivePath(pathname: string, href: string) {
 export function AdminNav({ canOpenMasterData }: AdminNavProps) {
   const pathname = usePathname();
   const links = canOpenMasterData
-    ? [baseLinks[0], masterDataLink, baseLinks[1]]
+    ? [baseLinks[0], masterDataLink, unitSkemaLink, baseLinks[1]]
     : baseLinks;
 
   return (

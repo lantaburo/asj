@@ -61,6 +61,7 @@ export async function findProgramById(programId: string) {
 export async function createProgram(data: {
   title: string;
   category: ProgramCategory;
+  customCategory?: string | null;
   industryType: string;
   description?: string | null;
   curriculum?: unknown;
@@ -70,6 +71,7 @@ export async function createProgram(data: {
     data: {
       title: data.title,
       category: data.category,
+      customCategory: data.customCategory,
       industryType: data.industryType,
       description: data.description,
       curriculum: data.curriculum as never,
@@ -83,6 +85,7 @@ export async function updateProgram(
   data: {
     title?: string;
     category?: ProgramCategory;
+    customCategory?: string | null;
     industryType?: string;
     description?: string | null;
     curriculum?: unknown;
@@ -96,6 +99,7 @@ export async function updateProgram(
     data: {
       title: data.title,
       category: data.category,
+      customCategory: data.customCategory,
       industryType: data.industryType,
       description: data.description,
       curriculum: data.curriculum as never,

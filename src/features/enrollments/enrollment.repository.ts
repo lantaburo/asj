@@ -47,6 +47,40 @@ export async function listEnrollmentsAdmin() {
   });
 }
 
+export async function listEnrollmentsByUser(userId: string) {
+  return prisma.enrollment.findMany({
+    where: {
+      userId
+    },
+    orderBy: {
+      createdAt: "desc"
+    },
+    include: {
+      batch: {
+        select: {
+          id: true,
+          startDate: true,
+          endDate: true,
+          status: true,
+          program: {
+            select: {
+              id: true,
+              title: true,
+              category: true,
+              industryType: true
+            }
+          }
+        }
+      },
+      _count: {
+        select: {
+          k3Logs: true
+        }
+      }
+    }
+  });
+}
+
 export async function findEnrollmentById(enrollmentId: string) {
   return prisma.enrollment.findUnique({
     where: {

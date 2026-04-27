@@ -10,6 +10,7 @@ import {
   createEnrollmentInOpenBatch,
   findEnrollmentById,
   findEnrollmentByQrCode,
+  listEnrollmentsByUser,
   listEnrollmentsAdmin,
   updateEnrollmentAssessment
 } from "@/features/enrollments/enrollment.repository";
@@ -46,6 +47,32 @@ function mapEnrollment(enrollment: Awaited<ReturnType<typeof listEnrollmentsAdmi
       endDate: enrollment.batch.endDate.toISOString()
     },
     k3LogCount: enrollment._count.k3Logs
+  };
+}
+
+function mapParticipantEnrollment(
+  enrollment: Awaited<ReturnType<typeof listEnrollmentsByUser>>[number]
+) {
+  return {
+    id: enrollment.id,
+    assessmentStatus: enrollment.assessmentStatus,
+    certificateNum: enrollment.certificateNum,
+    expiryDate: enrollment.expiryDate?.toISOString() ?? null,
+    qrVerifyCode: enrollment.qrVerifyCode,
+    createdAt: enrollment.createdAt.toISOString(),
+    k3LogCount: enrollment._count.k3Logs,
+    batch: {
+      id: enrollment.batch.id,
+      status: enrollment.batch.status,
+      startDate: enrollment.batch.startDate.toISOString(),
+      endDate: enrollment.batch.endDate.toISOString()
+    },
+    program: {
+      id: enrollment.batch.program.id,
+      title: enrollment.batch.program.title,
+      category: enrollment.batch.program.category,
+      industryType: enrollment.batch.program.industryType
+    }
   };
 }
 
@@ -106,6 +133,12 @@ export async function getAdminEnrollments() {
   const enrollments = await listEnrollmentsAdmin();
 
   return enrollments.map(mapEnrollment);
+}
+
+export async function getParticipantEnrollments(userId: string) {
+  await syncBatchStatuses();
+  const enrollments = await listEnrollmentsByUser(userId);
+  return enrollments.map(mapParticipantEnrollment);
 }
 
 export async function getEnrollmentDetail(enrollmentId: string) {

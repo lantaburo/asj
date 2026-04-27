@@ -1,15 +1,37 @@
 import { BatchStatus } from "@prisma/client";
 import { z } from "zod";
 
-const optionalUuid = z.string().uuid().nullable().optional();
+const optionalUuid = z.preprocess((value) => {
+  if (value === undefined || value === null) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim() === "") {
+    return null;
+  }
+
+  return value;
+}, z.string().uuid().nullable().optional());
+
+const optionalPrice = z.preprocess((value) => {
+  if (value === undefined || value === null) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim() === "") {
+    return null;
+  }
+
+  return value;
+}, z.coerce.number().int().nonnegative().nullable().optional());
 
 const batchBaseSchema = z.object({
   programId: z.string().uuid(),
   instructorId: optionalUuid,
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
-  quota: z.number().int().positive(),
-  price: z.number().int().nonnegative().nullable().optional(),
+  quota: z.coerce.number().int().positive(),
+  price: optionalPrice,
   status: z.nativeEnum(BatchStatus).optional()
 });
 

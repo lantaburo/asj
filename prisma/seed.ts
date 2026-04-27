@@ -1,5 +1,6 @@
 import {
   BatchStatus,
+  InstructorLevel,
   ProgramCategory,
   PrismaClient,
   Role
@@ -46,6 +47,7 @@ async function main() {
     update: {
       fullName: "Instruktur AJS",
       role: Role.INSTRUCTOR,
+      instructorLevel: InstructorLevel.MADYA,
       passwordHash: null
     },
     create: {
@@ -53,6 +55,7 @@ async function main() {
       email: "instruktur@ajs.local",
       fullName: "Instruktur AJS",
       role: Role.INSTRUCTOR,
+      instructorLevel: InstructorLevel.MADYA,
       passwordHash: null
     }
   });
@@ -109,6 +112,71 @@ async function main() {
       isActive: true
     }
   });
+
+  const unitSchema = await prisma.unitSchema.upsert({
+    where: {
+      code: "AJS-AKU-2026"
+    },
+    update: {
+      programId,
+      title: "Skema Ahli K3 Umum",
+      level: "Level 6",
+      description: "Rangkaian unit kompetensi inti untuk sertifikasi Ahli K3 Umum.",
+      isActive: true
+    },
+    create: {
+      code: "AJS-AKU-2026",
+      programId,
+      title: "Skema Ahli K3 Umum",
+      level: "Level 6",
+      description: "Rangkaian unit kompetensi inti untuk sertifikasi Ahli K3 Umum.",
+      isActive: true
+    }
+  });
+
+  const schemaUnits = [
+    {
+      unitCode: "K3-AKU-001",
+      title: "Menerapkan Regulasi Dasar K3",
+      orderIndex: 1,
+      isMandatory: true
+    },
+    {
+      unitCode: "K3-AKU-002",
+      title: "Melakukan Identifikasi Bahaya dan Penilaian Risiko",
+      orderIndex: 2,
+      isMandatory: true
+    },
+    {
+      unitCode: "K3-AKU-003",
+      title: "Menyusun Program Pengendalian Risiko K3",
+      orderIndex: 3,
+      isMandatory: true
+    }
+  ] as const;
+
+  for (const unit of schemaUnits) {
+    await prisma.schemaUnit.upsert({
+      where: {
+        unitSchemaId_unitCode: {
+          unitSchemaId: unitSchema.id,
+          unitCode: unit.unitCode
+        }
+      },
+      update: {
+        title: unit.title,
+        orderIndex: unit.orderIndex,
+        isMandatory: unit.isMandatory
+      },
+      create: {
+        unitSchemaId: unitSchema.id,
+        unitCode: unit.unitCode,
+        title: unit.title,
+        orderIndex: unit.orderIndex,
+        isMandatory: unit.isMandatory
+      }
+    });
+  }
 
   await prisma.classroom.upsert({
     where: { id: classroomId },

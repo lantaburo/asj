@@ -35,6 +35,7 @@ export default async function RegisterPage() {
           </Link>
           <nav className="britsafe-nav">
             <Link href="/" className="btn btn-outline" style={{ color: 'var(--ajs-navy)', borderColor: 'var(--ajs-border)' }}>Kembali ke Beranda</Link>
+            <Link href="/peserta">Portal Peserta</Link>
             <Link href="/masuk" className="britsafe-btn-auth">
               Masuk Admin
             </Link>
@@ -59,7 +60,14 @@ export default async function RegisterPage() {
 
         <section className="section-padding">
           <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '40px', alignItems: 'start' }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "28px",
+                alignItems: "start"
+              }}
+            >
               <div>
                 <RegisterForm batches={upcomingBatches} />
               </div>

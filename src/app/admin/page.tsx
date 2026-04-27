@@ -80,11 +80,37 @@ export default async function AdminDashboardPage() {
             <p className="britsafe-card__copy" style={{ fontSize: '14px', marginBottom: '32px' }}>
               Pusat kendali untuk menjaga data pelatihan tetap rapi, konsisten,
               dan siap dipakai oleh landing page maupun modul operasional lain.
+              Pendaftaran instruktur/asesor tersedia pada Step 5 (Member).
             </p>
           </div>
           {canOpenMasterData ? (
             <Link className="cta-primary" href="/admin/master-data" style={{ textAlign: 'center', marginTop: 'auto' }}>
               Buka Master Data
+            </Link>
+          ) : (
+            <div style={{ background: '#FEF2F2', color: '#991B1B', padding: '12px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginTop: 'auto' }}>
+              Area ini dikunci untuk role Anda. Hubungi ADMIN untuk akses.
+            </div>
+          )}
+        </article>
+
+        <article className="britsafe-card" style={{ padding: '32px', opacity: canOpenMasterData ? 1 : 0.6 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+            <span style={{ background: 'var(--ajs-teal)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '700' }}>SUPER_ADMIN / ADMIN</span>
+            <div style={{ display: 'flex', gap: '8px', fontSize: '11px', color: 'var(--ajs-muted)', fontWeight: '600', textTransform: 'uppercase' }}>
+              <span>Skema</span> • <span>Unit</span>
+            </div>
+          </div>
+          <div>
+            <h3 className="britsafe-card__title" style={{ fontSize: '22px' }}>Unit Skema</h3>
+            <p className="britsafe-card__copy" style={{ fontSize: '14px', marginBottom: '32px' }}>
+              Kelola bank skema kompetensi dan unit asesmen sebagai referensi pembelajaran
+              peserta serta kebutuhan verifikasi instruktur/asesor.
+            </p>
+          </div>
+          {canOpenMasterData ? (
+            <Link className="cta-primary" href="/admin/unit-skema" style={{ textAlign: 'center', marginTop: 'auto' }}>
+              Buka Unit Skema
             </Link>
           ) : (
             <div style={{ background: '#FEF2F2', color: '#991B1B', padding: '12px', borderRadius: 'var(--radius-sm)', fontSize: '13px', marginTop: 'auto' }}>

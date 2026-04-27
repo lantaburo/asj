@@ -1,4 +1,4 @@
-import type { Role } from "@prisma/client";
+import type { InstructorLevel, Role } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
@@ -41,6 +41,53 @@ export async function createUser(input: {
       email: input.email,
       phone: input.phone,
       fullName: input.fullName
+    }
+  });
+}
+
+export async function listInternalMembers() {
+  return prisma.user.findMany({
+    where: {
+      role: {
+        in: [
+          "SUPER_ADMIN",
+          "ADMIN",
+          "INSTRUCTOR",
+          "ASSESSOR",
+          "CLIENT_HR",
+          "AUDITOR"
+        ]
+      }
+    },
+    orderBy: [
+      {
+        role: "asc"
+      },
+      {
+        fullName: "asc"
+      }
+    ]
+  });
+}
+
+export async function createInternalMember(input: {
+  email: string;
+  fullName: string;
+  phone?: string;
+  role: Role;
+  instructorLevel?: InstructorLevel | null;
+  passwordHash?: string | null;
+  isActive?: boolean;
+}) {
+  return prisma.user.create({
+    data: {
+      email: input.email,
+      fullName: input.fullName,
+      phone: input.phone,
+      role: input.role,
+      instructorLevel: input.instructorLevel,
+      passwordHash: input.passwordHash ?? null,
+      isActive: input.isActive ?? true
     }
   });
 }

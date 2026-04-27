@@ -14,10 +14,14 @@ import {
 } from "@/features/programs/program.repository";
 
 function mapAdminProgram(program: Awaited<ReturnType<typeof listProgramsAdmin>>[number]) {
+  const categoryLabel = program.customCategory ?? program.category;
+
   return {
     id: program.id,
     title: program.title,
     category: program.category,
+    customCategory: program.customCategory,
+    categoryLabel,
     industryType: program.industryType,
     description: program.description,
     curriculum: program.curriculum,
@@ -61,7 +65,13 @@ export async function getAdminProgramById(programId: string) {
 
 export async function createProgramRecord(payload: unknown) {
   const parsed = createProgramSchema.parse(payload);
-  const program = await createProgram(parsed);
+  const customCategory =
+    parsed.category === "LAINNYA" ? (parsed.customCategory ?? null) : null;
+
+  const program = await createProgram({
+    ...parsed,
+    customCategory
+  });
 
   return getAdminProgramById(program.id);
 }
@@ -77,7 +87,17 @@ export async function updateProgramRecord(programId: string, payload: unknown) {
     });
   }
 
-  await updateProgram(programId, parsed);
+  const customCategory =
+    parsed.category === undefined
+      ? parsed.customCategory
+      : parsed.category === "LAINNYA"
+        ? (parsed.customCategory ?? null)
+        : null;
+
+  await updateProgram(programId, {
+    ...parsed,
+    customCategory
+  });
   return getAdminProgramById(programId);
 }
 
@@ -89,6 +109,8 @@ export async function getPublicPrograms(): Promise<PublicProgramDto[]> {
     id: program.id,
     title: program.title,
     category: program.category,
+    customCategory: program.customCategory,
+    categoryLabel: program.customCategory ?? program.category,
     industryType: program.industryType,
     description: program.description,
     openBatches: program.batches.map((batch) => ({

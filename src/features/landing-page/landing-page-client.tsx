@@ -10,6 +10,10 @@ import {
 import { getPublicPrograms } from "@/features/programs/program.service";
 
 function formatLabel(value: string) {
+  if (!value.includes("_")) {
+    return value;
+  }
+
   return value
     .toLowerCase()
     .split("_")
@@ -30,7 +34,7 @@ function summarizeCategories(
   >();
 
   for (const program of programs) {
-    const key = formatLabel(program.category);
+    const key = formatLabel(program.categoryLabel);
     const existing = categoryMap.get(key) ?? {
       programCount: 0,
       batchCount: 0,
@@ -96,7 +100,7 @@ function getUpcomingBatches(
       program.openBatches.map((batch) => ({
         ...batch,
         programTitle: program.title,
-        categoryLabel: formatLabel(program.category),
+        categoryLabel: formatLabel(program.categoryLabel),
         industryType: program.industryType
       }))
     )
@@ -150,6 +154,7 @@ export async function LandingPageClient() {
             <a href="#programs">Programs</a>
             <a href="#jadwal">Schedule</a>
             <a href="#cara-kerja">How it Works</a>
+            <Link href="/peserta">Portal Peserta</Link>
             <Link href="/masuk" className="britsafe-btn-auth">
               Workspace Internal
             </Link>
@@ -288,7 +293,7 @@ export async function LandingPageClient() {
             <div className="britsafe-grid">
               {featuredPrograms.map((program) => (
                 <article key={program.id} className="britsafe-card">
-                  <span className="britsafe-card__category">{formatLabel(program.category)}</span>
+                  <span className="britsafe-card__category">{formatLabel(program.categoryLabel)}</span>
                   <h3 className="britsafe-card__title">{program.title}</h3>
                   <p className="britsafe-card__copy">
                     {program.description ?? "Deskripsi program yang komprehensif untuk mendukung kompetensi Anda di bidang K3."}
@@ -344,6 +349,8 @@ export async function LandingPageClient() {
                 <li><a href="#programs">Semua Program</a></li>
                 <li><a href="#jadwal">Jadwal Pelatihan</a></li>
                 <li><a href="/daftar">Alur Pendaftaran</a></li>
+                <li><a href="/peserta">Dashboard Peserta</a></li>
+                <li><a href="/absen">Absensi Peserta</a></li>
                 <li><a href="/masuk">Portal Internal</a></li>
               </ul>
             </div>
