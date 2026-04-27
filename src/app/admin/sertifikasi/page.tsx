@@ -29,7 +29,13 @@ export default async function CertificationAdminPage() {
       </section>
 
       {/* KPI Strip */}
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+          gap: "20px"
+        }}
+      >
         {[
           { label: "Total Peserta", value: enrollments.length, color: "var(--ajs-navy)" },
           { label: "Dinyatakan Kompeten", value: kompeten, color: "var(--ajs-green)" },

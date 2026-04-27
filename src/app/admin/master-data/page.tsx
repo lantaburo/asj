@@ -51,13 +51,25 @@ export default async function AdminMasterDataPage() {
         </p>
       </section>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '30px' }}>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: "30px"
+        }}
+      >
         <div className="britsafe-card" style={{ padding: '32px' }}>
           <div style={{ marginBottom: '24px' }}>
             <span className="britsafe-card__category">Ringkasan</span>
             <h2 className="britsafe-card__title" style={{ fontSize: '20px', marginTop: '8px' }}>Lihat kesehatan struktur data sebelum melakukan perubahan.</h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+              gap: "16px"
+            }}
+          >
             <div style={{ background: 'var(--ajs-gray)', padding: '20px', borderRadius: 'var(--radius-sm)' }}>
               <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--ajs-navy)', textTransform: 'uppercase', marginBottom: '8px' }}>Program Aktif</div>
               <strong style={{ fontSize: '32px', color: 'var(--ajs-orange)', lineHeight: 1 }}>{activeProgramCount}</strong>
@@ -204,7 +216,13 @@ export default async function AdminMasterDataPage() {
         </div>
       </section>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: "30px"
+        }}
+      >
         <section className="britsafe-card" style={{ padding: '32px' }}>
           <div style={{ marginBottom: '24px' }}>
             <span className="britsafe-card__category">Classrooms</span>

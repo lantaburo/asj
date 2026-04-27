@@ -48,7 +48,7 @@ export default async function AdminLayout({
       <main className="section-padding britsafe-gray">
         <div className="container">
           <section className="britsafe-card" style={{ marginBottom: '40px', padding: '40px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '40px' }}>
+            <div className="admin-layout-hero">
               <div>
                 <span className="britsafe-card__category">Internal Command Center</span>
                 <h1 className="britsafe-card__title" style={{ fontSize: '36px', marginBottom: '16px' }}>

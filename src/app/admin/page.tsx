@@ -14,7 +14,14 @@ export default async function AdminDashboardPage() {
 
   return (
     <>
-      <section style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '30px', marginBottom: '30px' }}>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: "30px",
+          marginBottom: "30px"
+        }}
+      >
         <article className="britsafe-card" style={{ padding: '32px' }}>
           <div style={{ marginBottom: '24px' }}>
             <span className="britsafe-card__category">Kontrol Utama</span>
