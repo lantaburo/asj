@@ -2,6 +2,7 @@ import type { User } from "@prisma/client";
 
 import { hashPassword } from "@/lib/password";
 import {
+  loginParticipant,
   loginAdmin,
   startParticipantSession
 } from "@/features/auth/auth.service";
@@ -86,6 +87,39 @@ describe("auth service", () => {
     });
     expect(result.auth.channel).toBe("phone");
     expect(result.auth.destination).toBe("+628111222333");
+  });
+
+  it("restores participant session for an existing participant", async () => {
+    mockedFindUserByIdentity.mockResolvedValueOnce(
+      buildUser({
+        email: "peserta.lama@ajs.local",
+        phone: "081234567890"
+      })
+    );
+
+    const result = await loginParticipant({
+      email: "Peserta.Lama@ajs.local"
+    });
+
+    expect(mockedFindUserByIdentity).toHaveBeenCalledWith({
+      email: "peserta.lama@ajs.local",
+      phone: undefined
+    });
+    expect(result.user.email).toBe("peserta.lama@ajs.local");
+    expect(result.auth.tokenType).toBe("participant-login");
+  });
+
+  it("rejects participant login when identity is not found", async () => {
+    mockedFindUserByIdentity.mockResolvedValueOnce(null);
+
+    await expect(
+      loginParticipant({
+        email: "missing@ajs.local"
+      })
+    ).rejects.toMatchObject({
+      code: "PARTICIPANT_NOT_FOUND",
+      statusCode: 404
+    });
   });
 
   it("allows admin login with valid credentials", async () => {

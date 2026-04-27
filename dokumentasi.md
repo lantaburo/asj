@@ -427,3 +427,20 @@ Catatan:
 
 - Hardening ini ditujukan agar kegagalan data/render di production tidak langsung berubah menjadi `HTTP 500` pada halaman publik.
 - Endpoint API publik tidak diubah.
+
+## Update 17 - Login Ulang Dashboard Peserta
+
+Perubahan yang sudah dibuat:
+
+- Menambahkan halaman login ulang peserta di `src/app/peserta/masuk/page.tsx`.
+- Menambahkan komponen form login peserta `src/features/auth/participant-login-form.tsx`.
+- Menambahkan endpoint `POST /api/auth/participant/login` yang hanya memulihkan sesi untuk peserta yang sudah terdaftar, tanpa membuat enrollment baru.
+- Menambahkan service `loginParticipant` di `src/features/auth/auth.service.ts`.
+- Mengubah guard halaman `src/app/peserta/page.tsx` agar sesi yang habis diarahkan ke `/peserta/masuk?next=/peserta`, bukan kembali ke form daftar.
+- Menambahkan tombol logout peserta `src/features/auth/participant-logout-button.tsx` agar siklus login ulang peserta lengkap.
+- Menambahkan test auth service untuk login ulang peserta yang valid dan kasus identitas yang tidak ditemukan.
+
+Catatan:
+
+- Flow ini ditujukan untuk peserta yang pernah membuat sesi lewat pendaftaran atau absensi.
+- Peserta baru tetap memulai dari `/daftar`.

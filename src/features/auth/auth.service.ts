@@ -61,6 +61,34 @@ function mapAuthenticatedUser(user: User) {
   };
 }
 
+function buildParticipantSessionResult(
+  user: User,
+  identity: {
+    email?: string;
+    phone?: string;
+  },
+  options?: {
+    tokenType?: string;
+    instruction?: string;
+  }
+) {
+  const destination = identity.email ?? identity.phone ?? user.email;
+  const channel = identity.email ? "email" : "phone";
+
+  return {
+    user: mapAuthenticatedUser(user),
+    auth: {
+      channel,
+      destination,
+      tokenType: options?.tokenType ?? "mvp-auto-session",
+      expiresInMinutes: 720,
+      instruction:
+        options?.instruction ??
+        "Sesi peserta aktif otomatis di browser ini. Gunakan data yang sama untuk melanjutkan pendaftaran, absensi, atau membuka Dashboard Peserta."
+    }
+  };
+}
+
 async function resolveAdminLoginUser(email?: string) {
   if (!email) {
     return null;
@@ -105,20 +133,50 @@ export async function startParticipantSession(payload: unknown) {
     });
   }
 
-  const destination = email ?? phone ?? user.email;
-  const channel = email ? "email" : "phone";
+  return buildParticipantSessionResult(user, {
+    email,
+    phone
+  });
+}
 
-  return {
-    user: mapAuthenticatedUser(user),
-    auth: {
-      channel,
-      destination,
-      tokenType: "mvp-auto-session",
-      expiresInMinutes: 720,
+export async function loginParticipant(payload: unknown) {
+  const parsed = participantSessionRequestSchema.parse(payload);
+  const email = normalizeEmail(parsed.email);
+  const phone = normalizePhone(parsed.phone);
+  const user = await findUserByIdentity({
+    email,
+    phone
+  });
+
+  if (!user || !user.isActive) {
+    throw new AppError(
+      "Data peserta tidak ditemukan atau sesi belum pernah dibuat. Gunakan email atau nomor yang dipakai saat mendaftar.",
+      {
+        statusCode: 404,
+        code: "PARTICIPANT_NOT_FOUND"
+      }
+    );
+  }
+
+  if (user.role !== Role.TRAINEE) {
+    throw new AppError("Akun ini tidak memiliki akses Dashboard Peserta.", {
+      statusCode: 403,
+      code: "PARTICIPANT_ACCESS_DENIED"
+    });
+  }
+
+  return buildParticipantSessionResult(
+    user,
+    {
+      email,
+      phone
+    },
+    {
+      tokenType: "participant-login",
       instruction:
-        "Sesi peserta aktif otomatis di browser ini. Gunakan data yang sama untuk melanjutkan pendaftaran, absensi, atau membuka Dashboard Peserta."
+        "Sesi peserta berhasil dipulihkan di browser ini. Lanjutkan kembali ke Dashboard Peserta untuk melihat progres pelatihan."
     }
-  };
+  );
 }
 
 export async function loginAdmin(payload: unknown) {

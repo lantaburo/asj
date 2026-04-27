@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { AJSLogo } from "@/features/landing-page/logo";
 import { formatDateRange } from "@/features/landing-page/landing-page.service";
 import { getCurrentSessionUser } from "@/features/auth/auth.service";
+import { ParticipantLogoutButton } from "@/features/auth/participant-logout-button";
 import { getParticipantEnrollments } from "@/features/enrollments/enrollment.service";
 import { getParticipantUnitSchemaCatalog } from "@/features/unit-schemas/unit-schema.service";
 
@@ -34,7 +35,7 @@ export default async function PesertaDashboardPage() {
   const currentUser = await getCurrentSessionUser();
 
   if (!currentUser) {
-    redirect("/daftar");
+    redirect("/peserta/masuk?next=/peserta");
   }
 
   if (currentUser.role !== "TRAINEE") {
@@ -77,17 +78,47 @@ export default async function PesertaDashboardPage() {
             className="britsafe-card"
             style={{ padding: "32px", borderTop: "4px solid var(--ajs-teal)" }}
           >
-            <span className="britsafe-card__category">Dashboard Peserta</span>
-            <h1
-              className="britsafe-card__title"
-              style={{ fontSize: "28px", margin: "10px 0" }}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                gap: "24px",
+                alignItems: "start"
+              }}
             >
-              Halo, {currentUser.fullName}. Pantau progres belajarmu di sini.
-            </h1>
-            <p className="britsafe-card__copy" style={{ margin: 0 }}>
-              Dashboard ini merangkum status pendaftaran, logbook praktik K3, dan
-              informasi skema unit kompetensi yang relevan dengan programmu.
-            </p>
+              <div>
+                <span className="britsafe-card__category">Dashboard Peserta</span>
+                <h1
+                  className="britsafe-card__title"
+                  style={{ fontSize: "28px", margin: "10px 0" }}
+                >
+                  Halo, {currentUser.fullName}. Pantau progres belajarmu di sini.
+                </h1>
+                <p className="britsafe-card__copy" style={{ margin: 0 }}>
+                  Dashboard ini merangkum status pendaftaran, logbook praktik K3, dan
+                  informasi skema unit kompetensi yang relevan dengan programmu.
+                </p>
+              </div>
+
+              <aside
+                style={{
+                  display: "grid",
+                  gap: "14px",
+                  padding: "18px",
+                  borderRadius: "var(--radius-sm)",
+                  border: "1px solid var(--ajs-border)",
+                  background: "rgba(244, 121, 32, 0.04)"
+                }}
+              >
+                <div style={{ fontSize: "12px", color: "var(--ajs-muted)" }}>
+                  Masuk sebagai
+                </div>
+                <strong style={{ color: "var(--ajs-navy)" }}>
+                  {currentUser.email ?? currentUser.phone ?? currentUser.fullName}
+                </strong>
+                <ParticipantLogoutButton />
+              </aside>
+            </div>
           </section>
 
           <section
