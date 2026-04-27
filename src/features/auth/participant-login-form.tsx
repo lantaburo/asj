@@ -35,6 +35,13 @@ export function ParticipantLoginForm() {
         const email = String(formData.get("email") ?? "").trim();
         const phone = String(formData.get("phone") ?? "").trim();
         const nextPath = resolveNextPath(searchParams.get("next"));
+        const loginPayload = email
+          ? {
+              email
+            }
+          : {
+              phone: phone || undefined
+            };
 
         if (!email && !phone) {
           setError("Isi email atau nomor WhatsApp yang dipakai saat mendaftar.");
@@ -48,10 +55,7 @@ export function ParticipantLoginForm() {
               headers: {
                 "Content-Type": "application/json"
               },
-              body: JSON.stringify({
-                email: email || undefined,
-                phone: phone || undefined
-              })
+              body: JSON.stringify(loginPayload)
             });
 
             const payload = (await response.json()) as ApiErrorResponse;
@@ -84,7 +88,7 @@ export function ParticipantLoginForm() {
           autoFocus
         />
         <span className="field-helper">
-          Gunakan email yang dipakai saat daftar atau saat melakukan absensi.
+          Gunakan email yang dipakai saat daftar atau saat melakukan absensi. Ini jadi prioritas utama saat login.
         </span>
       </label>
 
@@ -98,7 +102,7 @@ export function ParticipantLoginForm() {
           placeholder="081234567890"
         />
         <span className="field-helper">
-          Boleh diisi sebagai alternatif jika email yang dipakai saat mendaftar tidak tersedia.
+          Isi nomor WhatsApp hanya jika Anda tidak memakai email untuk login.
         </span>
       </label>
 

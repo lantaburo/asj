@@ -109,6 +109,25 @@ describe("auth service", () => {
     expect(result.auth.tokenType).toBe("participant-login");
   });
 
+  it("prioritizes email for participant login when both email and phone are submitted", async () => {
+    mockedFindUserByIdentity.mockResolvedValueOnce(
+      buildUser({
+        email: "peserta.login@ajs.local",
+        phone: "081111111111"
+      })
+    );
+
+    const result = await loginParticipant({
+      email: "peserta.login@ajs.local",
+      phone: "089999999999"
+    });
+
+    expect(mockedFindUserByIdentity).toHaveBeenCalledWith({
+      email: "peserta.login@ajs.local"
+    });
+    expect(result.user.email).toBe("peserta.login@ajs.local");
+  });
+
   it("rejects participant login when identity is not found", async () => {
     mockedFindUserByIdentity.mockResolvedValueOnce(null);
 

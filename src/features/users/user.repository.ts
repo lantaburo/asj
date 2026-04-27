@@ -14,11 +14,19 @@ export async function findUserById(id: string) {
 }
 
 export async function findUserByIdentity(params: FindUserIdentityParams) {
-  const conditions = [params.email, params.phone]
-    .filter(Boolean)
-    .map((value) => ({
-      OR: [{ email: value as string }, { phone: value as string }]
-    }));
+  const conditions: FindUserIdentityParams[] = [];
+
+  if (params.email) {
+    conditions.push({
+      email: params.email
+    });
+  }
+
+  if (params.phone) {
+    conditions.push({
+      phone: params.phone
+    });
+  }
 
   if (conditions.length === 0) {
     return null;
@@ -26,7 +34,7 @@ export async function findUserByIdentity(params: FindUserIdentityParams) {
 
   return prisma.user.findFirst({
     where: {
-      OR: conditions.flatMap((condition) => condition.OR)
+      OR: conditions
     }
   });
 }

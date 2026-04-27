@@ -143,10 +143,13 @@ export async function loginParticipant(payload: unknown) {
   const parsed = participantSessionRequestSchema.parse(payload);
   const email = normalizeEmail(parsed.email);
   const phone = normalizePhone(parsed.phone);
-  const user = await findUserByIdentity({
-    email,
-    phone
-  });
+  const user = email
+    ? await findUserByIdentity({
+        email
+      })
+    : await findUserByIdentity({
+        phone
+      });
 
   if (!user || !user.isActive) {
     throw new AppError(
@@ -159,10 +162,13 @@ export async function loginParticipant(payload: unknown) {
   }
 
   if (user.role !== Role.TRAINEE) {
-    throw new AppError("Akun ini tidak memiliki akses Dashboard Peserta.", {
-      statusCode: 403,
-      code: "PARTICIPANT_ACCESS_DENIED"
-    });
+    throw new AppError(
+      "Identitas ini terhubung ke akun internal. Jika Anda staf, gunakan halaman Masuk Admin.",
+      {
+        statusCode: 403,
+        code: "PARTICIPANT_ACCESS_DENIED"
+      }
+    );
   }
 
   return buildParticipantSessionResult(
