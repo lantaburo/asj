@@ -78,7 +78,8 @@ export async function listEnrollmentsByUser(userId: string) {
         select: {
           k3Logs: true
         }
-      }
+      },
+      invoice: true
     }
   });
 }

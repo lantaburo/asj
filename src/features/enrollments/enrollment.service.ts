@@ -85,7 +85,13 @@ function mapParticipantEnrollment(
       title: enrollment.batch.program.title,
       category: enrollment.batch.program.category,
       industryType: enrollment.batch.program.industryType
-    }
+    },
+    invoice: enrollment.invoice ? {
+      id: enrollment.invoice.id,
+      amount: enrollment.invoice.amount,
+      status: enrollment.invoice.status,
+      invoiceNumber: enrollment.invoice.invoiceNumber
+    } : null
   };
 }
 

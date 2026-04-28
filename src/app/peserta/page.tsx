@@ -2,10 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AJSLogo } from "@/features/landing-page/logo";
-import { formatDateRange } from "@/features/landing-page/landing-page.service";
 import { getCurrentSessionUser } from "@/features/auth/auth.service";
 import { ParticipantLogoutButton } from "@/features/auth/participant-logout-button";
 import { getParticipantEnrollments } from "@/features/enrollments/enrollment.service";
+import { formatCurrency, formatDateRange } from "@/features/landing-page/landing-page.service";
 import { ParticipantDocumentsPanel } from "@/features/participant-documents/participant-documents-panel";
 import { getParticipantDocuments } from "@/features/participant-documents/participant-document.service";
 import { getParticipantUnitSchemaCatalog } from "@/features/unit-schemas/unit-schema.service";
@@ -279,6 +279,43 @@ export default async function PesertaDashboardPage() {
                       <div style={{ fontSize: "12px", color: "var(--ajs-muted)" }}>
                         Nomor sertifikat: {enrollment.certificateNum ?? "Belum terbit"}
                       </div>
+
+                      {enrollment.invoice && (
+                        <div style={{ marginTop: '12px', padding: '10px', background: 'var(--ajs-gray)', borderRadius: '8px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--ajs-muted)' }}>STATUS PEMBAYARAN</span>
+                            <span style={{ 
+                              fontSize: '10px', 
+                              fontWeight: 'bold', 
+                              padding: '2px 6px', 
+                              borderRadius: '4px',
+                              background: enrollment.invoice.status === 'PAID' ? '#E8F5E9' : '#FFF3E0',
+                              color: enrollment.invoice.status === 'PAID' ? '#2E7D32' : '#E65100'
+                            }}>
+                              {enrollment.invoice.status === 'PAID' ? 'LUNAS' : 
+                               enrollment.invoice.status === 'PENDING_VERIFICATION' ? 'MENUNGGU VERIFIKASI' : 
+                               enrollment.invoice.status === 'REJECTED' ? 'DITOLAK' : 'BELUM DIBAYAR'}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--ajs-navy)' }}>
+                            {formatCurrency(enrollment.invoice.amount)}
+                          </div>
+                          {enrollment.invoice.status !== 'PAID' && enrollment.invoice.status !== 'PENDING_VERIFICATION' && (
+                            <Link 
+                              href={`/checkout/${enrollment.invoice.id}`}
+                              className="btn btn-primary"
+                              style={{ width: '100%', marginTop: '8px', padding: '6px', fontSize: '12px', textAlign: 'center' }}
+                            >
+                              Bayar Sekarang
+                            </Link>
+                          )}
+                          {enrollment.invoice.status === 'PENDING_VERIFICATION' && (
+                            <p style={{ fontSize: '11px', color: 'var(--ajs-muted)', margin: '4px 0 0 0' }}>
+                              Bukti transfer sedang diperiksa oleh admin.
+                            </p>
+                          )}
+                        </div>
+                      )}
                       {enrollment.certificateNum ? (
                         <Link
                           href={`/verifikasi/${enrollment.qrVerifyCode}`}
