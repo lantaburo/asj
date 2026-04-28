@@ -66,21 +66,21 @@ export function SuperAdminDashboard({ data }: { data: any }) {
   return (
     <div style={{ display: 'grid', gap: '30px' }}>
       {/* Row 1: Revenue, Program, Batch */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
         <MetricCard title="Revenue" value={formatCurrency(metrics.revenue)} icon={<TrendingUp size={24} />} color="#283593" />
         <MetricCard title="Program" value={metrics.programs} icon={<BookOpen size={24} />} color="#5C6BC0" />
         <MetricCard title="Batch" value={metrics.batches} icon={<Layers size={24} />} color="#26A69A" />
       </div>
 
       {/* Row 2: Total Peserta, Kompeten, Tidak Kompeten */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
         <MetricCard title="Total Peserta" value={metrics.participants} icon={<Users size={24} />} color="#00ACC1" />
         <MetricCard title="Kompeten" value={metrics.competent} icon={<CheckCircle size={24} />} color="#43A047" />
         <MetricCard title="Tidak Kompeten" value={metrics.notCompetent} icon={<XCircle size={24} />} color="#EF5350" />
       </div>
 
       {/* Row 3: Instruktur, Asesor, Total JP */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
         <MetricCard title="Instruktur" value={metrics.instructors} icon={<UserCheck size={24} />} color="#7E57C2" />
         <MetricCard title="Asesor" value={metrics.assessors} icon={<UserCheck size={24} />} color="#AB47BC" />
         <MetricCard title="Total JP" value={`${metrics.totalJP} JP`} icon={<Clock size={24} />} color="#FB8C00" />
