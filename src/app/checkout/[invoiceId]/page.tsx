@@ -7,9 +7,10 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function CheckoutPage({ params }: { params: { invoiceId: string } }) {
+export default async function CheckoutPage({ params }: { params: Promise<{ invoiceId: string }> }) {
+  const { invoiceId } = await params;
   const user = await requireAuthenticatedSessionUser();
-  const invoice = await getInvoiceDetails(params.invoiceId);
+  const invoice = await getInvoiceDetails(invoiceId);
 
   if (invoice.enrollment.userId !== user.id) {
     redirect("/masuk");
