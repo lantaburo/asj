@@ -31,19 +31,19 @@ export default async function AdminMasterDataHubPage() {
     {
       title: "Daftar Instruktur & Asesor",
       description: "Database tenaga pengajar dan asesor internal maupun eksternal.",
-      href: "#", // Placeholder
+      href: "/admin/instruktur-asesor",
       icon: "👥"
     },
     {
       title: "Daftar Kelas (Classroom)",
       description: "Daftar ruangan atau meeting room untuk jadwal pelatihan.",
-      href: "#", // Placeholder
+      href: "/admin/classroom",
       icon: "🏢"
     },
     {
       title: "Pengaturan Sertifikat Internal",
       description: "Konfigurasi template PDF, tanda tangan digital, dan passing grade.",
-      href: "#", // Placeholder
+      href: "/admin/pengaturan-sertifikat",
       icon: "🎓"
     }
   ];

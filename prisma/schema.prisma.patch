@@ -1,0 +1,28 @@
+--- prisma/schema.prisma
++++ prisma/schema.prisma
+@@ -42,6 +42,7 @@
+   customCategory String?
+   batches        Batch[]
+   unitSchemas    UnitSchema[]
++  certificateConfig CertificateConfig?
+ }
+ 
+ model UnitSchema {
+@@ -107,6 +108,18 @@
+ 
+   @@unique([batchId, userId])
+ }
++
++model CertificateConfig {
++  id              String   @id @default(uuid())
++  programId       String?  @unique
++  pdfTemplateUrl  String?
++  signatureUrl    String?
++  passingGrade    Int      @default(70)
++  updatedAt       DateTime @updatedAt
++
++  program         Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
++}
+ 
+ model Classroom {
+   id          String         @id @default(uuid())

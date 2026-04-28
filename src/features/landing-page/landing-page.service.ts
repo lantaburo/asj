@@ -1,4 +1,6 @@
 import type { PublicProgramDto } from "@/features/programs/program.types";
+import { prisma } from "@/lib/prisma";
+import { Role } from "@prisma/client";
 
 function asSafeBatchList(program: PublicProgramDto) {
   return Array.isArray(program.openBatches) ? program.openBatches : [];
@@ -11,6 +13,15 @@ function asFiniteNumber(value: unknown) {
 function parseTimestamp(value: string) {
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+
+export async function getTotalParticipantCount() {
+  return prisma.user.count({
+    where: {
+      role: Role.TRAINEE
+    }
+  });
 }
 
 export function countOpenBatches(programs: PublicProgramDto[]) {
@@ -41,11 +52,11 @@ export function formatCurrency(value: number | null) {
   }).format(value);
 }
 
-export function formatDateRange(startDate: string, endDate: string) {
-  const startTimestamp = parseTimestamp(startDate);
-  const endTimestamp = parseTimestamp(endDate);
+export function formatDateRange(startDate: string | Date, endDate: string | Date) {
+  const startObj = typeof startDate === "string" ? new Date(startDate) : startDate;
+  const endObj = typeof endDate === "string" ? new Date(endDate) : endDate;
 
-  if (startTimestamp === null || endTimestamp === null) {
+  if (isNaN(startObj.getTime()) || isNaN(endObj.getTime())) {
     return "Jadwal akan diumumkan";
   }
 
@@ -53,7 +64,7 @@ export function formatDateRange(startDate: string, endDate: string) {
     dateStyle: "medium"
   });
 
-  return `${formatter.format(startTimestamp)} - ${formatter.format(endTimestamp)}`;
+  return `${formatter.format(startObj)} - ${formatter.format(endObj)}`;
 }
 
 export function compareDateStrings(leftDate: string, rightDate: string) {

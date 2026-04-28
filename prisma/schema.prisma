@@ -18,10 +18,14 @@ model User {
   updatedAt            DateTime         @updatedAt
   passwordHash         String?
   instructorLevel      InstructorLevel?
+  licenseNumber        String?
+  profilePictureUrl    String?
   participantDocuments Json?
   attendances          Attendance[]
   instructed           Batch[]          @relation("InstructorBatches")
+  assessed             Batch[]          @relation("AssessorBatches")
   sessions             ClassSession[]   @relation("SessionInstructor")
+  assessedSessions     ClassSession[]   @relation("SessionAssessor")
   enrollments          Enrollment[]
   verifiedLogs         K3Log[]          @relation("LogVerifier")
 }
@@ -39,6 +43,7 @@ model Program {
   customCategory String?
   batches        Batch[]
   unitSchemas    UnitSchema[]
+  certificateConfig CertificateConfig?
 }
 
 model UnitSchema {
@@ -52,7 +57,7 @@ model UnitSchema {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   units       SchemaUnit[]
-  program     Program?     @relation(fields: [programId], references: [id])
+  program     Program?     @relation(fields: [programId], references: [id], onDelete: Cascade)
 }
 
 model SchemaUnit {
@@ -75,15 +80,20 @@ model Batch {
   id           String         @id @default(uuid())
   programId    String
   instructorId String?
+  assessorId   String?
   startDate    DateTime
   endDate      DateTime
   quota        Int
   price        Int?
+  pricePackages Json?
   status       BatchStatus    @default(OPEN)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+  classroomId  String?
+  classroom    Classroom?     @relation(fields: [classroomId], references: [id])
   instructor   User?          @relation("InstructorBatches", fields: [instructorId], references: [id])
-  program      Program        @relation(fields: [programId], references: [id])
+  assessor     User?          @relation("AssessorBatches", fields: [assessorId], references: [id])
+  program      Program        @relation(fields: [programId], references: [id], onDelete: Cascade)
   sessions     ClassSession[]
   enrollments  Enrollment[]
 }
@@ -99,7 +109,7 @@ model Enrollment {
   qrVerifyCode     String           @unique @default(uuid())
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
-  batch            Batch            @relation(fields: [batchId], references: [id])
+  batch            Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
   user             User             @relation(fields: [userId], references: [id])
   k3Logs           K3Log[]
 
@@ -113,6 +123,7 @@ model Classroom {
   facilities  Json?
   isAvailable Boolean        @default(true)
   sessions    ClassSession[]
+  batches     Batch[]
 }
 
 model ClassSession {
@@ -120,16 +131,19 @@ model ClassSession {
   batchId      String
   classroomId  String?
   instructorId String?
+  assessorId   String?
   title        String
   sessionDate  DateTime
   startTime    DateTime
   endTime      DateTime
   locationType String       @default("Classroom")
+  jp           Int          @default(1)
   createdAt    DateTime     @default(now())
   attendances  Attendance[]
-  batch        Batch        @relation(fields: [batchId], references: [id])
+  batch        Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
   classroom    Classroom?   @relation(fields: [classroomId], references: [id])
   instructor   User?        @relation("SessionInstructor", fields: [instructorId], references: [id])
+  assessor     User?        @relation("SessionAssessor", fields: [assessorId], references: [id])
 }
 
 model Attendance {
@@ -141,7 +155,7 @@ model Attendance {
   selfieUrl      String?
   status         AttendanceStatus @default(PRESENT)
   deviceInfo     String?
-  session        ClassSession     @relation(fields: [sessionId], references: [id])
+  session        ClassSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   user           User             @relation(fields: [userId], references: [id])
 
   @@unique([sessionId, userId])
@@ -156,8 +170,22 @@ model K3Log {
   evidenceUrl  String?
   gpsWatermark Json?
   timestamp    DateTime   @default(now())
-  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   verifiedBy   User?      @relation("LogVerifier", fields: [verifiedById], references: [id])
+}
+
+model CertificateConfig {
+  id              String   @id @default(uuid())
+  programId       String?  @unique
+  pdfTemplateUrl  String?
+  signatureUrl    String?
+  signatoryName   String?
+  signatoryTitle  String?
+  passingGrade    Int      @default(70)
+  validityMonths  Int?
+  updatedAt       DateTime @updatedAt
+
+  program         Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
@@ -202,4 +230,27 @@ enum AttendanceStatus {
   PRESENT
   LATE
   ABSENT
+}
+
+model Article {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  author          String
+  content         String   @db.Text
+  imageUrl        String?
+  version         String   @default("1.0")
+  publishDate     DateTime @default(now())
+  seoDescription  String?
+  seoKeywords     String?
+  isPublished     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AiBrain {
+  id          String   @id @default(uuid())
+  purpose     String   @unique // e.g., "SEO_METADATA", "ARTICLE_GENERATOR"
+  systemPrompt String   @db.Text
+  updatedAt   DateTime @updatedAt
 }

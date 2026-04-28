@@ -10,7 +10,9 @@ import {
   findActiveProgramsWithOpenBatches,
   findProgramById,
   listProgramsAdmin,
-  updateProgram
+  updateProgram,
+  deleteProgram,
+  listProgramStatisticsAdmin
 } from "@/features/programs/program.repository";
 
 function mapAdminProgram(program: Awaited<ReturnType<typeof listProgramsAdmin>>[number]) {
@@ -70,7 +72,8 @@ export async function createProgramRecord(payload: unknown) {
 
   const program = await createProgram({
     ...parsed,
-    customCategory
+    customCategory,
+    unitSchemaId: parsed.unitSchemaId ?? null
   });
 
   return getAdminProgramById(program.id);
@@ -101,6 +104,17 @@ export async function updateProgramRecord(programId: string, payload: unknown) {
   return getAdminProgramById(programId);
 }
 
+export async function deleteProgramRecord(programId: string) {
+  const existing = await findProgramById(programId);
+  if (!existing) {
+    throw new AppError("Program tidak ditemukan.", {
+      statusCode: 404,
+      code: "PROGRAM_NOT_FOUND"
+    });
+  }
+  await deleteProgram(programId);
+}
+
 export async function getPublicPrograms(): Promise<PublicProgramDto[]> {
   await syncBatchStatuses();
   const programs = await findActiveProgramsWithOpenBatches();
@@ -122,6 +136,40 @@ export async function getPublicPrograms(): Promise<PublicProgramDto[]> {
       price: batch.price,
       status: batch.status,
       instructorName: batch.instructor?.fullName ?? null
+    }))
+  }));
+}
+
+export async function getProgramStatisticsList() {
+  await syncBatchStatuses();
+  const programs = await listProgramStatisticsAdmin();
+  return programs.map(program => ({
+    id: program.id,
+    title: program.title,
+    category: program.category,
+    industryType: program.industryType,
+    isActive: program.isActive,
+    batches: program.batches.map(batch => ({
+      id: batch.id,
+      startDate: batch.startDate.toISOString(),
+      endDate: batch.endDate.toISOString(),
+      quota: batch.quota,
+      price: batch.price,
+      status: batch.status,
+      instructorName: batch.instructor?.fullName ?? "TBA",
+      enrollments: batch.enrollments.map(e => ({
+        id: e.id,
+        userName: e.user.fullName,
+        userEmail: e.user.email,
+        assessmentStatus: e.assessmentStatus
+      })),
+      sessions: batch.sessions.map(s => ({
+        id: s.id,
+        title: s.title,
+        sessionDate: s.sessionDate.toISOString(),
+        instructorName: s.instructor?.fullName ?? "TBA",
+        attendanceCount: s._count.attendances
+      }))
     }))
   }));
 }

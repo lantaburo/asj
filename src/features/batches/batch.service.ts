@@ -10,7 +10,8 @@ import {
   findBatchById,
   listBatchesAdmin,
   syncBatchStatuses,
-  updateBatch
+  updateBatch,
+  deleteBatch
 } from "@/features/batches/batch.repository";
 import { findProgramById } from "@/features/programs/program.repository";
 import { findUserById } from "@/features/users/user.repository";
@@ -35,9 +36,12 @@ function mapBatchAdmin(batch: Awaited<ReturnType<typeof listBatchesAdmin>>[numbe
     quota: batch.quota,
     quotaRemaining: Math.max(batch.quota - batch._count.enrollments, 0),
     price: batch.price,
+    pricePackages: batch.pricePackages,
     status: batch.status,
     program: batch.program,
     instructor: batch.instructor,
+    assessor: batch.assessor,
+    classroom: batch.classroom,
     enrollmentCount: batch._count.enrollments,
     sessionCount: batch._count.sessions
   };
@@ -99,6 +103,7 @@ export async function createBatchRecord(payload: unknown) {
 
   await ensureProgramExists(parsed.programId);
   await ensureInstructorExists(parsed.instructorId ?? null);
+  await ensureInstructorExists(parsed.assessorId ?? null);
 
   const status =
     parsed.status ?? inferBatchStatus(parsed.startDate, parsed.endDate);
@@ -106,10 +111,13 @@ export async function createBatchRecord(payload: unknown) {
   const batch = await createBatch({
     programId: parsed.programId,
     instructorId: parsed.instructorId ?? null,
+    assessorId: parsed.assessorId ?? null,
+    classroomId: parsed.classroomId ?? null,
     startDate: parsed.startDate,
     endDate: parsed.endDate,
     quota: parsed.quota,
     price: parsed.price ?? null,
+    pricePackages: (parsed as any).pricePackages ?? null,
     status
   });
 
@@ -152,12 +160,30 @@ export async function updateBatchRecord(batchId: string, payload: unknown) {
     programId: parsed.programId,
     instructorId:
       parsed.instructorId === undefined ? undefined : (parsed.instructorId ?? null),
+    assessorId:
+      parsed.assessorId === undefined ? undefined : (parsed.assessorId ?? null),
+    classroomId:
+      parsed.classroomId === undefined ? undefined : (parsed.classroomId ?? null),
     startDate: parsed.startDate,
     endDate: parsed.endDate,
     quota: parsed.quota,
     price: parsed.price === undefined ? undefined : (parsed.price ?? null),
+    pricePackages: (parsed as any).pricePackages,
     status
   });
 
   return getAdminBatchById(batchId);
+}
+
+export async function deleteBatchRecord(batchId: string) {
+  const existingBatch = await findBatchById(batchId);
+
+  if (!existingBatch) {
+    throw new AppError("Batch tidak ditemukan.", {
+      statusCode: 404,
+      code: "BATCH_NOT_FOUND"
+    });
+  }
+
+  await deleteBatch(batchId);
 }

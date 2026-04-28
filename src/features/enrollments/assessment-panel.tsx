@@ -10,7 +10,13 @@ type EnrollmentItem = {
   expiryDate: string | null;
   qrVerifyCode: string;
   user: { id: string; fullName: string; email: string };
-  batch: { program: { title: string }; startDate: string; endDate: string };
+  batch: { 
+    program: { title: string }; 
+    startDate: string; 
+    endDate: string;
+    instructor: { fullName: string } | null;
+    assessor: { fullName: string } | null;
+  };
   k3LogCount: number;
 };
 
@@ -158,10 +164,11 @@ export function AssessmentPanel({ enrollments, logs }: { enrollments: Enrollment
                     </strong>
                   </div>
                   <div style={{ background: "var(--ajs-gray)", padding: "14px", borderRadius: "var(--radius-sm)" }}>
-                    <div style={{ fontSize: "11px", color: "var(--ajs-muted)", fontWeight: "700", textTransform: "uppercase", marginBottom: "4px" }}>Kode QR Verifikasi</div>
-                    <strong style={{ fontSize: "13px", color: "var(--ajs-navy)", wordBreak: "break-all" }}>
-                      {enrollment.qrVerifyCode}
-                    </strong>
+                    <div style={{ fontSize: "11px", color: "var(--ajs-muted)", fontWeight: "700", textTransform: "uppercase", marginBottom: "4px" }}>Tenaga Ahli</div>
+                    <div style={{ fontSize: "12px", color: "var(--ajs-navy)" }}>
+                      Instruktur: <strong>{enrollment.batch.instructor?.fullName ?? "-"}</strong><br/>
+                      Asesor: <strong>{enrollment.batch.assessor?.fullName ?? "-"}</strong>
+                    </div>
                   </div>
                 </div>
 

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --ajs-navy: #1B365D; /* Deep Blue from shield */
+  --ajs-navy: #283593; /* Brand Indigo */
   --ajs-indigo: #283593; /* Indigo from shield bottom */
   --ajs-teal: #005F73; /* Dark Teal from medal */
   --ajs-orange: #F47920; /* Vibrant Orange from helmet */
@@ -14,8 +14,9 @@
   --ajs-border: #E2E8F0; /* Slate 200 - very soft border */
   
   --gradient-helmet: linear-gradient(135deg, #F47920, #E31E24);
-  --gradient-shield: linear-gradient(135deg, #1B365D 0%, #152B4A 100%); /* Smoother, darker, safer navy gradient */
-  --gradient-vibrant: linear-gradient(90deg, #F47920, #E31E24, #009688, #00A651, #1B365D);
+  --gradient-shield: linear-gradient(135deg, #283593 0%, #1a237e 100%); 
+  --gradient-vibrant: linear-gradient(90deg, #F47920, #E31E24, #009688, #00A651, #283593);
+  --gradient-footer: linear-gradient(to right, #283593 0%, #020617 100%);
   
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   
@@ -49,7 +50,7 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 button {
@@ -183,10 +184,10 @@ button {
   background: rgba(255, 255, 255, 0.92);
   color: var(--ajs-text);
   transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    background 180ms ease,
-    border-color 180ms ease;
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-chip:hover {
@@ -197,7 +198,7 @@ button {
 
 .nav-chip--active {
   border-color: transparent;
-  background: linear-gradient(135deg, var(--ajs-navy), #152b4a);
+  background: var(--gradient-footer);
   color: white;
   box-shadow: var(--shadow-lg);
 }
@@ -216,17 +217,29 @@ button {
 
 /* Hero Section */
 .britsafe-hero {
-  background: var(--gradient-shield);
+  background: linear-gradient(rgba(40, 53, 147, 0.85), rgba(2, 6, 23, 0.9)), url('/images/hero-k3.png');
+  background-size: cover;
+  background-position: center 20%;
+  background-attachment: fixed;
   color: white;
-  padding-block: 120px; /* More impact */
+  padding-block: 160px;
   position: relative;
   overflow: hidden;
+  text-align: center;
+}
+
+.britsafe-hero__grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
 }
 
 .britsafe-hero__content {
-  max-width: 760px; /* Slightly wider */
-  position: relative;
-  z-index: 2;
+  max-width: 860px;
+  margin: 0 auto;
 }
 
 .britsafe-hero__kicker {
@@ -255,10 +268,15 @@ button {
   font-weight: 400;
 }
 
+.britsafe-hero__visual {
+  display: none;
+}
+
 .britsafe-hero__actions {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .btn {
@@ -266,7 +284,7 @@ button {
   font-weight: 700;
   border-radius: var(--radius-sm);
   text-align: center;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 15px;
   letter-spacing: 0.5px;
   display: inline-block;
@@ -350,7 +368,7 @@ button {
   border: 1px solid var(--ajs-border);
   border-radius: var(--radius-md); /* Add rounded corners to cards */
   padding: 40px;
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -364,21 +382,10 @@ button {
   border-color: var(--ajs-border);
 }
 
-.britsafe-card::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 4px; /* Thicker line */
-  border-bottom-left-radius: var(--radius-md);
-  border-bottom-right-radius: var(--radius-md);
-  background: var(--ajs-orange);
-  transition: width 0.3s ease;
-}
-
-.britsafe-card:hover::after {
-  width: 100%;
+.britsafe-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--ajs-border);
 }
 
 .britsafe-card__category {
@@ -480,7 +487,7 @@ button {
 
 /* Footer */
 .britsafe-footer {
-  background: var(--ajs-navy);
+  background: var(--gradient-footer);
   color: white;
   padding-block: 60px 30px;
 }
@@ -579,7 +586,15 @@ button {
   }
   
   .britsafe-hero {
+    padding-block: 100px;
+  }
+
+  .britsafe-hero__grid {
     text-align: center;
+  }
+  
+  .britsafe-hero__content {
+    max-width: 100%;
   }
   
   .britsafe-hero__actions {
@@ -754,7 +769,7 @@ button {
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .cta-primary:hover:not(:disabled) {
@@ -764,4 +779,51 @@ button {
 .cta-primary:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+/* Global Soft Animations */
+@keyframes softFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes softFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main {
+  animation: softFadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.britsafe-card, .section-card, .nav-chip, .britsafe-hero__content {
+  animation: softFadeUp 1s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+/* Delay for second elements to create a subtle flow */
+section + section .britsafe-card {
+  animation-delay: 0.1s;
+}
+
+.britsafe-site {
+  animation: softFadeIn 0.8s ease-out;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.social-icon:hover {
+  opacity: 1 !important;
+  transform: translateY(-3px);
+  color: var(--ajs-orange) !important;
 }

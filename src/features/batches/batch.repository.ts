@@ -64,17 +64,16 @@ export async function listBatchesAdmin() {
         }
       },
       instructor: {
-        select: {
-          id: true,
-          fullName: true,
-          email: true
-        }
+        select: { id: true, fullName: true, email: true }
+      },
+      assessor: {
+        select: { id: true, fullName: true, email: true }
+      },
+      classroom: {
+        select: { id: true, roomName: true }
       },
       _count: {
-        select: {
-          enrollments: true,
-          sessions: true
-        }
+        select: { enrollments: true, sessions: true }
       }
     }
   });
@@ -87,25 +86,19 @@ export async function findBatchById(batchId: string) {
     },
     include: {
       program: {
-        select: {
-          id: true,
-          title: true,
-          category: true,
-          industryType: true
-        }
+        select: { id: true, title: true, category: true, industryType: true }
       },
       instructor: {
-        select: {
-          id: true,
-          fullName: true,
-          email: true
-        }
+        select: { id: true, fullName: true, email: true }
+      },
+      assessor: {
+        select: { id: true, fullName: true, email: true }
+      },
+      classroom: {
+        select: { id: true, roomName: true }
       },
       _count: {
-        select: {
-          enrollments: true,
-          sessions: true
-        }
+        select: { enrollments: true, sessions: true }
       }
     }
   });
@@ -114,20 +107,26 @@ export async function findBatchById(batchId: string) {
 export async function createBatch(data: {
   programId: string;
   instructorId?: string | null;
+  assessorId?: string | null;
   startDate: Date;
   endDate: Date;
   quota: number;
   price?: number | null;
   status: BatchStatus;
+  classroomId?: string | null;
+  pricePackages?: any;
 }) {
   return prisma.batch.create({
     data: {
       programId: data.programId,
       instructorId: data.instructorId,
+      assessorId: data.assessorId,
+      classroomId: data.classroomId,
       startDate: data.startDate,
       endDate: data.endDate,
       quota: data.quota,
       price: data.price,
+      pricePackages: data.pricePackages,
       status: data.status
     }
   });
@@ -138,24 +137,28 @@ export async function updateBatch(
   data: {
     programId?: string;
     instructorId?: string | null;
+    assessorId?: string | null;
     startDate?: Date;
     endDate?: Date;
     quota?: number;
     price?: number | null;
     status?: BatchStatus;
+    classroomId?: string | null;
+    pricePackages?: any;
   }
 ) {
   return prisma.batch.update({
-    where: {
-      id: batchId
-    },
+    where: { id: batchId },
     data: {
       programId: data.programId,
       instructorId: data.instructorId,
+      assessorId: data.assessorId,
+      classroomId: data.classroomId,
       startDate: data.startDate,
       endDate: data.endDate,
       quota: data.quota,
       price: data.price,
+      pricePackages: data.pricePackages,
       status: data.status
     }
   });
@@ -181,5 +184,11 @@ export async function findOpenBatchById(batchId: string) {
         }
       }
     }
+  });
+}
+
+export async function deleteBatch(batchId: string) {
+  return prisma.batch.delete({
+    where: { id: batchId }
   });
 }

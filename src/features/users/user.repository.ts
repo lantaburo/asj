@@ -49,12 +49,16 @@ export async function createUser(input: {
   email: string;
   phone?: string;
   fullName: string;
+  passwordHash?: string | null;
+  isActive?: boolean;
 }) {
   return prisma.user.create({
     data: {
       email: input.email,
       phone: input.phone,
-      fullName: input.fullName
+      fullName: input.fullName,
+      passwordHash: input.passwordHash,
+      isActive: input.isActive ?? true
     }
   });
 }
@@ -90,6 +94,8 @@ export async function createInternalMember(input: {
   phone?: string;
   role: Role;
   instructorLevel?: InstructorLevel | null;
+  licenseNumber?: string | null;
+  profilePictureUrl?: string | null;
   passwordHash?: string | null;
   isActive?: boolean;
 }) {
@@ -100,6 +106,8 @@ export async function createInternalMember(input: {
       phone: input.phone,
       role: input.role,
       instructorLevel: input.instructorLevel,
+      licenseNumber: input.licenseNumber ?? null,
+      profilePictureUrl: input.profilePictureUrl ?? null,
       passwordHash: input.passwordHash ?? null,
       isActive: input.isActive ?? true
     }
@@ -130,5 +138,38 @@ export async function upsertInternalUserByEmail(input: {
       passwordHash: input.passwordHash,
       isActive: input.isActive ?? true
     }
+  });
+}
+
+export async function updateInternalMember(id: string, input: {
+  email?: string;
+  fullName?: string;
+  phone?: string | null;
+  role?: Role;
+  instructorLevel?: InstructorLevel | null;
+  licenseNumber?: string | null;
+  profilePictureUrl?: string | null;
+  passwordHash?: string | null;
+  isActive?: boolean;
+}) {
+  return prisma.user.update({
+    where: { id },
+    data: {
+      email: input.email,
+      fullName: input.fullName,
+      phone: input.phone,
+      role: input.role,
+      instructorLevel: input.instructorLevel,
+      licenseNumber: input.licenseNumber,
+      profilePictureUrl: input.profilePictureUrl,
+      passwordHash: input.passwordHash === null ? undefined : input.passwordHash,
+      isActive: input.isActive
+    }
+  });
+}
+
+export async function deleteUser(id: string) {
+  return prisma.user.delete({
+    where: { id }
   });
 }

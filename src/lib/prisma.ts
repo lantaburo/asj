@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-
 import { AppError } from "@/lib/app-error";
 
 const globalForPrisma = globalThis as unknown as {
@@ -16,7 +15,7 @@ function getDatabaseUrl() {
       statusCode: 500,
       code: "DATABASE_URL_MISSING",
       details: {
-        hint: "Tambahkan DATABASE_URL pada environment aplikasi atau file .env di root project."
+        hint: "Pastikan file .env berisi DATABASE_URL dan server telah direstart jika diperlukan."
       }
     });
   }

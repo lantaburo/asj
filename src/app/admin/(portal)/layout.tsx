@@ -53,10 +53,10 @@ export default async function AdminLayout({
             <div style={{ marginBottom: '24px' }}>
               <AdminNav canOpenMasterData={canOpenMasterData} canOpenLandingSettings={canOpenLandingSettings} />
             </div>
-            <div style={{ background: 'var(--ajs-navy)', color: 'white', padding: '24px', borderRadius: '8px' }}>
+            <div style={{ background: 'var(--gradient-footer)', color: 'white', padding: '24px', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}>
               <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '12px', color: 'white' }}>Akses Cepat</h3>
-              <Link href="/" className="btn btn-outline" style={{ width: '100%', fontSize: '13px' }}>
-                Landing Publik
+              <Link href="/admin/artikel" className="btn btn-outline" style={{ width: '100%', fontSize: '13px' }}>
+                Artikel
               </Link>
             </div>
           </aside>

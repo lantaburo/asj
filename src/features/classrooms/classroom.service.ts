@@ -7,7 +7,8 @@ import {
   createClassroom,
   findClassroomById,
   listClassrooms,
-  updateClassroom
+  updateClassroom,
+  deleteClassroom
 } from "@/features/classrooms/classroom.repository";
 
 function mapClassroom(classroom: Awaited<ReturnType<typeof listClassrooms>>[number]) {
@@ -72,4 +73,24 @@ export async function updateClassroomRecord(classroomId: string, payload: unknow
 
   await updateClassroom(classroomId, parsed);
   return getClassroomDetail(classroomId);
+}
+
+export async function deleteClassroomRecord(classroomId: string) {
+  const existing = await findClassroomById(classroomId);
+
+  if (!existing) {
+    throw new AppError("Classroom tidak ditemukan.", {
+      statusCode: 404,
+      code: "CLASSROOM_NOT_FOUND"
+    });
+  }
+
+  if (existing._count.sessions > 0) {
+    throw new AppError("Classroom tidak dapat dihapus karena sudah memiliki sesi terjadwal.", {
+      statusCode: 400,
+      code: "CLASSROOM_HAS_SESSIONS"
+    });
+  }
+
+  await deleteClassroom(classroomId);
 }

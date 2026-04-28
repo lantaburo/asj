@@ -39,6 +39,8 @@ type FlashState = {
 type ApiErrorResponse = {
   error?: {
     message?: string;
+    code?: string;
+    details?: unknown;
   };
 };
 
@@ -625,7 +627,7 @@ export function UnitSchemaAdminPanel({
                       <input name="title" defaultValue={schema.title} className="text-input" style={{ fontSize: "12px", padding: "6px" }} required />
                       <label style={{ fontSize: "12px" }}><input type="checkbox" name="isActive" defaultChecked={schema.isActive} /> Aktif</label>
                       <div style={{ display: "flex", gap: "8px" }}>
-                        <button type="submit" disabled={isPending} style={{ flex: 1, padding: "6px", fontSize: "12px", background: "var(--accent)", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}>Simpan</button>
+                        <button type="submit" disabled={isPending} style={{ flex: 1, padding: "8px", fontSize: "12px", backgroundColor: "#0f766e", color: "#ffffff", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>Simpan</button>
                         <button type="button" onClick={() => setEditingSchemaId(null)} style={{ padding: "6px 12px", fontSize: "12px", background: "transparent", border: "1px solid var(--line)", borderRadius: "4px", cursor: "pointer" }}>Batal</button>
                       </div>
                     </form>

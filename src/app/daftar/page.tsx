@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { AJSLogo } from "@/features/landing-page/logo";
 import { compareDateStrings } from "@/features/landing-page/landing-page.service";
@@ -106,7 +107,9 @@ export default async function RegisterPage() {
               }}
             >
               <div>
-                <RegisterForm batches={upcomingBatches} />
+                <Suspense fallback={<div className="britsafe-card" style={{ padding: '40px' }}>Memuat formulir...</div>}>
+                  <RegisterForm batches={upcomingBatches} />
+                </Suspense>
               </div>
 
               <aside>
@@ -123,7 +126,7 @@ export default async function RegisterPage() {
                     </div>
                     <div>
                       <strong style={{ color: 'var(--ajs-orange)', display: 'block', marginBottom: '4px' }}>Bantuan</strong>
-                      Jika mengalami kesulitan, hubungi support@arkamajaya.co.id
+                      Jika mengalami kesulitan, hubungi cs@arkamajayasertifikasi.id
                     </div>
                   </div>
                 </div>

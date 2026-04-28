@@ -29,7 +29,10 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     await requireAdminSessionUser();
-    const body = await request.json();
+    const contentType = request.headers.get("content-type") || "";
+    const body = contentType.includes("multipart/form-data") 
+      ? await request.formData()
+      : await request.json();
     const member = await createInternalMemberRecord(body);
 
     return successResponse(

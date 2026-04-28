@@ -3,7 +3,8 @@ import { handleApiError } from "@/lib/handle-api-error";
 import { requireAdminSessionUser } from "@/features/auth/auth.service";
 import {
   getAdminProgramById,
-  updateProgramRecord
+  updateProgramRecord,
+  deleteProgramRecord
 } from "@/features/programs/program.service";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +47,23 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       },
       {
         message: "Program berhasil diperbarui."
+      }
+    );
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function DELETE(_request: Request, { params }: RouteContext) {
+  try {
+    await requireAdminSessionUser();
+    const { programId } = await params;
+    await deleteProgramRecord(programId);
+
+    return successResponse(
+      null,
+      {
+        message: "Program berhasil dihapus."
       }
     );
   } catch (error) {

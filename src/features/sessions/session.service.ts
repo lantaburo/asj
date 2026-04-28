@@ -9,7 +9,8 @@ import {
   createSession,
   findSessionByIdForAdmin,
   listSessionsAdmin,
-  updateSession
+  updateSession,
+  deleteSession
 } from "@/features/sessions/session.repository";
 import { findUserById } from "@/features/users/user.repository";
 
@@ -24,7 +25,8 @@ function mapSession(session: Awaited<ReturnType<typeof listSessionsAdmin>>[numbe
     attendanceCount: session._count.attendances,
     batch: session.batch,
     classroom: session.classroom,
-    instructor: session.instructor
+    instructor: session.instructor,
+    assessor: session.assessor
   };
 }
 
@@ -99,11 +101,13 @@ export async function createSessionRecord(payload: unknown) {
   await ensureBatchExists(parsed.batchId);
   await ensureClassroomExists(parsed.classroomId ?? null);
   await ensureInstructorExists(parsed.instructorId ?? null);
+  await ensureInstructorExists(parsed.assessorId ?? null);
 
   const session = await createSession({
     batchId: parsed.batchId,
     classroomId: parsed.classroomId ?? null,
     instructorId: parsed.instructorId ?? null,
+    assessorId: parsed.assessorId ?? null,
     title: parsed.title,
     sessionDate: parsed.sessionDate,
     startTime: parsed.startTime,
@@ -137,6 +141,10 @@ export async function updateSessionRecord(sessionId: string, payload: unknown) {
     await ensureInstructorExists(parsed.instructorId ?? null);
   }
 
+  if (parsed.assessorId !== undefined) {
+    await ensureInstructorExists(parsed.assessorId ?? null);
+  }
+
   const nextStartTime = parsed.startTime ?? existing.startTime;
   const nextEndTime = parsed.endTime ?? existing.endTime;
 
@@ -153,6 +161,8 @@ export async function updateSessionRecord(sessionId: string, payload: unknown) {
       parsed.classroomId === undefined ? undefined : (parsed.classroomId ?? null),
     instructorId:
       parsed.instructorId === undefined ? undefined : (parsed.instructorId ?? null),
+    assessorId:
+      parsed.assessorId === undefined ? undefined : (parsed.assessorId ?? null),
     title: parsed.title,
     sessionDate: parsed.sessionDate,
     startTime: parsed.startTime,
@@ -161,4 +171,17 @@ export async function updateSessionRecord(sessionId: string, payload: unknown) {
   });
 
   return getSessionDetail(sessionId);
+}
+
+export async function deleteSessionRecord(sessionId: string) {
+  const existing = await findSessionByIdForAdmin(sessionId);
+
+  if (!existing) {
+    throw new AppError("Session tidak ditemukan.", {
+      statusCode: 404,
+      code: "SESSION_NOT_FOUND"
+    });
+  }
+
+  await deleteSession(sessionId);
 }

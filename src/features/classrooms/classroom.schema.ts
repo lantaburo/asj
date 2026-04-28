@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createClassroomSchema = z.object({
   roomName: z.string().trim().min(2).max(120),
   capacity: z.coerce.number().int().positive(),
-  facilities: z.unknown().optional(),
+  facilities: z.array(z.string()).optional(),
   isAvailable: z.boolean().optional()
 });
 

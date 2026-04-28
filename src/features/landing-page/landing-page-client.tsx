@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BookOpen, UserPlus, LayoutDashboard, ShieldCheck, Award, Building, Hexagon, Zap, Triangle, Box, Diamond, Factory, Mountain, ChevronDown, Pickaxe } from "lucide-react";
 import { AJSLogo } from "@/features/landing-page/logo";
+import { CertificateChecker } from "@/features/landing-page/certificate-checker";
 import { logger } from "@/lib/logger";
 
 import {
@@ -11,6 +12,7 @@ import {
   formatDateRange
 } from "@/features/landing-page/landing-page.service";
 import { getPublicPrograms } from "@/features/programs/program.service";
+import { LandingHeader } from "./landing-header";
 
 function formatLabel(value: string) {
   if (!value.includes("_")) {
@@ -161,24 +163,16 @@ const faqsData = [
   }
 ];
 
-export async function LandingPageClient() {
-  try {
-    const programs = await getPublicPrograms();
+export function LandingPageClient({ 
+  programs, 
+  totalParticipants 
+}: { 
+  programs: Awaited<ReturnType<typeof getPublicPrograms>>,
+  totalParticipants: number
+}) {
     const openBatches = countOpenBatches(programs);
     const availableSeats = countAvailableSeats(programs);
-    let categorySummaries = summarizeCategories(programs);
-    const dummyCategories = [
-      { label: "KEMENAKER RI", programCount: 12, batchCount: 5, seats: 0 },
-      { label: "Sertifikasi BNSP", programCount: 8, batchCount: 3, seats: 0 },
-      { label: "In-House Training", programCount: 5, batchCount: 2, seats: 0 },
-      { label: "Audit & Konsultasi", programCount: 4, batchCount: 1, seats: 0 }
-    ];
-    for (const dummy of dummyCategories) {
-      if (!categorySummaries.some(c => c.label.toUpperCase().includes(dummy.label.split(' ')[0].toUpperCase()))) {
-        categorySummaries.push(dummy);
-      }
-    }
-    categorySummaries = categorySummaries.slice(0, 4);
+    const categorySummaries = summarizeCategories(programs);
     const upcomingBatches = getUpcomingBatches(programs);
     const featuredPrograms = [...programs]
       .sort((left, right) => right.openBatches.length - left.openBatches.length)
@@ -191,26 +185,11 @@ export async function LandingPageClient() {
 
     return (
       <div className="britsafe-site">
-        <header className="britsafe-header">
-          <div className="container britsafe-header__container">
-            <Link href="/">
-              <AJSLogo />
-            </Link>
-            <nav className="britsafe-nav">
-              <a href="#programs">Programs</a>
-              <a href="#jadwal">Schedule</a>
-              <a href="#cara-kerja">How it Works</a>
-              <Link href="/peserta">Dashboard Peserta</Link>
-              <Link href="/masuk" className="britsafe-btn-auth">
-                Workspace Internal
-              </Link>
-            </nav>
-          </div>
-        </header>
+        <LandingHeader />
 
         <main>
           <section className="britsafe-hero">
-            <div className="container">
+            <div className="container britsafe-hero__grid">
               <div className="britsafe-hero__content">
                 <span className="britsafe-hero__kicker">Arkama Jaya Sertifikasi Excellence</span>
                 <h1 className="britsafe-hero__title">
@@ -246,8 +225,13 @@ export async function LandingPageClient() {
                 <strong>{availableSeats}</strong>
                 <span>Kursi Tersedia</span>
               </div>
+              <div className="stat-item">
+                <strong>{totalParticipants}</strong>
+                <span>Peserta Terdaftar</span>
+              </div>
             </div>
           </section>
+
 
           <section className="section-padding" style={{ background: 'white', padding: '40px 0', borderBottom: '1px solid var(--ajs-border)' }}>
             <div className="container">
@@ -367,7 +351,7 @@ export async function LandingPageClient() {
                             <span className="schedule-price">{batch.priceLabel}</span>
                           </td>
                           <td data-label="Aksi">
-                            <Link href="/daftar" className="schedule-btn">
+                            <Link href={`/daftar?batchId=${batch.id}`} className="schedule-btn">
                               Daftar Sekarang
                             </Link>
                           </td>
@@ -573,11 +557,29 @@ export async function LandingPageClient() {
                   Penyedia pelatihan dan sertifikasi K3 terkemuka dengan sistem manajemen yang modern dan terintegrasi.
                   Berdedikasi untuk meningkatkan standar keselamatan industri di Indonesia.
                 </p>
-                <div style={{ display: 'flex', gap: '16px', fontSize: '14px', fontWeight: '500' }}>
-                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'opacity 0.2s', textDecoration: 'none' }}>Facebook</a>
-                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'opacity 0.2s', textDecoration: 'none' }}>Twitter</a>
-                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'opacity 0.2s', textDecoration: 'none' }}>Instagram</a>
-                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'opacity 0.2s', textDecoration: 'none' }}>LinkedIn</a>
+                <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'all 0.2s' }} className="social-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                  </a>
+                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'all 0.2s' }} className="social-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                  </a>
+                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'all 0.2s' }} className="social-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                  </a>
+                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'all 0.2s' }} className="social-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                  </a>
                 </div>
               </div>
               <div className="footer-col">
@@ -587,14 +589,13 @@ export async function LandingPageClient() {
                   <li><a href="#jadwal">Jadwal Pelatihan</a></li>
                   <li><a href="/daftar">Alur Pendaftaran</a></li>
                   <li><a href="/peserta">Dashboard Peserta</a></li>
-                  <li><a href="/absen">Absensi Peserta</a></li>
                   <li><a href="/masuk">Portal Internal</a></li>
                 </ul>
               </div>
               <div className="footer-col">
                 <h4>Hubungi Kami</h4>
                 <ul style={{ opacity: 0.7, fontSize: '14px', lineHeight: 2 }}>
-                  <li><strong style={{ color: 'white' }}>Email:</strong> cs@arkamajaya.co.id</li>
+                  <li><strong style={{ color: 'white' }}>Email:</strong> cs@arkamajayasertifikasi.id</li>
                   <li><strong style={{ color: 'white' }}>WhatsApp:</strong> +62 821-2345-6789 (Hunting)</li>
                   <li><strong style={{ color: 'white' }}>Kantor Pusat:</strong> Gedung Arkama Safety Lt. 5<br/>Jl. Jend. Sudirman Kav 10-11, Jakarta Selatan</li>
                 </ul>
@@ -608,55 +609,4 @@ export async function LandingPageClient() {
         </footer>
       </div>
     );
-  } catch (error) {
-    logger.error({
-      scope: "public-home",
-      message: "Failed to render public landing page.",
-      error
-    });
-
-    return (
-      <div className="britsafe-site">
-        <header className="britsafe-header">
-          <div className="container britsafe-header__container">
-            <Link href="/">
-              <AJSLogo />
-            </Link>
-            <nav className="britsafe-nav">
-              <Link href="/daftar">Daftar Pelatihan</Link>
-              <Link href="/masuk" className="britsafe-btn-auth">
-                Workspace Internal
-              </Link>
-            </nav>
-          </div>
-        </header>
-
-        <main style={{ padding: "60px 0", background: "var(--ajs-gray)" }}>
-          <div className="container">
-            <section className="britsafe-card" style={{ padding: "40px", borderTop: "4px solid var(--ajs-orange)" }}>
-              <span className="britsafe-card__category">Layanan Publik</span>
-              <h1 className="britsafe-card__title" style={{ fontSize: "28px", margin: "12px 0" }}>
-                Halaman utama sedang dimuat ulang.
-              </h1>
-              <p className="britsafe-card__copy" style={{ maxWidth: "760px" }}>
-                Data katalog publik sementara belum dapat ditampilkan penuh. Anda tetap bisa membuka halaman pendaftaran atau mencoba memuat ulang beberapa saat lagi.
-              </p>
-              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginTop: "24px" }}>
-                <Link href="/daftar" className="btn btn-primary">
-                  Buka Pendaftaran
-                </Link>
-                <Link
-                  href="/absen"
-                  className="btn btn-outline"
-                  style={{ color: "var(--ajs-navy)", borderColor: "var(--ajs-border)" }}
-                >
-                  Buka Absensi
-                </Link>
-              </div>
-            </section>
-          </div>
-        </main>
-      </div>
-    );
-  }
 }

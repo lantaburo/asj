@@ -3,7 +3,8 @@ import { handleApiError } from "@/lib/handle-api-error";
 import { requireAdminSessionUser } from "@/features/auth/auth.service";
 import {
   getAdminBatchById,
-  updateBatchRecord
+  updateBatchRecord,
+  deleteBatchRecord
 } from "@/features/batches/batch.service";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +47,23 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       },
       {
         message: "Batch berhasil diperbarui."
+      }
+    );
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function DELETE(_request: Request, { params }: RouteContext) {
+  try {
+    await requireAdminSessionUser();
+    const { batchId } = await params;
+    await deleteBatchRecord(batchId);
+
+    return successResponse(
+      null,
+      {
+        message: "Batch berhasil dihapus."
       }
     );
   } catch (error) {

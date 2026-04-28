@@ -3,7 +3,8 @@ import { handleApiError } from "@/lib/handle-api-error";
 import { requireAdminSessionUser } from "@/features/auth/auth.service";
 import {
   getClassroomDetail,
-  updateClassroomRecord
+  updateClassroomRecord,
+  deleteClassroomRecord
 } from "@/features/classrooms/classroom.service";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +47,23 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       },
       {
         message: "Classroom berhasil diperbarui."
+      }
+    );
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function DELETE(request: Request, { params }: RouteContext) {
+  try {
+    await requireAdminSessionUser();
+    const { classroomId } = await params;
+    await deleteClassroomRecord(classroomId);
+
+    return successResponse(
+      null,
+      {
+        message: "Classroom berhasil dihapus."
       }
     );
   } catch (error) {

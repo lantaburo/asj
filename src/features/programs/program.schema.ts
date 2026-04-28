@@ -17,7 +17,8 @@ const programBaseSchema = z.object({
   industryType: z.string().trim().min(2).max(100).default("Umum"),
   description: z.string().trim().max(5000).nullable().optional(),
   curriculum: z.unknown().optional(),
-  isActive: z.boolean().optional()
+  isActive: z.boolean().optional(),
+  unitSchemaId: z.string().uuid().optional()
 });
 
 export const createProgramSchema = programBaseSchema.refine(

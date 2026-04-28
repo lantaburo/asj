@@ -129,8 +129,13 @@ export async function startParticipantSession(payload: unknown) {
     user = await createUser({
       email: email ?? buildFallbackEmail(phone),
       phone,
-      fullName: buildDefaultFullName(null, parsed.fullName)
+      fullName: buildDefaultFullName(null, parsed.fullName),
+      passwordHash: parsed.password ? hashPassword(parsed.password) : undefined,
+      isActive: true
     });
+  } else if (parsed.password && !user.passwordHash) {
+    // Optional: allow setting password if user exists but has no password yet (legacy upgrade)
+    // For now we just proceed, but we could update the user here.
   }
 
   return buildParticipantSessionResult(user, {
@@ -169,6 +174,21 @@ export async function loginParticipant(payload: unknown) {
         code: "PARTICIPANT_ACCESS_DENIED"
       }
     );
+  }
+
+  // Verify password if user has one
+  if (user.passwordHash && parsed.password) {
+    if (!verifyPassword(parsed.password, user.passwordHash)) {
+      throw new AppError("Password yang Anda masukkan salah.", {
+        statusCode: 401,
+        code: "INVALID_PARTICIPANT_PASSWORD"
+      });
+    }
+  } else if (user.passwordHash && !parsed.password) {
+    throw new AppError("Akun Anda memerlukan password untuk masuk.", {
+      statusCode: 401,
+      code: "PASSWORD_REQUIRED"
+    });
   }
 
   return buildParticipantSessionResult(

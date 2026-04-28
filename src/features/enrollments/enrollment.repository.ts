@@ -30,6 +30,8 @@ export async function listEnrollmentsAdmin() {
           startDate: true,
           endDate: true,
           status: true,
+          instructor: { select: { id: true, fullName: true } },
+          assessor: { select: { id: true, fullName: true } },
           program: {
             select: {
               title: true,
@@ -100,8 +102,11 @@ export async function findEnrollmentById(enrollmentId: string) {
           startDate: true,
           endDate: true,
           status: true,
+          instructor: { select: { id: true, fullName: true } },
+          assessor: { select: { id: true, fullName: true } },
           program: {
             select: {
+              id: true,
               title: true,
               category: true
             }
@@ -131,10 +136,13 @@ export async function findEnrollmentById(enrollmentId: string) {
   });
 }
 
-export async function findEnrollmentByQrCode(qrCode: string) {
-  return prisma.enrollment.findUnique({
+export async function findEnrollmentByVerificationCode(code: string) {
+  return prisma.enrollment.findFirst({
     where: {
-      qrVerifyCode: qrCode
+      OR: [
+        { qrVerifyCode: code },
+        { certificateNum: code }
+      ]
     },
     include: {
       user: {
@@ -301,5 +309,11 @@ export async function updateEnrollmentAssessment(
       certificateNum: data.certificateNum,
       expiryDate: data.expiryDate
     }
+  });
+}
+
+export async function deleteEnrollment(enrollmentId: string) {
+  return prisma.enrollment.delete({
+    where: { id: enrollmentId }
   });
 }

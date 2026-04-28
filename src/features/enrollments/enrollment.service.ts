@@ -10,15 +10,17 @@ import { buildParticipantDocumentRegistrationSnapshot } from "@/features/partici
 import {
   createEnrollmentInOpenBatch,
   findEnrollmentById,
-  findEnrollmentByQrCode,
+  findEnrollmentByVerificationCode,
   listEnrollmentsByUser,
   listEnrollmentsAdmin,
-  updateEnrollmentAssessment
+  updateEnrollmentAssessment,
+  deleteEnrollment
 } from "@/features/enrollments/enrollment.repository";
 import {
   ensureActiveUser,
   ensureVerifierUser
 } from "@/features/users/user.service";
+import { fetchCertificateConfig } from "@/features/certificate-config/certificate-config.service";
 
 function hasUniqueConstraintTarget(target: unknown, fields: string[]) {
   const targetValues = Array.isArray(target)
@@ -51,6 +53,8 @@ function mapEnrollment(enrollment: Awaited<ReturnType<typeof listEnrollmentsAdmi
       status: enrollment.batch.status,
       startDate: enrollment.batch.startDate.toISOString(),
       endDate: enrollment.batch.endDate.toISOString(),
+      instructor: enrollment.batch.instructor,
+      assessor: enrollment.batch.assessor,
       program: {
         title: enrollment.batch.program.title,
       }
@@ -181,6 +185,8 @@ export async function getEnrollmentDetail(enrollmentId: string) {
       status: enrollment.batch.status,
       startDate: enrollment.batch.startDate.toISOString(),
       endDate: enrollment.batch.endDate.toISOString(),
+      instructor: enrollment.batch.instructor,
+      assessor: enrollment.batch.assessor,
       program: {
         title: enrollment.batch.program.title,
       }
@@ -222,9 +228,20 @@ export async function updateEnrollmentAssessmentRecord(
       ? parsed.certificateNum ?? enrollment.certificateNum ?? buildCertificateNumber(enrollment.id)
       : null;
 
+  let finalExpiryDate = parsed.expiryDate ?? enrollment.expiryDate ?? null;
+
+  if (parsed.assessmentStatus === AssessmentStatus.KOMPETEN && !parsed.expiryDate && !enrollment.expiryDate) {
+    const config = await fetchCertificateConfig(enrollment.batch.program.id);
+    if (config?.validityMonths) {
+      const date = new Date();
+      date.setMonth(date.getMonth() + config.validityMonths);
+      finalExpiryDate = date;
+    }
+  }
+
   const expiryDate =
     parsed.assessmentStatus === AssessmentStatus.KOMPETEN
-      ? parsed.expiryDate ?? enrollment.expiryDate ?? null
+      ? finalExpiryDate
       : null;
 
   await updateEnrollmentAssessment(enrollmentId, {
@@ -236,8 +253,8 @@ export async function updateEnrollmentAssessmentRecord(
   return getEnrollmentDetail(enrollmentId);
 }
 
-export async function getCertificateVerification(qrCode: string) {
-  const enrollment = await findEnrollmentByQrCode(qrCode);
+export async function getCertificateVerification(code: string) {
+  const enrollment = await findEnrollmentByVerificationCode(code);
 
   if (!enrollment) {
     throw new AppError("Kode verifikasi sertifikat tidak ditemukan.", {
@@ -271,4 +288,17 @@ export async function getCertificateVerification(qrCode: string) {
     k3LogCount: enrollment._count.k3Logs,
     issued: enrollment.assessmentStatus === AssessmentStatus.KOMPETEN
   };
+}
+
+export async function deleteEnrollmentRecord(enrollmentId: string) {
+  const enrollment = await findEnrollmentById(enrollmentId);
+
+  if (!enrollment) {
+    throw new AppError("Enrollment tidak ditemukan.", {
+      statusCode: 404,
+      code: "ENROLLMENT_NOT_FOUND"
+    });
+  }
+
+  await deleteEnrollment(enrollmentId);
 }

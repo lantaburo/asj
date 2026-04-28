@@ -28,10 +28,13 @@ const optionalPrice = z.preprocess((value) => {
 const batchBaseSchema = z.object({
   programId: z.string().uuid(),
   instructorId: optionalUuid,
+  assessorId: optionalUuid,
+  classroomId: optionalUuid,
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
   quota: z.coerce.number().int().positive(),
   price: optionalPrice,
+  pricePackages: z.record(z.string(), z.any()).optional(),
   status: z.nativeEnum(BatchStatus).optional()
 });
 

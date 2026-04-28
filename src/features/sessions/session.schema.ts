@@ -16,6 +16,7 @@ const sessionBaseSchema = z.object({
   batchId: z.string().uuid(),
   classroomId: optionalUuid,
   instructorId: optionalUuid,
+  assessorId: optionalUuid,
   title: z.string().min(3).max(160),
   sessionDate: z.coerce.date(),
   startTime: z.coerce.date(),

@@ -3,7 +3,8 @@ import { handleApiError } from "@/lib/handle-api-error";
 import { requireAdminSessionUser } from "@/features/auth/auth.service";
 import {
   getSessionDetail,
-  updateSessionRecord
+  updateSessionRecord,
+  deleteSessionRecord
 } from "@/features/sessions/session.service";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +47,23 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       },
       {
         message: "Session berhasil diperbarui."
+      }
+    );
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function DELETE(_request: Request, { params }: RouteContext) {
+  try {
+    await requireAdminSessionUser();
+    const { sessionId } = await params;
+    await deleteSessionRecord(sessionId);
+
+    return successResponse(
+      null,
+      {
+        message: "Session berhasil dihapus."
       }
     );
   } catch (error) {

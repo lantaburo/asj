@@ -473,3 +473,22 @@ Catatan:
 - Penyimpanan file saat ini memakai filesystem aplikasi pada folder `public/uploads/participant-documents`.
 - Metadata reuse tetap disimpan di PostgreSQL, sedangkan file fisik disajikan lewat URL publik aplikasi.
 - Untuk production jangka panjang, storage file idealnya dipindahkan ke object storage agar tidak bergantung pada disk instance aplikasi.
+
+## Update 19 - Integrasi Standar K3 Internasional pada Kelas (Classroom)
+
+Perubahan yang sudah dibuat:
+
+- Memperbarui `src/features/classrooms/classroom.schema.ts` untuk memvalidasi `facilities` sebagai array string (`z.array(z.string()).optional()`).
+- Menambahkan checklist K3 berstandar internasional (seperti ISO 29993 / OSHA / NEBOSH) ke dalam komponen form pembuatan Classroom pada halaman `Master Data API Panel` (`src/features/admin/master-data-api-panel.tsx`).
+- Kategori fasilitas yang ditambahkan ke form meliputi:
+  1. Lingkungan & Area Belajar (Suhu, Pencahayaan, Kedap Suara)
+  2. Peralatan Instruksional (Proyektor, Konektivitas, Whiteboard)
+  3. Alat Peraga & Praktik K3 (APD, Manekin CPR, APAR, P3K)
+  4. Keselamatan Fasilitas (Jalur Evakuasi, Detektor Asap)
+  5. Kenyamanan Peserta (Ergonomi kursi, stasiun hidrasi)
+  6. Administrasi & Materi (Modul, Evaluasi)
+- Menyimpan seluruh fasilitas K3 yang dicentang admin sebagai data JSON pada database ketika kelas dibuat.
+
+Catatan:
+
+- Fitur ini memungkinkan admin untuk secara proaktif memverifikasi kelayakan K3 pada fasilitas pelatihan, memastikan standarisasi kenyamanan, instruksional, dan safety peserta sebelum pelatihan dimulai.

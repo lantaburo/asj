@@ -79,3 +79,11 @@ export async function updateClassroom(
     }
   });
 }
+
+export async function deleteClassroom(classroomId: string) {
+  return prisma.classroom.delete({
+    where: {
+      id: classroomId
+    }
+  });
+}

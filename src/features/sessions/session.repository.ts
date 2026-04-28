@@ -29,6 +29,12 @@ export async function listSessionsAdmin() {
           fullName: true
         }
       },
+      assessor: {
+        select: {
+          id: true,
+          fullName: true
+        }
+      },
       _count: {
         select: {
           attendances: true
@@ -62,15 +68,13 @@ export async function findSessionByIdForAdmin(sessionId: string) {
         }
       },
       instructor: {
-        select: {
-          id: true,
-          fullName: true
-        }
+        select: { id: true, fullName: true }
+      },
+      assessor: {
+        select: { id: true, fullName: true }
       },
       _count: {
-        select: {
-          attendances: true
-        }
+        select: { attendances: true }
       }
     }
   });
@@ -80,6 +84,7 @@ export async function createSession(data: {
   batchId: string;
   classroomId?: string | null;
   instructorId?: string | null;
+  assessorId?: string | null;
   title: string;
   sessionDate: Date;
   startTime: Date;
@@ -91,6 +96,7 @@ export async function createSession(data: {
       batchId: data.batchId,
       classroomId: data.classroomId,
       instructorId: data.instructorId,
+      assessorId: data.assessorId,
       title: data.title,
       sessionDate: data.sessionDate,
       startTime: data.startTime,
@@ -106,6 +112,7 @@ export async function updateSession(
     batchId?: string;
     classroomId?: string | null;
     instructorId?: string | null;
+    assessorId?: string | null;
     title?: string;
     sessionDate?: Date;
     startTime?: Date;
@@ -114,18 +121,23 @@ export async function updateSession(
   }
 ) {
   return prisma.classSession.update({
-    where: {
-      id: sessionId
-    },
+    where: { id: sessionId },
     data: {
       batchId: data.batchId,
       classroomId: data.classroomId,
       instructorId: data.instructorId,
+      assessorId: data.assessorId,
       title: data.title,
       sessionDate: data.sessionDate,
       startTime: data.startTime,
       endTime: data.endTime,
       locationType: data.locationType
     }
+  });
+}
+
+export async function deleteSession(sessionId: string) {
+  return prisma.classSession.delete({
+    where: { id: sessionId }
   });
 }

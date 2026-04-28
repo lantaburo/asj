@@ -156,8 +156,8 @@ export async function createUnitSchema(data: {
   programId?: string | null;
   code: string;
   title: string;
-  level?: string;
-  description?: string;
+  level?: string | null;
+  description?: string | null;
   isActive?: boolean;
 }) {
   return prisma.unitSchema.create({

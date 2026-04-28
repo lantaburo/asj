@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { AJSLogo } from "@/features/landing-page/logo";
 import { getSessionList } from "@/features/sessions/session.service";
@@ -32,7 +33,9 @@ export default async function AbsenPage() {
               Silakan pilih sesi kelas yang sedang berlangsung, pastikan GPS Anda aktif, dan catat kehadiran Anda.
             </p>
 
-            <AttendanceScanner sessions={sessions} />
+            <Suspense fallback={<div style={{ textAlign: 'center', padding: '20px' }}>Memuat scanner...</div>}>
+              <AttendanceScanner sessions={sessions} />
+            </Suspense>
           </div>
         </div>
       </main>

@@ -66,6 +66,7 @@ export async function createProgram(data: {
   description?: string | null;
   curriculum?: unknown;
   isActive?: boolean;
+  unitSchemaId?: string | null;
 }) {
   return prisma.program.create({
     data: {
@@ -75,7 +76,12 @@ export async function createProgram(data: {
       industryType: data.industryType,
       description: data.description,
       curriculum: data.curriculum as never,
-      isActive: data.isActive ?? true
+      isActive: data.isActive ?? true,
+      ...(data.unitSchemaId && {
+        unitSchemas: {
+          connect: { id: data.unitSchemaId }
+        }
+      })
     }
   });
 }
@@ -133,6 +139,38 @@ export async function findActiveProgramsWithOpenBatches() {
           _count: {
             select: {
               enrollments: true
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+export async function deleteProgram(programId: string) {
+  return prisma.program.delete({
+    where: { id: programId }
+  });
+}
+
+export async function listProgramStatisticsAdmin() {
+  return prisma.program.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      batches: {
+        orderBy: { startDate: "asc" },
+        include: {
+          instructor: { select: { fullName: true } },
+          enrollments: {
+            include: {
+              user: { select: { fullName: true, email: true } }
+            }
+          },
+          sessions: {
+            orderBy: { sessionDate: "asc" },
+            include: {
+              instructor: { select: { fullName: true } },
+              _count: { select: { attendances: true } }
             }
           }
         }

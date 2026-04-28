@@ -69,7 +69,6 @@ export default async function PesertaDashboardPage() {
           </Link>
           <nav className="britsafe-nav">
             <Link href="/daftar">Daftar Pelatihan</Link>
-            <Link href="/absen">Absensi</Link>
             <Link href="/masuk" className="britsafe-btn-auth">
               Workspace Internal
             </Link>

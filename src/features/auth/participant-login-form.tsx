@@ -33,18 +33,11 @@ export function ParticipantLoginForm() {
 
         const formData = new FormData(event.currentTarget);
         const email = String(formData.get("email") ?? "").trim();
-        const phone = String(formData.get("phone") ?? "").trim();
+        const password = String(formData.get("password") ?? "");
         const nextPath = resolveNextPath(searchParams.get("next"));
-        const loginPayload = email
-          ? {
-              email
-            }
-          : {
-              phone: phone || undefined
-            };
 
-        if (!email && !phone) {
-          setError("Isi email atau nomor WhatsApp yang dipakai saat mendaftar.");
+        if (!email || !password) {
+          setError("Silakan masukkan email dan password Anda.");
           return;
         }
 
@@ -55,7 +48,7 @@ export function ParticipantLoginForm() {
               headers: {
                 "Content-Type": "application/json"
               },
-              body: JSON.stringify(loginPayload)
+              body: JSON.stringify({ email, password })
             });
 
             const payload = (await response.json()) as ApiErrorResponse;
@@ -85,36 +78,32 @@ export function ParticipantLoginForm() {
           name="email"
           autoComplete="email"
           placeholder="budi@example.com"
+          required
           autoFocus
         />
-        <span className="field-helper">
-          Gunakan email yang dipakai saat daftar atau saat melakukan absensi. Ini jadi prioritas utama saat login.
-        </span>
       </label>
 
       <label className="field-group">
-        <span className="field-label">Nomor WhatsApp</span>
+        <span className="field-label">Password</span>
         <input
           className="text-input"
-          type="tel"
-          name="phone"
-          autoComplete="tel"
-          placeholder="081234567890"
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          placeholder="••••••••"
+          required
         />
-        <span className="field-helper">
-          Isi nomor WhatsApp hanya jika Anda tidak memakai email untuk login.
-        </span>
       </label>
 
       {error ? <div className="error-banner">{error}</div> : null}
 
       <div className="auth-form-meta">
         <span className="status-dot" aria-hidden="true" />
-        <span>Setelah cocok, sesi peserta akan aktif lagi di browser ini selama 12 jam.</span>
+        <span>Gunakan kredensial yang Anda buat saat pendaftaran.</span>
       </div>
 
       <button className="cta-primary" type="submit" disabled={isPending}>
-        {isPending ? "Memulihkan sesi..." : "Masuk ke Dashboard Peserta"}
+        {isPending ? "Masuk..." : "Masuk ke Dashboard"}
       </button>
     </form>
   );

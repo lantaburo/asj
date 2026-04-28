@@ -48,7 +48,6 @@ export default async function ParticipantLoginPage({
           <nav className="britsafe-nav">
             <Link href="/">Home</Link>
             <Link href="/daftar">Daftar Pelatihan</Link>
-            <Link href="/absen">Absensi</Link>
           </nav>
         </div>
       </header>

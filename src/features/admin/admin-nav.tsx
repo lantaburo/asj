@@ -45,6 +45,12 @@ const landingSettingsLink = {
   description: "Ubah konten landing page publik."
 } as const;
 
+const pengaturanSertifikatLink = {
+  href: "/admin/pengaturan-sertifikat",
+  label: "Pengaturan Sertifikat",
+  description: "Template PDF dan Passing Grade."
+} as const;
+
 function isActivePath(pathname: string, href: string) {
   if (href === "/admin") {
     return pathname === href;
@@ -59,7 +65,7 @@ export function AdminNav({ canOpenMasterData, canOpenLandingSettings }: AdminNav
   let links: NavLink[] = [...baseLinks];
 
   if (canOpenMasterData) {
-    links = [baseLinks[0], masterDataLink, unitSkemaLink, buatProgramLink, baseLinks[1]];
+    links = [baseLinks[0], masterDataLink, unitSkemaLink, buatProgramLink, baseLinks[1], pengaturanSertifikatLink];
   }
 
   if (canOpenLandingSettings) {

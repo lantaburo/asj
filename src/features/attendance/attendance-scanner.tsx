@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 type Session = {
   id: string;
@@ -15,11 +16,20 @@ type Session = {
 };
 
 export function AttendanceScanner({ sessions }: { sessions: Session[] }) {
-  const [selectedSessionId, setSelectedSessionId] = useState("");
+  const searchParams = useSearchParams();
+  const initialSessionId = searchParams.get("sessionId") || "";
+  
+  const [selectedSessionId, setSelectedSessionId] = useState(initialSessionId);
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialSessionId) {
+      setSelectedSessionId(initialSessionId);
+    }
+  }, [initialSessionId]);
 
   const handleScan = async (e: React.FormEvent) => {
     e.preventDefault();
