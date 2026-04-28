@@ -11,7 +11,7 @@ model AiBrain {
   id           String   @id
   purpose      String   @unique
   systemPrompt String
-  updatedAt    DateTime
+  updatedAt    DateTime @updatedAt
 }
 
 model Article {
@@ -27,7 +27,7 @@ model Article {
   seoKeywords    String?
   isPublished    Boolean  @default(false)
   createdAt      DateTime @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime @updatedAt
 }
 
 model Attendance {
@@ -55,7 +55,7 @@ model Batch {
   price                         Int?
   status                        BatchStatus    @default(OPEN)
   createdAt                     DateTime       @default(now())
-  updatedAt                     DateTime
+  updatedAt                     DateTime @updatedAt
   assessorId                    String?
   classroomId                   String?
   pricePackages                 Json?
@@ -72,7 +72,7 @@ model CertificateConfig {
   pdfTemplateUrl String?
   signatureUrl   String?
   passingGrade   Int      @default(70)
-  updatedAt      DateTime
+  updatedAt      DateTime @updatedAt
   programId      String?  @unique
   signatoryName  String?
   validityMonths Int?
@@ -120,7 +120,7 @@ model Enrollment {
   expiryDate       DateTime?
   qrVerifyCode     String           @unique
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime
+  updatedAt        DateTime @updatedAt
   Batch            Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
   User             User             @relation(fields: [userId], references: [id])
   K3Log            K3Log[]
@@ -150,7 +150,7 @@ model Program {
   curriculum        Json?
   isActive          Boolean            @default(true)
   createdAt         DateTime           @default(now())
-  updatedAt         DateTime
+  updatedAt         DateTime @updatedAt
   customCategory    String?
   Batch             Batch[]
   CertificateConfig CertificateConfig?
@@ -166,7 +166,7 @@ model SchemaUnit {
   isMandatory  Boolean    @default(true)
   criteria     Json?
   createdAt    DateTime   @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime @updatedAt
   UnitSchema   UnitSchema @relation(fields: [unitSchemaId], references: [id], onDelete: Cascade)
 
   @@unique([unitSchemaId, unitCode])
@@ -182,7 +182,7 @@ model UnitSchema {
   description String?
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   SchemaUnit  SchemaUnit[]
   Program     Program?     @relation(fields: [programId], references: [id], onDelete: Cascade)
 }
@@ -195,7 +195,7 @@ model User {
   role                                         Role             @default(TRAINEE)
   isActive                                     Boolean          @default(true)
   createdAt                                    DateTime         @default(now())
-  updatedAt                                    DateTime
+  updatedAt                                    DateTime @updatedAt
   passwordHash                                 String?
   instructorLevel                              InstructorLevel?
   participantDocuments                         Json?
