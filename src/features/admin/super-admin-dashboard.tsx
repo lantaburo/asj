@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 
 import { formatCurrency } from "@/features/landing-page/landing-page.service";
 import { 
@@ -62,6 +63,7 @@ function MetricCard({ title, value, icon, color }: MetricCardProps) {
 
 export function SuperAdminDashboard({ data }: { data: any }) {
   const { metrics, pareto, timeSeries } = data;
+  const [chartMode, setChartMode] = useState<'peserta' | 'batch'>('peserta');
 
   return (
     <div style={{ display: 'grid', gap: '30px' }}>
@@ -86,52 +88,74 @@ export function SuperAdminDashboard({ data }: { data: any }) {
         <MetricCard title="Total JP" value={`${metrics.totalJP} JP`} icon={<Clock size={24} />} color="#FB8C00" />
       </div>
 
-      {/* Charts Section */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: '30px' }}>
-        <div className="britsafe-card" style={{ padding: '32px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+      {/* Chart Section */}
+      <div className="britsafe-card" style={{ padding: '32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Calendar size={20} style={{ color: 'var(--ajs-navy)' }} />
-            <h3 className="britsafe-card__title" style={{ fontSize: '18px', margin: 0 }}>Revenue vs Peserta</h3>
+            <h3 className="britsafe-card__title" style={{ fontSize: '18px', margin: 0 }}>Tren Pendapatan & Pertumbuhan</h3>
           </div>
-          <div style={{ height: '300px', width: '100%' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={timeSeries}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E0E0E0" />
-                <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                  formatter={(value: any) => typeof value === 'number' && value > 1000 ? formatCurrency(value) : value}
-                />
-                <Legend iconType="circle" />
-                <Bar name="Revenue" dataKey="revenue" fill="#283593" radius={[4, 4, 0, 0]} />
-                <Bar name="Peserta" dataKey="participants" fill="#00ACC1" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div style={{ display: 'flex', gap: '8px', background: 'var(--ajs-gray)', padding: '4px', borderRadius: '8px' }}>
+            <button 
+              onClick={() => setChartMode('peserta')}
+              style={{
+                padding: '6px 16px',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                background: chartMode === 'peserta' ? '#fff' : 'transparent',
+                color: chartMode === 'peserta' ? 'var(--ajs-navy)' : 'var(--ajs-muted)',
+                boxShadow: chartMode === 'peserta' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              Peserta
+            </button>
+            <button 
+              onClick={() => setChartMode('batch')}
+              style={{
+                padding: '6px 16px',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                background: chartMode === 'batch' ? '#fff' : 'transparent',
+                color: chartMode === 'batch' ? 'var(--ajs-teal)' : 'var(--ajs-muted)',
+                boxShadow: chartMode === 'batch' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              Batch
+            </button>
           </div>
         </div>
-
-        <div className="britsafe-card" style={{ padding: '32px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-            <Calendar size={20} style={{ color: 'var(--ajs-teal)' }} />
-            <h3 className="britsafe-card__title" style={{ fontSize: '18px', margin: 0 }}>Revenue vs Batch</h3>
-          </div>
-          <div style={{ height: '300px', width: '100%' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={timeSeries}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E0E0E0" />
-                <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis yAxisId="left" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis yAxisId="right" orientation="right" fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                />
-                <Legend iconType="circle" />
-                <Line yAxisId="left" type="monotone" name="Revenue" dataKey="revenue" stroke="#283593" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+        
+        <div style={{ height: '350px', width: '100%' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={timeSeries}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E0E0E0" />
+              <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis yAxisId="left" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `Rp${(val/1000000).toFixed(0)}M`} />
+              <YAxis yAxisId="right" orientation="right" fontSize={12} tickLine={false} axisLine={false} />
+              <Tooltip 
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                formatter={(value: any, name: string) => [
+                  name === 'Revenue' ? formatCurrency(value) : value,
+                  name
+                ]}
+              />
+              <Legend iconType="circle" />
+              <Line yAxisId="left" type="monotone" name="Revenue" dataKey="revenue" stroke="#283593" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+              {chartMode === 'peserta' ? (
+                <Line yAxisId="right" type="monotone" name="Peserta" dataKey="participants" stroke="#00ACC1" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+              ) : (
                 <Line yAxisId="right" type="monotone" name="Batch" dataKey="batchCount" stroke="#26A69A" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+              )}
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
