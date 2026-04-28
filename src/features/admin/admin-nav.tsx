@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 type AdminNavProps = {
   canOpenMasterData: boolean;
+  canOpenLandingSettings?: boolean;
 };
 
 const baseLinks = [
@@ -23,13 +24,25 @@ const baseLinks = [
 const masterDataLink = {
   href: "/admin/master-data",
   label: "Master Data",
-  description: "Program, batch, classroom, dan session."
+  description: "Pusat data instruktur, program, dan kelas."
+} as const;
+
+const buatProgramLink = {
+  href: "/admin/buat-program",
+  label: "Buat Program",
+  description: "Wizard pembuatan pelatihan baru."
 } as const;
 
 const unitSkemaLink = {
   href: "/admin/unit-skema",
   label: "Unit Skema",
   description: "Skema kompetensi dan unit asesmen."
+} as const;
+
+const landingSettingsLink = {
+  href: "/admin/pengaturan-landing",
+  label: "Pengaturan Web",
+  description: "Ubah konten landing page publik."
 } as const;
 
 function isActivePath(pathname: string, href: string) {
@@ -40,11 +53,18 @@ function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AdminNav({ canOpenMasterData }: AdminNavProps) {
+export function AdminNav({ canOpenMasterData, canOpenLandingSettings }: AdminNavProps) {
   const pathname = usePathname();
-  const links = canOpenMasterData
-    ? [baseLinks[0], masterDataLink, unitSkemaLink, baseLinks[1]]
-    : baseLinks;
+  type NavLink = { href: string; label: string; description: string };
+  let links: NavLink[] = [...baseLinks];
+
+  if (canOpenMasterData) {
+    links = [baseLinks[0], masterDataLink, unitSkemaLink, buatProgramLink, baseLinks[1]];
+  }
+
+  if (canOpenLandingSettings) {
+    links.push(landingSettingsLink);
+  }
 
   return (
     <nav className="admin-nav admin-nav--rail" aria-label="Navigasi admin">

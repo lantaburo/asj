@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -39,6 +39,10 @@ type FlashState = {
 type ApiErrorResponse = {
   error?: {
     message?: string;
+    details?: {
+      formErrors?: string[];
+      fieldErrors?: Record<string, string[]>;
+    };
   };
 };
 
@@ -239,6 +243,13 @@ export function MasterDataApiPanel({
     INITIAL_FLASHES
   );
   const [opsFlash, setOpsFlash] = useState<FlashState>(null);
+  const [showWizard, setShowWizard] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("ajs_hide_master_wizard") !== "true") {
+      setShowWizard(true);
+    }
+  }, []);
 
   function setStepFlash(step: FlowStep, value: FlashState) {
     setFlashes((currentValue) => ({
@@ -272,9 +283,23 @@ export function MasterDataApiPanel({
         const payload = (await response.json()) as ApiErrorResponse;
 
         if (!response.ok) {
+          let errorMessage = payload.error?.message ?? "Permintaan API gagal diproses.";
+          
+          if (payload.error?.details?.fieldErrors) {
+            const fieldErrors = payload.error.details.fieldErrors;
+            const errorDetails = Object.entries(fieldErrors)
+              .map(([field, msgs]) => `${field}: ${msgs.join(", ")}`)
+              .join(" | ");
+            if (errorDetails) {
+              errorMessage = `Validasi gagal - ${errorDetails}`;
+            }
+          } else if (payload.error?.details?.formErrors?.length) {
+            errorMessage = `Validasi gagal - ${payload.error.details.formErrors.join(", ")}`;
+          }
+
           setStepFlash(step, {
             type: "error",
-            message: payload.error?.message ?? "Permintaan API gagal diproses."
+            message: errorMessage
           });
           return;
         }
@@ -356,18 +381,40 @@ export function MasterDataApiPanel({
       style={{ padding: "32px", borderTop: "4px solid var(--ajs-teal)" }}
     >
       <div style={{ marginBottom: "20px" }}>
-        <span className="britsafe-card__category">API Operations</span>
+        <span className="britsafe-card__category">Program Creation Wizard</span>
         <h2
           className="britsafe-card__title"
           style={{ fontSize: "22px", margin: "8px 0 8px" }}
         >
-          Flow operasional API yang lebih rapi dan bertahap.
+          Formulir Pembuatan Pelatihan & Batch
         </h2>
         <p style={{ fontSize: "13px", color: "var(--ajs-muted)", margin: 0 }}>
           Pilih langkah di bawah, kerjakan satu form, lalu lanjut ke langkah
           berikutnya.
         </p>
       </div>
+
+      {showWizard && (
+        <div style={{ background: '#E8F4FD', border: '1px solid #B6DFF8', padding: '24px', borderRadius: '8px', marginBottom: '24px', position: 'relative' }}>
+          <button 
+            type="button"
+            onClick={() => {
+              localStorage.setItem("ajs_hide_master_wizard", "true");
+              setShowWizard(false);
+            }}
+            style={{ position: 'absolute', top: '16px', right: '16px', background: 'white', border: '1px solid #B6DFF8', padding: '6px 12px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold', color: '#005A9E' }}
+          >
+            Sembunyikan Panduan
+          </button>
+          <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#005A9E', marginBottom: '12px', marginTop: 0 }}>Panduan Membuat Program Pelatihan</h3>
+          <ol style={{ paddingLeft: '20px', margin: 0, fontSize: '14px', color: '#003366', lineHeight: 1.6 }}>
+            <li style={{ marginBottom: '8px' }}><strong>Step 1 (Program):</strong> Isi judul program (misal: "Ahli K3 Umum"). Kategori pilih <em>KEMENAKER</em>. Jika sudah, klik <strong>Create Program</strong>.</li>
+            <li style={{ marginBottom: '8px' }}><strong>Step 2 (Batch):</strong> Program yang dibuat belum bisa diikuti tanpa jadwal. Pindah ke Step 2, pilih Program Anda, tentukan tanggal & kuota peserta, lalu klik <strong>Create Batch</strong>.</li>
+            <li style={{ marginBottom: '8px' }}><strong>Step 3 (Classroom) & Step 4 (Session):</strong> Daftarkan nama ruangan di Step 3, kemudian susun jadwal sesi harian di Step 4 untuk keperluan absensi peserta.</li>
+            <li><strong>Info SKKNI:</strong> Setelah program selesai dibuat, Anda bisa menautkannya ke <em>Unit Skema</em> melalui menu sebelah kiri.</li>
+          </ol>
+        </div>
+      )}
 
       <div
         style={{

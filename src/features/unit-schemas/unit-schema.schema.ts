@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-const schemaCodeRegex = /^[A-Z0-9][A-Z0-9._-]{2,39}$/;
-const unitCodeRegex = /^[A-Z0-9][A-Z0-9._-]{2,39}$/;
+
 
 const optionalProgramId = z.preprocess((value) => {
   if (value === null || value === undefined) {
@@ -21,7 +20,7 @@ const normalizedSchemaCode = z.preprocess((value) => {
   }
 
   return value.trim().toUpperCase();
-}, z.string().regex(schemaCodeRegex, "Kode skema tidak valid."));
+}, z.string().min(2).max(40));
 
 const normalizedUnitCode = z.preprocess((value) => {
   if (typeof value !== "string") {
@@ -29,25 +28,23 @@ const normalizedUnitCode = z.preprocess((value) => {
   }
 
   return value.trim().toUpperCase();
-}, z.string().regex(unitCodeRegex, "Kode unit tidak valid."));
+}, z.string().min(2).max(40));
 
 const optionalLevel = z.preprocess((value) => {
   if (typeof value !== "string") {
     return value;
   }
-
   const trimmed = value.trim();
-  return trimmed.length === 0 ? undefined : trimmed;
-}, z.string().min(2).max(80).optional());
+  return trimmed.length === 0 ? null : trimmed;
+}, z.string().min(2).max(80).optional().nullable());
 
 const optionalDescription = z.preprocess((value) => {
   if (typeof value !== "string") {
     return value;
   }
-
   const trimmed = value.trim();
-  return trimmed.length === 0 ? undefined : trimmed;
-}, z.string().min(3).max(500).optional());
+  return trimmed.length === 0 ? null : trimmed;
+}, z.string().min(3).max(500).optional().nullable());
 
 export const createUnitSchemaSchema = z.object({
   programId: optionalProgramId,
@@ -71,3 +68,6 @@ export const createSchemaUnitSchema = z.object({
   isMandatory: z.boolean().optional(),
   criteria: z.unknown().optional()
 });
+
+export const createSchemaUnitBulkSchema = z.array(createSchemaUnitSchema).min(1, "Minimal satu unit harus disertakan.");
+

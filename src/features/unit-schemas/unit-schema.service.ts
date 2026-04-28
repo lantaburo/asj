@@ -2,7 +2,8 @@ import { AppError } from "@/lib/app-error";
 import {
   createSchemaUnitSchema,
   createUnitSchemaSchema,
-  updateUnitSchemaSchema
+  updateUnitSchemaSchema,
+  createSchemaUnitBulkSchema
 } from "@/features/unit-schemas/unit-schema.schema";
 import {
   createSchemaUnit,
@@ -10,7 +11,11 @@ import {
   findUnitSchemaById,
   listActiveUnitSchemasByProgramIds,
   listUnitSchemas,
-  updateUnitSchema
+  updateUnitSchema,
+  createSchemaUnitBulk,
+  deleteUnitSchema,
+  deleteSchemaUnit,
+  updateSchemaUnit
 } from "@/features/unit-schemas/unit-schema.repository";
 
 function mapUnitSchema(schema: Awaited<ReturnType<typeof listUnitSchemas>>[number]) {
@@ -146,6 +151,49 @@ export async function createSchemaUnitRecord(unitSchemaId: string, payload: unkn
   });
 
   return getUnitSchemaDetail(unitSchemaId);
+}
+
+export async function createSchemaUnitBulkRecord(unitSchemaId: string, payload: unknown) {
+  const parsed = createSchemaUnitBulkSchema.parse(payload);
+  const schema = await findUnitSchemaById(unitSchemaId);
+
+  if (!schema) {
+    throw new AppError("Skema unit tidak ditemukan.", {
+      statusCode: 404,
+      code: "UNIT_SCHEMA_NOT_FOUND"
+    });
+  }
+
+  const startingIndex = schema._count.units + 1;
+  const unitsToCreate = parsed.map((u, index) => ({
+    ...u,
+    orderIndex: u.orderIndex ?? startingIndex + index,
+  }));
+
+  await createSchemaUnitBulk(unitSchemaId, unitsToCreate);
+  return getUnitSchemaDetail(unitSchemaId);
+}
+
+export async function deleteUnitSchemaRecord(unitSchemaId: string) {
+  const schema = await findUnitSchemaById(unitSchemaId);
+  if (!schema) {
+    throw new AppError("Skema unit tidak ditemukan.", {
+      statusCode: 404,
+      code: "UNIT_SCHEMA_NOT_FOUND"
+    });
+  }
+  await deleteUnitSchema(unitSchemaId);
+}
+
+export async function deleteSchemaUnitRecord(schemaUnitId: string) {
+  await deleteSchemaUnit(schemaUnitId);
+}
+
+export async function updateSchemaUnitRecord(
+  schemaUnitId: string,
+  payload: { unitCode?: string; title?: string }
+) {
+  await updateSchemaUnit(schemaUnitId, payload);
 }
 
 export async function getParticipantUnitSchemaCatalog(programIds: string[]) {

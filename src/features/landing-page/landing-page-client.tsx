@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BookOpen, UserPlus, LayoutDashboard, ShieldCheck, Award, Building, Hexagon, Zap, Triangle, Box, Diamond, Factory, Mountain, ChevronDown, Pickaxe } from "lucide-react";
 import { AJSLogo } from "@/features/landing-page/logo";
 import { logger } from "@/lib/logger";
 
@@ -114,25 +115,70 @@ function getUpcomingBatches(
 
 const journeySteps = [
   {
-    title: "Katalog Pelatihan",
-    copy: "Program, batch, harga, dan sisa kuota tampil dari data operasional yang sama."
+    title: "Pilih Program Pelatihan",
+    copy: "Temukan berbagai program sertifikasi K3 sesuai kebutuhan industri Anda. Jadwal dan ketersediaan kuota selalu diperbarui secara real-time.",
+    Icon: BookOpen
   },
   {
-    title: "Flow Pendaftaran",
-    copy: "Landing, login otomatis peserta, enrollment, dan attendance dirangkai tanpa memecah sistem."
+    title: "Daftar dengan Mudah",
+    copy: "Proses registrasi yang terintegrasi dan transparan. Peserta langsung mendapatkan akses ke dasbor personal untuk manajemen kehadiran.",
+    Icon: UserPlus
   },
   {
-    title: "Panel Internal",
-    copy: "Master data, sertifikasi, dan verifikasi berjalan pada workspace yang terkontrol."
+    title: "Raih Sertifikasi Resmi",
+    copy: "Ikuti pelatihan bersama instruktur profesional dan berpengalaman. Setelah lulus evaluasi, sertifikat resmi diterbitkan untuk menunjang karir Anda.",
+    Icon: Award
   }
 ] as const;
+
+const partnersData = [
+  { name: "IMIP Morowali", Icon: Factory, color: "#C1272D" },
+  { name: "Vale Indonesia", Icon: Mountain, color: "#007D51" },
+  { name: "Pertamina Energi", Icon: Hexagon, color: "#1E4B9C" },
+  { name: "PLN (Persero)", Icon: Zap, color: "#009B91" },
+  { name: "Freeport Indonesia", Icon: Pickaxe, color: "#D4A017" },
+  { name: "WIKA Karya", Icon: Triangle, color: "#2E5EAA" },
+  { name: "Semen Indonesia", Icon: Box, color: "#E02020" },
+  { name: "Krakatau Steel", Icon: Diamond, color: "#8E9196" },
+] as const;
+
+const faqsData = [
+  {
+    question: "Apakah sertifikat yang diterbitkan resmi?",
+    answer: "Ya, semua pelatihan kami berafiliasi dan terakreditasi resmi oleh institusi terkait seperti KEMENAKER RI dan BNSP, sehingga sertifikat yang diterbitkan valid dan diakui secara nasional."
+  },
+  {
+    question: "Bagaimana cara mendaftar pelatihan?",
+    answer: "Anda dapat memilih program dari Katalog Pelatihan, cek jadwal Batch yang tersedia, lalu klik 'Daftar Sekarang'. Anda akan dipandu melalui alur pendaftaran terintegrasi kami."
+  },
+  {
+    question: "Apakah tersedia pelatihan In-House untuk perusahaan?",
+    answer: "Tentu. Kami menyediakan pelatihan In-House yang dapat disesuaikan dengan kebutuhan dan jadwal spesifik perusahaan Anda. Silakan hubungi tim layanan pelanggan kami untuk konsultasi lebih lanjut."
+  },
+  {
+    question: "Metode pembayaran apa saja yang diterima?",
+    answer: "Kami menerima berbagai metode pembayaran termasuk transfer bank (Virtual Account), kartu kredit, dan pembayaran B2B/Corporate Invoicing untuk perusahaan mitra."
+  }
+];
 
 export async function LandingPageClient() {
   try {
     const programs = await getPublicPrograms();
     const openBatches = countOpenBatches(programs);
     const availableSeats = countAvailableSeats(programs);
-    const categorySummaries = summarizeCategories(programs);
+    let categorySummaries = summarizeCategories(programs);
+    const dummyCategories = [
+      { label: "KEMENAKER RI", programCount: 12, batchCount: 5, seats: 0 },
+      { label: "Sertifikasi BNSP", programCount: 8, batchCount: 3, seats: 0 },
+      { label: "In-House Training", programCount: 5, batchCount: 2, seats: 0 },
+      { label: "Audit & Konsultasi", programCount: 4, batchCount: 1, seats: 0 }
+    ];
+    for (const dummy of dummyCategories) {
+      if (!categorySummaries.some(c => c.label.toUpperCase().includes(dummy.label.split(' ')[0].toUpperCase()))) {
+        categorySummaries.push(dummy);
+      }
+    }
+    categorySummaries = categorySummaries.slice(0, 4);
     const upcomingBatches = getUpcomingBatches(programs);
     const featuredPrograms = [...programs]
       .sort((left, right) => right.openBatches.length - left.openBatches.length)
@@ -203,7 +249,60 @@ export async function LandingPageClient() {
             </div>
           </section>
 
-          <section id="categories" className="section-padding" style={{ background: 'white' }}>
+          <section className="section-padding" style={{ background: 'white', padding: '40px 0', borderBottom: '1px solid var(--ajs-border)' }}>
+            <div className="container">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+                <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--ajs-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  Dipercaya & Terakreditasi Oleh
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '48px', alignItems: 'center', opacity: 0.6 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '20px', fontWeight: '700' }}>
+                    <ShieldCheck size={32} style={{ color: 'var(--ajs-navy)' }} />
+                    KEMENAKER RI
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '20px', fontWeight: '700' }}>
+                    <Award size={32} style={{ color: 'var(--ajs-navy)' }} />
+                    BNSP
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '20px', fontWeight: '700' }}>
+                    <Building size={32} style={{ color: 'var(--ajs-navy)' }} />
+                    ISO 9001:2015
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="programs" className="section-padding" style={{ background: 'white' }}>
+            <div className="container">
+              <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 64px' }}>
+                <h2 className="britsafe-section-title">Program Unggulan</h2>
+                <p className="britsafe-section-subtitle">
+                  Kurasi program pelatihan yang paling diminati dan siap untuk diikuti.
+                </p>
+              </div>
+
+              <div className="britsafe-grid">
+                {featuredPrograms.map((program) => (
+                  <article key={program.id} className="britsafe-card">
+                    <span className="britsafe-card__category">{formatLabel(program.categoryLabel)}</span>
+                    <h3 className="britsafe-card__title">{program.title}</h3>
+                    <p className="britsafe-card__copy">
+                      {program.description ?? "Deskripsi program yang komprehensif untuk mendukung kompetensi Anda di bidang K3."}
+                    </p>
+                    <div style={{ marginBottom: '20px', fontSize: '14px', color: 'var(--ajs-navy)', fontWeight: '600' }}>
+                      {program.openBatches.length} Batch Tersedia
+                    </div>
+                    <a href="#jadwal" className="britsafe-card__link">
+                      Cek Jadwal
+                    </a>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="categories" className="section-padding britsafe-gray">
             <div className="container">
               <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 64px' }}>
                 <h2 className="britsafe-section-title">Telusuri Berdasarkan Kategori</h2>
@@ -228,7 +327,7 @@ export async function LandingPageClient() {
             </div>
           </section>
 
-          <section id="jadwal" className="section-padding britsafe-gray">
+          <section id="jadwal" className="section-padding" style={{ background: 'white' }}>
             <div className="container">
               <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 64px' }}>
                 <h2 className="britsafe-section-title">Jadwal Pelatihan Mendatang</h2>
@@ -281,36 +380,100 @@ export async function LandingPageClient() {
             </div>
           </section>
 
-          <section id="programs" className="section-padding" style={{ background: 'white' }}>
-            <div className="container">
+          <section className="section-padding britsafe-gray">
+            <div className="container" style={{ overflow: 'hidden' }}>
+              <style>{`
+                .partner-logo {
+                  display: flex;
+                  align-items: center;
+                  gap: 20px;
+                  font-size: 28px;
+                  font-weight: 800;
+                  color: var(--ajs-muted);
+                  opacity: 0.6;
+                  transition: all 0.3s ease;
+                  cursor: default;
+                  filter: grayscale(100%);
+                  white-space: nowrap;
+                }
+                .partner-logo:hover {
+                  filter: grayscale(0%);
+                  opacity: 1;
+                  color: var(--hover-color) !important;
+                }
+                @keyframes scrollRight {
+                  0% { transform: translateX(-50%); }
+                  100% { transform: translateX(0); }
+                }
+                @keyframes scrollLeft {
+                  0% { transform: translateX(0); }
+                  100% { transform: translateX(-50%); }
+                }
+                .marquee-container {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 64px;
+                  width: 100%;
+                  position: relative;
+                }
+                .marquee-row {
+                  display: flex;
+                  gap: 80px;
+                  width: max-content;
+                }
+                .marquee-row.right {
+                  animation: scrollRight 240s linear infinite;
+                }
+                .marquee-row.left {
+                  animation: scrollLeft 240s linear infinite;
+                }
+                .marquee-row:hover {
+                  animation-play-state: paused;
+                }
+              `}</style>
               <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 64px' }}>
-                <h2 className="britsafe-section-title">Program Unggulan</h2>
-                <p className="britsafe-section-subtitle">
-                  Kurasi program pelatihan yang paling diminati dan siap untuk diikuti.
+                <h2 className="britsafe-section-title" style={{ fontSize: '28px' }}>Mitra Perusahaan Kami</h2>
+                <p className="britsafe-section-subtitle" style={{ fontSize: '16px' }}>
+                  Berbagai perusahaan multinasional dan BUMN telah mempercayakan pelatihan K3 kepada kami.
                 </p>
               </div>
-
-              <div className="britsafe-grid">
-                {featuredPrograms.map((program) => (
-                  <article key={program.id} className="britsafe-card">
-                    <span className="britsafe-card__category">{formatLabel(program.categoryLabel)}</span>
-                    <h3 className="britsafe-card__title">{program.title}</h3>
-                    <p className="britsafe-card__copy">
-                      {program.description ?? "Deskripsi program yang komprehensif untuk mendukung kompetensi Anda di bidang K3."}
-                    </p>
-                    <div style={{ marginBottom: '20px', fontSize: '14px', color: 'var(--ajs-navy)', fontWeight: '600' }}>
-                      {program.openBatches.length} Batch Tersedia
-                    </div>
-                    <a href="#jadwal" className="britsafe-card__link">
-                      Cek Jadwal
-                    </a>
-                  </article>
-                ))}
+            
+              <div className="marquee-container">
+                <div className="marquee-row right">
+                  {[...partnersData.slice(0, 4), ...partnersData.slice(0, 4), ...partnersData.slice(0, 4), ...partnersData.slice(0, 4)].map((partner, i) => {
+                    const Icon = partner.Icon;
+                    return (
+                      <div 
+                        key={partner.name + i}
+                        className="partner-logo"
+                        style={{ '--hover-color': partner.color } as React.CSSProperties}
+                      >
+                        <Icon size={48} style={{ color: 'inherit' }} />
+                        {partner.name}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="marquee-row left">
+                  {[...partnersData.slice(4, 8), ...partnersData.slice(4, 8), ...partnersData.slice(4, 8), ...partnersData.slice(4, 8)].map((partner, i) => {
+                    const Icon = partner.Icon;
+                    return (
+                      <div 
+                        key={partner.name + i}
+                        className="partner-logo"
+                        style={{ '--hover-color': partner.color } as React.CSSProperties}
+                      >
+                        <Icon size={48} style={{ color: 'inherit' }} />
+                        {partner.name}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </section>
 
-          <section id="cara-kerja" className="section-padding britsafe-gray">
+          <section id="cara-kerja" className="section-padding" style={{ background: 'white' }}>
             <div className="container">
               <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 64px' }}>
                 <h2 className="britsafe-section-title">Bagaimana Kami Bekerja</h2>
@@ -319,14 +482,82 @@ export async function LandingPageClient() {
                 </p>
               </div>
               <div className="britsafe-grid">
-                {journeySteps.map((step, index) => (
-                  <article key={step.title} className="britsafe-card" style={{ borderTop: '4px solid var(--ajs-orange)', paddingTop: '60px' }}>
+                {journeySteps.map((step, index) => {
+                  const Icon = step.Icon;
+                  return (
+                  <article key={step.title} className="britsafe-card" style={{ borderTop: '4px solid var(--ajs-orange)', paddingTop: '60px', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ position: 'absolute', top: '24px', right: '24px', opacity: 0.05, color: 'var(--ajs-navy)' }}>
+                      <Icon size={80} />
+                    </div>
                     <span style={{ fontSize: '64px', fontWeight: '900', color: 'rgba(27, 54, 93, 0.04)', position: 'absolute', top: '20px', left: '30px' }}>
                       0{index + 1}
                     </span>
                     <h3 className="britsafe-card__title" style={{ position: 'relative', zIndex: 2 }}>{step.title}</h3>
                     <p className="britsafe-card__copy" style={{ position: 'relative', zIndex: 2, fontSize: '15px', color: 'var(--ajs-muted)' }}>{step.copy}</p>
                   </article>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          <section id="faq" className="section-padding britsafe-gray">
+            <div className="container">
+              <style>{`
+                .faq-details {
+                  background: white;
+                  border-radius: 8px;
+                  margin-bottom: 16px;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+                  overflow: hidden;
+                }
+                .faq-summary {
+                  padding: 24px;
+                  font-weight: 700;
+                  font-size: 16px;
+                  color: var(--ajs-navy);
+                  cursor: pointer;
+                  list-style: none;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                }
+                .faq-summary::-webkit-details-marker {
+                  display: none;
+                }
+                .faq-details[open] .faq-summary {
+                  border-bottom: 1px solid var(--ajs-border);
+                }
+                .faq-content {
+                  padding: 24px;
+                  color: var(--ajs-muted);
+                  line-height: 1.6;
+                  font-size: 15px;
+                }
+                .faq-icon {
+                  transition: transform 0.3s ease;
+                }
+                .faq-details[open] .faq-icon {
+                  transform: rotate(180deg);
+                }
+              `}</style>
+              <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 64px' }}>
+                <h2 className="britsafe-section-title">Pertanyaan yang Sering Diajukan</h2>
+                <p className="britsafe-section-subtitle">
+                  Temukan jawaban untuk pertanyaan umum seputar program pelatihan dan sertifikasi kami.
+                </p>
+              </div>
+              <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                {faqsData.map((faq, index) => (
+                  <details key={index} className="faq-details">
+                    <summary className="faq-summary">
+                      {faq.question}
+                      <ChevronDown className="faq-icon" size={20} />
+                    </summary>
+                    <div className="faq-content">
+                      {faq.answer}
+                    </div>
+                  </details>
                 ))}
               </div>
             </div>
@@ -338,10 +569,16 @@ export async function LandingPageClient() {
             <div className="britsafe-footer__grid">
               <div className="footer-col" style={{ gridColumn: 'span 2' }}>
                 <h4 style={{ color: 'white', marginBottom: '24px' }}>ARKAMA JAYA SERTIFIKASI</h4>
-                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.8, maxWidth: '400px' }}>
+                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.8, maxWidth: '400px', marginBottom: '24px' }}>
                   Penyedia pelatihan dan sertifikasi K3 terkemuka dengan sistem manajemen yang modern dan terintegrasi.
                   Berdedikasi untuk meningkatkan standar keselamatan industri di Indonesia.
                 </p>
+                <div style={{ display: 'flex', gap: '16px', fontSize: '14px', fontWeight: '500' }}>
+                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'opacity 0.2s', textDecoration: 'none' }}>Facebook</a>
+                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'opacity 0.2s', textDecoration: 'none' }}>Twitter</a>
+                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'opacity 0.2s', textDecoration: 'none' }}>Instagram</a>
+                  <a href="#" style={{ color: 'white', opacity: 0.7, transition: 'opacity 0.2s', textDecoration: 'none' }}>LinkedIn</a>
+                </div>
               </div>
               <div className="footer-col">
                 <h4>Layanan</h4>
@@ -357,9 +594,9 @@ export async function LandingPageClient() {
               <div className="footer-col">
                 <h4>Hubungi Kami</h4>
                 <ul style={{ opacity: 0.7, fontSize: '14px', lineHeight: 2 }}>
-                  <li>Email: info@arkamajaya.co.id</li>
-                  <li>WhatsApp: +62 812 3456 7890</li>
-                  <li>Gedung Arkama, Lt. 5, Jakarta</li>
+                  <li><strong style={{ color: 'white' }}>Email:</strong> cs@arkamajaya.co.id</li>
+                  <li><strong style={{ color: 'white' }}>WhatsApp:</strong> +62 821-2345-6789 (Hunting)</li>
+                  <li><strong style={{ color: 'white' }}>Kantor Pusat:</strong> Gedung Arkama Safety Lt. 5<br/>Jl. Jend. Sudirman Kav 10-11, Jakarta Selatan</li>
                 </ul>
               </div>
             </div>

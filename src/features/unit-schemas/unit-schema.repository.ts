@@ -217,3 +217,51 @@ export async function createSchemaUnit(data: {
     }
   });
 }
+
+export async function createSchemaUnitBulk(
+  unitSchemaId: string,
+  units: {
+    unitCode: string;
+    title: string;
+    orderIndex?: number;
+    isMandatory?: boolean;
+    criteria?: unknown;
+  }[]
+) {
+  return prisma.schemaUnit.createMany({
+    data: units.map((u) => ({
+      unitSchemaId,
+      unitCode: u.unitCode,
+      title: u.title,
+      orderIndex: u.orderIndex ?? 1,
+      isMandatory: u.isMandatory ?? true,
+      criteria: u.criteria as never
+    })),
+    skipDuplicates: true
+  });
+}
+
+export async function deleteUnitSchema(unitSchemaId: string) {
+  return prisma.unitSchema.delete({
+    where: { id: unitSchemaId }
+  });
+}
+
+export async function deleteSchemaUnit(schemaUnitId: string) {
+  return prisma.schemaUnit.delete({
+    where: { id: schemaUnitId }
+  });
+}
+
+export async function updateSchemaUnit(
+  schemaUnitId: string,
+  data: {
+    unitCode?: string;
+    title?: string;
+  }
+) {
+  return prisma.schemaUnit.update({
+    where: { id: schemaUnitId },
+    data
+  });
+}

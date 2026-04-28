@@ -7,6 +7,7 @@ import { AdminLogoutButton } from "@/features/auth/admin-logout-button";
 import {
   canAccessAdminPortal,
   canManageMasterData,
+  canManageLandingSettings,
   getCurrentSessionUser
 } from "@/features/auth/auth.service";
 
@@ -28,6 +29,7 @@ export default async function AdminLayout({
   }
 
   const canOpenMasterData = canManageMasterData(currentUser.role);
+  const canOpenLandingSettings = canManageLandingSettings(currentUser.role);
 
   return (
     <div className="britsafe-site">
@@ -45,46 +47,23 @@ export default async function AdminLayout({
         </div>
       </header>
 
-      <main className="section-padding britsafe-gray">
-        <div className="container">
-          <section className="britsafe-card" style={{ marginBottom: '40px', padding: '40px' }}>
-            <div className="admin-layout-hero">
-              <div>
-                <span className="britsafe-card__category">Internal Command Center</span>
-                <h1 className="britsafe-card__title" style={{ fontSize: '36px', marginBottom: '16px' }}>
-                  Dashboard Operasional ARKAMA JAYA SERTIFIKASI
-                </h1>
-                <p className="britsafe-card__copy" style={{ fontSize: '16px', marginBottom: '32px' }}>
-                  Selamat datang kembali, <strong>{currentUser.fullName}</strong>. 
-                  Gunakan panel ini untuk mengelola master data pelatihan, verifikasi peserta, 
-                  dan memantau operasional sistem secara real-time.
-                </p>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px' }}>
-                  <div style={{ background: 'white', padding: '15px', borderRadius: '8px', border: '1px solid var(--ajs-border)' }}>
-                    <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--ajs-muted)', textTransform: 'uppercase' }}>Email</span>
-                    <div style={{ fontWeight: '700', fontSize: '14px' }}>{currentUser.email}</div>
-                  </div>
-                  <div style={{ background: 'white', padding: '15px', borderRadius: '8px', border: '1px solid var(--ajs-border)' }}>
-                    <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--ajs-muted)', textTransform: 'uppercase' }}>Role</span>
-                    <div style={{ fontWeight: '700', fontSize: '14px' }}>{currentUser.role}</div>
-                  </div>
-                </div>
-              </div>
-
-              <aside style={{ display: 'grid', gap: '20px' }}>
-                <AdminNav canOpenMasterData={canOpenMasterData} />
-                <div style={{ background: 'var(--ajs-navy)', color: 'white', padding: '24px', borderRadius: '8px' }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '12px', color: 'white' }}>Akses Cepat</h3>
-                  <Link href="/" className="btn btn-outline" style={{ width: '100%', fontSize: '14px' }}>
-                    Lihat Landing Publik
-                  </Link>
-                </div>
-              </aside>
+      <main className="britsafe-gray" style={{ minHeight: 'calc(100vh - 140px)', padding: '40px 0' }}>
+        <div className="container" style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+          <aside style={{ width: '260px', flexShrink: 0, position: 'sticky', top: '100px', zIndex: 10 }}>
+            <div style={{ marginBottom: '24px' }}>
+              <AdminNav canOpenMasterData={canOpenMasterData} canOpenLandingSettings={canOpenLandingSettings} />
             </div>
-          </section>
+            <div style={{ background: 'var(--ajs-navy)', color: 'white', padding: '24px', borderRadius: '8px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '12px', color: 'white' }}>Akses Cepat</h3>
+              <Link href="/" className="btn btn-outline" style={{ width: '100%', fontSize: '13px' }}>
+                Landing Publik
+              </Link>
+            </div>
+          </aside>
 
-          {children}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {children}
+          </div>
         </div>
       </main>
 

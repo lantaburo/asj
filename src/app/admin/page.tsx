@@ -13,7 +13,33 @@ export default async function AdminDashboardPage() {
     : false;
 
   return (
-    <>
+    <div style={{ display: 'grid', gap: '30px' }}>
+      <section className="britsafe-card" style={{ padding: '40px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ flex: '1 1 400px' }}>
+            <span className="britsafe-card__category">Internal Command Center</span>
+            <h1 className="britsafe-card__title" style={{ fontSize: '32px', marginBottom: '16px', marginTop: '8px' }}>
+              Dashboard Operasional
+            </h1>
+            <p className="britsafe-card__copy" style={{ fontSize: '15px', marginBottom: 0 }}>
+              Selamat datang kembali, <strong>{currentUser?.fullName}</strong>. 
+              Gunakan panel ini untuk mengelola master data pelatihan, verifikasi peserta, 
+              dan memantau operasional sistem secara real-time.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <div style={{ background: 'var(--ajs-gray)', padding: '15px 20px', borderRadius: '8px', border: '1px solid var(--ajs-border)' }}>
+              <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--ajs-muted)', textTransform: 'uppercase' }}>Email</span>
+              <div style={{ fontWeight: '700', fontSize: '14px', color: 'var(--ajs-navy)' }}>{currentUser?.email}</div>
+            </div>
+            <div style={{ background: 'var(--ajs-gray)', padding: '15px 20px', borderRadius: '8px', border: '1px solid var(--ajs-border)' }}>
+              <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--ajs-muted)', textTransform: 'uppercase' }}>Role</span>
+              <div style={{ fontWeight: '700', fontSize: '14px', color: 'var(--ajs-navy)' }}>{currentUser?.role}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section
         style={{
           display: "grid",
@@ -50,28 +76,6 @@ export default async function AdminDashboardPage() {
           </div>
         </article>
 
-        <article className="britsafe-card" style={{ padding: '32px' }}>
-          <span className="britsafe-card__category">Session Aktif</span>
-          <div style={{ display: 'grid', gap: '16px', marginTop: '20px', marginBottom: '30px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--ajs-border)', paddingBottom: '8px' }}>
-              <span style={{ fontSize: '14px', color: 'var(--ajs-muted)' }}>Nama operator</span>
-              <strong style={{ fontSize: '14px', color: 'var(--ajs-text)' }}>{currentUser?.fullName ?? "-"}</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--ajs-border)', paddingBottom: '8px' }}>
-              <span style={{ fontSize: '14px', color: 'var(--ajs-muted)' }}>Email login</span>
-              <strong style={{ fontSize: '14px', color: 'var(--ajs-text)' }}>{currentUser?.email ?? "-"}</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--ajs-border)', paddingBottom: '8px' }}>
-              <span style={{ fontSize: '14px', color: 'var(--ajs-muted)' }}>Role aktif</span>
-              <strong style={{ fontSize: '14px', color: 'var(--ajs-text)' }}>{currentUser?.role ?? "-"}</strong>
-            </div>
-          </div>
-          <div style={{ background: 'rgba(0, 166, 81, 0.1)', color: 'var(--ajs-green)', padding: '16px', borderRadius: 'var(--radius-sm)', fontSize: '13px', fontWeight: '600', lineHeight: 1.5 }}>
-            {canOpenMasterData
-              ? "Role Anda memiliki akses ke seluruh area kerja internal."
-              : "Role Anda difokuskan ke area sertifikasi dan verifikasi internal."}
-          </div>
-        </article>
       </section>
 
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
@@ -145,6 +149,6 @@ export default async function AdminDashboardPage() {
           </Link>
         </article>
       </section>
-    </>
+    </div>
   );
 }

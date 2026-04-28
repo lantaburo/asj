@@ -284,3 +284,7 @@ export function canAccessAdminPortal(role: Role) {
 export function canManageMasterData(role: Role) {
   return hasRequiredRole(role, adminRoles);
 }
+
+export function canManageLandingSettings(role: Role) {
+  return role === Role.SUPER_ADMIN;
+}
