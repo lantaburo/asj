@@ -587,6 +587,10 @@ button {
   transform: rotate(-45deg) translate(0px, 2px);
 }
 
+.footer-col-wide {
+  grid-column: span 2;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .admin-layout-hero {
@@ -639,6 +643,10 @@ button {
   
   .britsafe-hero {
     padding-block: 100px;
+  }
+
+  .footer-col-wide {
+    grid-column: 1 / -1;
   }
 
   .britsafe-hero__grid {

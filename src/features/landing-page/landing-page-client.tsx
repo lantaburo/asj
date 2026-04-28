@@ -551,7 +551,7 @@ export function LandingPageClient({
         <footer className="britsafe-footer">
           <div className="container">
             <div className="britsafe-footer__grid">
-              <div className="footer-col" style={{ gridColumn: 'span 2' }}>
+              <div className="footer-col footer-col-wide">
                 <h4 style={{ color: 'white', marginBottom: '24px' }}>ARKAMA JAYA SERTIFIKASI</h4>
                 <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.8, maxWidth: '400px', marginBottom: '24px' }}>
                   Penyedia pelatihan dan sertifikasi K3 terkemuka dengan sistem manajemen yang modern dan terintegrasi.
