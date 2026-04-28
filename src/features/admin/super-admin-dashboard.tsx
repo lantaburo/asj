@@ -112,8 +112,8 @@ export function SuperAdminDashboard({ data }: { data: any }) {
           </div>
         </div>
         
-        <div style={{ height: '350px', width: '100%' }}>
-          <ResponsiveContainer width="100%" height="100%">
+        <div style={{ height: '350px', width: '100%', minWidth: 0, minHeight: 0 }}>
+          <ResponsiveContainer width="99%" height="100%">
             <LineChart data={timeSeries}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E0E0E0" />
               <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
