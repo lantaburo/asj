@@ -18,8 +18,8 @@ export function MasterDataExplorer({ programs, batches, sessions }: ExplorerProp
   const selectedProgram = programs.find(p => p.id === selectedProgramId);
   const selectedBatch = batches.find(b => b.id === selectedBatchId);
 
-  const filteredBatches = batches.filter(b => b.programId === selectedProgramId);
-  const filteredSessions = sessions.filter(s => s.batchId === selectedBatchId);
+  const filteredBatches = batches.filter(b => b.program?.id === selectedProgramId);
+  const filteredSessions = sessions.filter(s => s.batch?.id === selectedBatchId);
 
   return (
     <div className="britsafe-card" style={{ padding: '32px', background: 'white' }}>
@@ -76,7 +76,7 @@ export function MasterDataExplorer({ programs, batches, sessions }: ExplorerProp
       {level === 1 && (
         <div style={{ display: 'grid', gap: '16px' }}>
           {programs.map(p => {
-            const pBatches = batches.filter(b => b.programId === p.id);
+            const pBatches = batches.filter(b => b.program?.id === p.id);
             const stats = {
               total: pBatches.length,
               ongoing: pBatches.filter(b => b.status === "ONGOING").length,
