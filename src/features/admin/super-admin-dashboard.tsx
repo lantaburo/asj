@@ -117,11 +117,11 @@ export function SuperAdminDashboard({ data }: { data: any }) {
             <LineChart data={timeSeries}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E0E0E0" />
               <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis yAxisId="left" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => \`Rp\${(val/1000000).toFixed(0)}M\`} />
+              <YAxis yAxisId="left" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `Rp${(val/1000000).toFixed(0)}M`} />
               <YAxis yAxisId="right" orientation="right" fontSize={12} tickLine={false} axisLine={false} />
               <Tooltip 
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                formatter={(value: any, name: string) => [
+                formatter={(value: any, name: any) => [
                   name === 'Revenue' ? formatCurrency(value) : value,
                   name
                 ]}
