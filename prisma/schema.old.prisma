@@ -124,7 +124,6 @@ model Enrollment {
   batch            Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
   user             User             @relation(fields: [userId], references: [id])
   k3Logs           K3Log[]
-  invoice          Invoice?
 
   @@unique([batchId, userId])
 }
@@ -209,7 +208,6 @@ model User {
   instructorSessions    ClassSession[]   @relation("InstructorSessions")
   enrollments           Enrollment[]
   verifiedLogs          K3Log[]          @relation("VerifiedLogs")
-  verifiedInvoices      Invoice[]        @relation("VerifiedInvoices")
 }
 
 enum AssessmentStatus {
@@ -255,39 +253,3 @@ enum Role {
   CLIENT_HR
   AUDITOR
 }
-
-model PaymentSetting {
-  id            String   @id @default(uuid())
-  bankName      String
-  accountName   String
-  accountNumber String
-  instructions  String?
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Invoice {
-  id               String        @id @default(uuid())
-  enrollmentId     String        @unique
-  invoiceNumber    String        @unique
-  amount           Int
-  status           InvoiceStatus @default(UNPAID)
-  paymentProofUrl  String?
-  paymentNotes     String?
-  verifiedById     String?
-  issuedAt         DateTime      @default(now())
-  paidAt           DateTime?
-  updatedAt        DateTime      @updatedAt
-  
-  enrollment       Enrollment    @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
-  verifiedBy       User?         @relation("VerifiedInvoices", fields: [verifiedById], references: [id])
-}
-
-enum InvoiceStatus {
-  UNPAID
-  PENDING_VERIFICATION
-  PAID
-  REJECTED
-}
-
