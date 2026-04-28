@@ -8,14 +8,14 @@ datasource db {
 }
 
 model AiBrain {
-  id           String   @id
+  id           String   @id @default(uuid())
   purpose      String   @unique
   systemPrompt String
   updatedAt    DateTime @updatedAt
 }
 
 model Article {
-  id             String   @id
+  id             String   @id @default(uuid())
   title          String
   slug           String   @unique
   author         String
@@ -31,7 +31,7 @@ model Article {
 }
 
 model Attendance {
-  id             String           @id
+  id             String           @id @default(uuid())
   sessionId      String
   userId         String
   checkInTime    DateTime         @default(now())
@@ -39,36 +39,36 @@ model Attendance {
   selfieUrl      String?
   status         AttendanceStatus @default(PRESENT)
   deviceInfo     String?
-  ClassSession   ClassSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  User           User             @relation(fields: [userId], references: [id])
+  session        ClassSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id])
 
   @@unique([sessionId, userId])
 }
 
 model Batch {
-  id                            String         @id
-  programId                     String
-  instructorId                  String?
-  startDate                     DateTime
-  endDate                       DateTime
-  quota                         Int
-  price                         Int?
-  status                        BatchStatus    @default(OPEN)
-  createdAt                     DateTime       @default(now())
-  updatedAt                     DateTime @updatedAt
-  assessorId                    String?
-  classroomId                   String?
-  pricePackages                 Json?
-  User_Batch_assessorIdToUser   User?          @relation("Batch_assessorIdToUser", fields: [assessorId], references: [id])
-  Classroom                     Classroom?     @relation(fields: [classroomId], references: [id])
-  User_Batch_instructorIdToUser User?          @relation("Batch_instructorIdToUser", fields: [instructorId], references: [id])
-  Program                       Program        @relation(fields: [programId], references: [id], onDelete: Cascade)
-  ClassSession                  ClassSession[]
-  Enrollment                    Enrollment[]
+  id            String         @id @default(uuid())
+  programId     String
+  instructorId  String?
+  startDate     DateTime
+  endDate       DateTime
+  quota         Int
+  price         Int?
+  status        BatchStatus    @default(OPEN)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  assessorId    String?
+  classroomId   String?
+  pricePackages Json?
+  assessor      User?          @relation("AssessorBatches", fields: [assessorId], references: [id])
+  classroom     Classroom?     @relation(fields: [classroomId], references: [id])
+  instructor    User?          @relation("InstructorBatches", fields: [instructorId], references: [id])
+  program       Program        @relation(fields: [programId], references: [id], onDelete: Cascade)
+  sessions      ClassSession[]
+  enrollments   Enrollment[]
 }
 
 model CertificateConfig {
-  id             String   @id
+  id             String   @id @default(uuid())
   pdfTemplateUrl String?
   signatureUrl   String?
   passingGrade   Int      @default(70)
@@ -77,59 +77,59 @@ model CertificateConfig {
   signatoryName  String?
   validityMonths Int?
   signatoryTitle String?
-  Program        Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
+  program        Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
 }
 
 model ClassSession {
-  id                                   String       @id
-  batchId                              String
-  classroomId                          String?
-  instructorId                         String?
-  title                                String
-  sessionDate                          DateTime
-  startTime                            DateTime
-  endTime                              DateTime
-  locationType                         String       @default("Classroom")
-  createdAt                            DateTime     @default(now())
-  assessorId                           String?
-  jp                                   Int          @default(1)
-  Attendance                           Attendance[]
-  User_ClassSession_assessorIdToUser   User?        @relation("ClassSession_assessorIdToUser", fields: [assessorId], references: [id])
-  Batch                                Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  Classroom                            Classroom?   @relation(fields: [classroomId], references: [id])
-  User_ClassSession_instructorIdToUser User?        @relation("ClassSession_instructorIdToUser", fields: [instructorId], references: [id])
+  id           String       @id @default(uuid())
+  batchId      String
+  classroomId  String?
+  instructorId String?
+  title        String
+  sessionDate  DateTime
+  startTime    DateTime
+  endTime      DateTime
+  locationType String       @default("Classroom")
+  createdAt    DateTime     @default(now())
+  assessorId   String?
+  jp           Int          @default(1)
+  attendances  Attendance[]
+  assessor     User?        @relation("AssessorSessions", fields: [assessorId], references: [id])
+  batch        Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  classroom    Classroom?   @relation(fields: [classroomId], references: [id])
+  instructor   User?        @relation("InstructorSessions", fields: [instructorId], references: [id])
 }
 
 model Classroom {
-  id           String         @id
+  id           String         @id @default(uuid())
   roomName     String
   capacity     Int
   facilities   Json?
   isAvailable  Boolean        @default(true)
-  Batch        Batch[]
-  ClassSession ClassSession[]
+  batches      Batch[]
+  sessions     ClassSession[]
 }
 
 model Enrollment {
-  id               String           @id
+  id               String           @id @default(uuid())
   batchId          String
   userId           String
   registrationDocs Json?
   assessmentStatus AssessmentStatus @default(PENDING)
   certificateNum   String?          @unique
   expiryDate       DateTime?
-  qrVerifyCode     String           @unique
+  qrVerifyCode     String           @unique @default(uuid())
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime @updatedAt
-  Batch            Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  User             User             @relation(fields: [userId], references: [id])
-  K3Log            K3Log[]
+  updatedAt        DateTime         @updatedAt
+  batch            Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  user             User             @relation(fields: [userId], references: [id])
+  k3Logs           K3Log[]
 
   @@unique([batchId, userId])
 }
 
 model K3Log {
-  id           String     @id
+  id           String     @id @default(uuid())
   enrollmentId String
   activityName String
   safetyScore  Int?
@@ -137,12 +137,12 @@ model K3Log {
   evidenceUrl  String?
   gpsWatermark Json?
   timestamp    DateTime   @default(now())
-  Enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
-  User         User?      @relation(fields: [verifiedById], references: [id])
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  verifiedBy   User?      @relation("VerifiedLogs", fields: [verifiedById], references: [id])
 }
 
 model Program {
-  id                String             @id
+  id                String             @id @default(uuid())
   title             String
   category          ProgramCategory
   industryType      String             @default("Umum")
@@ -150,15 +150,15 @@ model Program {
   curriculum        Json?
   isActive          Boolean            @default(true)
   createdAt         DateTime           @default(now())
-  updatedAt         DateTime @updatedAt
+  updatedAt         DateTime           @updatedAt
   customCategory    String?
-  Batch             Batch[]
-  CertificateConfig CertificateConfig?
-  UnitSchema        UnitSchema[]
+  batches           Batch[]
+  certificateConfig CertificateConfig?
+  unitSchemas       UnitSchema[]
 }
 
 model SchemaUnit {
-  id           String     @id
+  id           String     @id @default(uuid())
   unitSchemaId String
   unitCode     String
   title        String
@@ -166,15 +166,15 @@ model SchemaUnit {
   isMandatory  Boolean    @default(true)
   criteria     Json?
   createdAt    DateTime   @default(now())
-  updatedAt    DateTime @updatedAt
-  UnitSchema   UnitSchema @relation(fields: [unitSchemaId], references: [id], onDelete: Cascade)
+  updatedAt    DateTime   @updatedAt
+  unitSchema   UnitSchema @relation(fields: [unitSchemaId], references: [id], onDelete: Cascade)
 
   @@unique([unitSchemaId, unitCode])
   @@index([unitSchemaId, orderIndex])
 }
 
 model UnitSchema {
-  id          String       @id
+  id          String       @id @default(uuid())
   programId   String?
   code        String       @unique
   title       String
@@ -182,32 +182,32 @@ model UnitSchema {
   description String?
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime @updatedAt
-  SchemaUnit  SchemaUnit[]
-  Program     Program?     @relation(fields: [programId], references: [id], onDelete: Cascade)
+  updatedAt   DateTime     @updatedAt
+  units       SchemaUnit[]
+  program     Program?     @relation(fields: [programId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id                                           String           @id
-  email                                        String           @unique
-  phone                                        String?          @unique
-  fullName                                     String
-  role                                         Role             @default(TRAINEE)
-  isActive                                     Boolean          @default(true)
-  createdAt                                    DateTime         @default(now())
-  updatedAt                                    DateTime @updatedAt
-  passwordHash                                 String?
-  instructorLevel                              InstructorLevel?
-  participantDocuments                         Json?
-  licenseNumber                                String?
-  profilePictureUrl                            String?
-  Attendance                                   Attendance[]
-  Batch_Batch_assessorIdToUser                 Batch[]          @relation("Batch_assessorIdToUser")
-  Batch_Batch_instructorIdToUser               Batch[]          @relation("Batch_instructorIdToUser")
-  ClassSession_ClassSession_assessorIdToUser   ClassSession[]   @relation("ClassSession_assessorIdToUser")
-  ClassSession_ClassSession_instructorIdToUser ClassSession[]   @relation("ClassSession_instructorIdToUser")
-  Enrollment                                   Enrollment[]
-  K3Log                                        K3Log[]
+  id                    String           @id @default(uuid())
+  email                 String           @unique
+  phone                 String?          @unique
+  fullName              String
+  role                  Role             @default(TRAINEE)
+  isActive              Boolean          @default(true)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  passwordHash          String?
+  instructorLevel       InstructorLevel?
+  participantDocuments  Json?
+  licenseNumber         String?
+  profilePictureUrl     String?
+  attendances           Attendance[]
+  assessorBatches       Batch[]          @relation("AssessorBatches")
+  instructorBatches     Batch[]          @relation("InstructorBatches")
+  assessorSessions      ClassSession[]   @relation("AssessorSessions")
+  instructorSessions    ClassSession[]   @relation("InstructorSessions")
+  enrollments           Enrollment[]
+  verifiedLogs          K3Log[]          @relation("VerifiedLogs")
 }
 
 enum AssessmentStatus {
