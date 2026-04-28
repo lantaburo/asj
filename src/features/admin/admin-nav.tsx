@@ -57,6 +57,12 @@ const pengaturanPembayaranLink = {
   description: "Nomor rekening dan metode bayar."
 } as const;
 
+const verifikasiPembayaranLink = {
+  href: "/admin/verifikasi-pembayaran",
+  label: "Verifikasi Pembayaran",
+  description: "Cek dan setujui bukti transfer."
+} as const;
+
 function isActivePath(pathname: string, href: string) {
   if (href === "/admin") {
     return pathname === href;
@@ -71,7 +77,7 @@ export function AdminNav({ canOpenMasterData, canOpenLandingSettings }: AdminNav
   let links: NavLink[] = [...baseLinks];
 
   if (canOpenMasterData) {
-    links = [baseLinks[0], masterDataLink, unitSkemaLink, buatProgramLink, baseLinks[1], pengaturanSertifikatLink, pengaturanPembayaranLink];
+    links = [baseLinks[0], masterDataLink, unitSkemaLink, buatProgramLink, baseLinks[1], verifikasiPembayaranLink, pengaturanSertifikatLink, pengaturanPembayaranLink];
   }
 
   if (canOpenLandingSettings) {
