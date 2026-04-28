@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { formatCurrency, formatDateRange } from "@/features/landing-page/landing-page.service";
 
 type UpcomingBatch = {
@@ -16,6 +16,7 @@ type UpcomingBatch = {
 };
 
 export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialBatchId = searchParams.get("batchId") || "";
   
@@ -79,6 +80,11 @@ export function RegisterForm({ batches }: { batches: UpcomingBatch[] }) {
         const enrollData = await enrollRes.json();
         if (!enrollRes.ok) {
           throw new Error(enrollData.error?.message || "Gagal mendaftarkan ke batch ini.");
+        }
+
+        if (enrollData.data?.invoice?.id) {
+          router.push(`/checkout/${enrollData.data.invoice.id}`);
+          return;
         }
       }
 

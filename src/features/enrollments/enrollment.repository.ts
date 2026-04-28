@@ -231,6 +231,7 @@ export async function createEnrollmentInOpenBatch(input: {
       select: {
         id: true,
         quota: true,
+        price: true,
         _count: {
           select: {
             enrollments: true
@@ -281,9 +282,22 @@ export async function createEnrollmentInOpenBatch(input: {
       }
     });
 
+    let invoice = null;
+    if (batch.price && batch.price > 0) {
+      invoice = await tx.invoice.create({
+        data: {
+          enrollmentId: enrollment.id,
+          invoiceNumber: `INV-${Date.now()}-${enrollment.id.slice(0, 4).toUpperCase()}`,
+          amount: batch.price,
+          status: 'UNPAID'
+        }
+      });
+    }
+
     return {
       status: "created" as const,
       enrollment,
+      invoice,
       quota: {
         total: batch.quota,
         remainingAfterRegistration: quotaRemaining - 1

@@ -126,6 +126,7 @@ export async function registerEnrollment(payload: unknown, currentUserId: string
 
     return {
       enrollment: result.enrollment,
+      invoice: result.invoice,
       quota: result.quota
     };
   } catch (error) {
