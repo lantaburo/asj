@@ -1,5 +1,6 @@
-import { getArticleBySlug } from "@/features/cms/article.service";
+import { getArticleBySlug, getRelatedArticles } from "@/features/cms/article.service";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { LandingHeader } from "@/features/landing-page/landing-header";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -25,6 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function PublicArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
+  const relatedArticles = await getRelatedArticles(slug);
 
   if (!article) {
     notFound();
@@ -41,8 +43,40 @@ export default async function PublicArticlePage({ params }: { params: Promise<{ 
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#F8F9FA' }}>
       <LandingHeader />
       
-      <main style={{ flex: 1, padding: '120px 20px 60px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
-        <article className="britsafe-card" style={{ padding: '40px', background: 'white' }}>
+      <div style={{ flex: 1, padding: '120px 20px 60px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '30px' }} className="article-layout">
+          
+          <aside className="article-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--ajs-navy)', borderBottom: '2px solid var(--ajs-teal)', paddingBottom: '10px', marginBottom: '10px' }}>
+              Artikel Terkait
+            </h3>
+            {relatedArticles.length === 0 ? (
+              <p style={{ color: 'var(--ajs-muted)', fontSize: '14px' }}>Belum ada artikel terkait.</p>
+            ) : (
+              relatedArticles.map((related: any) => (
+                <Link key={related.slug} href={`/artikel/${related.slug}`} style={{ textDecoration: 'none', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  {related.imageUrl ? (
+                    <div style={{ width: '80px', height: '60px', flexShrink: 0, borderRadius: '6px', overflow: 'hidden' }}>
+                      <img src={related.imageUrl} alt={related.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  ) : (
+                    <div style={{ width: '80px', height: '60px', flexShrink: 0, borderRadius: '6px', background: 'var(--ajs-gray)' }} />
+                  )}
+                  <div>
+                    <h4 style={{ fontSize: '14px', margin: '0 0 4px 0', color: 'var(--ajs-navy)', lineHeight: 1.3, fontWeight: '600' }}>
+                      {related.title.length > 50 ? related.title.substring(0, 50) + '...' : related.title}
+                    </h4>
+                    <span style={{ fontSize: '12px', color: 'var(--ajs-muted)' }}>
+                      {new Date(related.publishDate || related.createdAt).toLocaleDateString('id-ID')}
+                    </span>
+                  </div>
+                </Link>
+              ))
+            )}
+          </aside>
+
+          <main style={{ minWidth: 0 }}>
+            <article className="britsafe-card" style={{ padding: '40px', background: 'white' }}>
           {article.imageUrl && (
             <div style={{ marginBottom: '30px', borderRadius: '12px', overflow: 'hidden' }}>
               <img 
@@ -75,8 +109,10 @@ export default async function PublicArticlePage({ params }: { params: Promise<{ 
               {article.content}
             </ReactMarkdown>
           </div>
-        </article>
-      </main>
+            </article>
+          </main>
+        </div>
+      </div>
 
       <footer className="britsafe-footer">
         <div className="container">
@@ -88,6 +124,10 @@ export default async function PublicArticlePage({ params }: { params: Promise<{ 
       </footer>
 
       <style dangerouslySetInnerHTML={{__html: `
+        @media (min-width: 992px) {
+          .article-layout { grid-template-columns: 300px 1fr !important; }
+        }
+        .article-sidebar a:hover h4 { color: var(--ajs-teal) !important; }
         .article-content h2 { margin-top: 32px; margin-bottom: 16px; font-size: 24px; color: var(--ajs-navy); }
         .article-content h3 { margin-top: 24px; margin-bottom: 12px; font-size: 20px; color: var(--ajs-navy); }
         .article-content p { margin-bottom: 20px; }

@@ -12,6 +12,10 @@ export async function getArticleBySlug(slug: string) {
   return result[0] || null;
 }
 
+export async function getRelatedArticles(currentSlug: string) {
+  return prisma.$queryRaw<any[]>`SELECT slug, title, "imageUrl", "publishDate", "createdAt" FROM "Article" WHERE "isPublished" = true AND slug != ${currentSlug} ORDER BY "publishDate" DESC LIMIT 5`;
+}
+
 export async function createArticle(data: {
   title: string;
   author: string;
