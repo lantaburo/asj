@@ -16,7 +16,7 @@ export default async function CheckoutPage({ params }: { params: { invoiceId: st
   }
 
   const paymentSettings = await getPaymentSettings();
-  const activeSettings = paymentSettings.filter(s => s.isActive);
+  const activeSettings = paymentSettings.filter((s: any) => s.isActive);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#F8F9FA' }}>
