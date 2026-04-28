@@ -68,7 +68,7 @@ export function SuperAdminDashboard({ data }: { data: any }) {
   return (
     <div style={{ display: 'grid', gap: '30px' }}>
       {/* Chart Section */}
-      <div className="britsafe-card" style={{ padding: '32px' }}>
+      <div className="britsafe-card" style={{ padding: '32px', minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Calendar size={20} style={{ color: 'var(--ajs-navy)' }} />
@@ -161,7 +161,7 @@ export function SuperAdminDashboard({ data }: { data: any }) {
 
       {/* Row 4: Pareto */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '30px' }}>
-        <div className="britsafe-card" style={{ padding: '32px' }}>
+        <div className="britsafe-card" style={{ padding: '32px', minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
             <BarChart3 size={20} style={{ color: 'var(--ajs-navy)' }} />
             <h3 className="britsafe-card__title" style={{ fontSize: '18px', margin: 0 }}>Pareto Program (Top Revenue)</h3>
@@ -176,7 +176,7 @@ export function SuperAdminDashboard({ data }: { data: any }) {
           </div>
         </div>
 
-        <div className="britsafe-card" style={{ padding: '32px' }}>
+        <div className="britsafe-card" style={{ padding: '32px', minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
             <BarChart3 size={20} style={{ color: 'var(--ajs-teal)' }} />
             <h3 className="britsafe-card__title" style={{ fontSize: '18px', margin: 0 }}>Pareto Batch (Top Revenue)</h3>
