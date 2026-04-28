@@ -54,6 +54,10 @@ export default async function RegisterPage() {
           <Link href="/">
             <AJSLogo />
           </Link>
+          <input type="checkbox" id="mobile-menu-toggle" className="mobile-menu-toggle" aria-label="Toggle mobile menu" />
+          <label htmlFor="mobile-menu-toggle" className="mobile-menu-button">
+            <span></span><span></span><span></span>
+          </label>
           <nav className="britsafe-nav">
             <Link href="/" className="btn btn-outline" style={{ color: 'var(--ajs-navy)', borderColor: 'var(--ajs-border)' }}>Kembali ke Beranda</Link>
             <Link href="/peserta">Dashboard Peserta</Link>

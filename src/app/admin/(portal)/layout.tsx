@@ -38,6 +38,10 @@ export default async function AdminLayout({
           <Link href="/">
             <AJSLogo />
           </Link>
+          <input type="checkbox" id="mobile-menu-toggle" className="mobile-menu-toggle" aria-label="Toggle mobile menu" />
+          <label htmlFor="mobile-menu-toggle" className="mobile-menu-button">
+            <span></span><span></span><span></span>
+          </label>
           <nav className="britsafe-nav">
             <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--ajs-orange)', textTransform: 'uppercase' }}>
               Admin Mode: {currentUser.role}

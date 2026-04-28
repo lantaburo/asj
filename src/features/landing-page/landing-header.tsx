@@ -17,6 +17,10 @@ export function LandingHeader() {
           <Link href="/">
             <AJSLogo />
           </Link>
+          <input type="checkbox" id="mobile-menu-toggle" className="mobile-menu-toggle" aria-label="Toggle mobile menu" />
+          <label htmlFor="mobile-menu-toggle" className="mobile-menu-button">
+            <span></span><span></span><span></span>
+          </label>
           <nav className="britsafe-nav">
             <a href="#programs">Programs</a>
             <a href="#jadwal">Schedule</a>
