@@ -11,7 +11,7 @@ export async function getSuperAdminOverview() {
     notCompetentCount,
     instructorCount,
     assessorCount,
-    totalJPResult,
+    sessions,
     enrollmentsWithBatch
   ] = await Promise.all([
     prisma.program.count(),
@@ -22,7 +22,7 @@ export async function getSuperAdminOverview() {
     prisma.enrollment.count({ where: { assessmentStatus: AssessmentStatus.BELUM_KOMPETEN } }),
     prisma.user.count({ where: { role: Role.INSTRUCTOR } }),
     prisma.user.count({ where: { role: Role.ASSESSOR } }),
-    prisma.$queryRaw<{ sum: number }[]>`SELECT SUM(jp)::int as sum FROM "ClassSession"`,
+    prisma.classSession.findMany({ select: { startTime: true, endTime: true } }),
     prisma.enrollment.findMany({
       include: {
         batch: {
@@ -108,7 +108,10 @@ export async function getSuperAdminOverview() {
       notCompetent: notCompetentCount,
       instructors: instructorCount,
       assessors: assessorCount,
-      totalJP: totalJPResult[0]?.sum ?? 0,
+      totalJP: sessions.reduce((acc, s) => {
+        const diffMs = s.endTime.getTime() - s.startTime.getTime();
+        return acc + Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
+      }, 0),
     },
     pareto: {
       topPrograms,

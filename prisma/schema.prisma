@@ -18,32 +18,32 @@ model User {
   updatedAt            DateTime         @updatedAt
   passwordHash         String?
   instructorLevel      InstructorLevel?
+  participantDocuments Json?
   licenseNumber        String?
   profilePictureUrl    String?
-  participantDocuments Json?
   attendances          Attendance[]
-  instructed           Batch[]          @relation("InstructorBatches")
   assessed             Batch[]          @relation("AssessorBatches")
-  sessions             ClassSession[]   @relation("SessionInstructor")
+  instructed           Batch[]          @relation("InstructorBatches")
   assessedSessions     ClassSession[]   @relation("SessionAssessor")
+  sessions             ClassSession[]   @relation("SessionInstructor")
   enrollments          Enrollment[]
   verifiedLogs         K3Log[]          @relation("LogVerifier")
 }
 
 model Program {
-  id             String          @id @default(uuid())
-  title          String
-  category       ProgramCategory
-  industryType   String          @default("Umum")
-  description    String?
-  curriculum     Json?
-  isActive       Boolean         @default(true)
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  customCategory String?
-  batches        Batch[]
-  unitSchemas    UnitSchema[]
+  id                String             @id @default(uuid())
+  title             String
+  category          ProgramCategory
+  industryType      String             @default("Umum")
+  description       String?
+  curriculum        Json?
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  customCategory    String?
+  batches           Batch[]
   certificateConfig CertificateConfig?
+  unitSchemas       UnitSchema[]
 }
 
 model UnitSchema {
@@ -77,25 +77,25 @@ model SchemaUnit {
 }
 
 model Batch {
-  id           String         @id @default(uuid())
-  programId    String
-  instructorId String?
-  assessorId   String?
-  startDate    DateTime
-  endDate      DateTime
-  quota        Int
-  price        Int?
+  id            String         @id @default(uuid())
+  programId     String
+  instructorId  String?
+  startDate     DateTime
+  endDate       DateTime
+  quota         Int
+  price         Int?
+  status        BatchStatus    @default(OPEN)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  assessorId    String?
+  classroomId   String?
   pricePackages Json?
-  status       BatchStatus    @default(OPEN)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  classroomId  String?
-  classroom    Classroom?     @relation(fields: [classroomId], references: [id])
-  instructor   User?          @relation("InstructorBatches", fields: [instructorId], references: [id])
-  assessor     User?          @relation("AssessorBatches", fields: [assessorId], references: [id])
-  program      Program        @relation(fields: [programId], references: [id], onDelete: Cascade)
-  sessions     ClassSession[]
-  enrollments  Enrollment[]
+  assessor      User?          @relation("AssessorBatches", fields: [assessorId], references: [id])
+  classroom     Classroom?     @relation(fields: [classroomId], references: [id])
+  instructor    User?          @relation("InstructorBatches", fields: [instructorId], references: [id])
+  program       Program        @relation(fields: [programId], references: [id], onDelete: Cascade)
+  sessions      ClassSession[]
+  enrollments   Enrollment[]
 }
 
 model Enrollment {
@@ -122,8 +122,8 @@ model Classroom {
   capacity    Int
   facilities  Json?
   isAvailable Boolean        @default(true)
-  sessions    ClassSession[]
   batches     Batch[]
+  sessions    ClassSession[]
 }
 
 model ClassSession {
@@ -131,19 +131,19 @@ model ClassSession {
   batchId      String
   classroomId  String?
   instructorId String?
-  assessorId   String?
   title        String
   sessionDate  DateTime
   startTime    DateTime
   endTime      DateTime
   locationType String       @default("Classroom")
-  jp           Int          @default(1)
   createdAt    DateTime     @default(now())
+  assessorId   String?
+  jp           Int          @default(1)
   attendances  Attendance[]
+  assessor     User?        @relation("SessionAssessor", fields: [assessorId], references: [id])
   batch        Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
   classroom    Classroom?   @relation(fields: [classroomId], references: [id])
   instructor   User?        @relation("SessionInstructor", fields: [instructorId], references: [id])
-  assessor     User?        @relation("SessionAssessor", fields: [assessorId], references: [id])
 }
 
 model Attendance {
@@ -175,17 +175,39 @@ model K3Log {
 }
 
 model CertificateConfig {
-  id              String   @id @default(uuid())
-  programId       String?  @unique
-  pdfTemplateUrl  String?
-  signatureUrl    String?
-  signatoryName   String?
-  signatoryTitle  String?
-  passingGrade    Int      @default(70)
-  validityMonths  Int?
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(uuid())
+  pdfTemplateUrl String?
+  signatureUrl   String?
+  passingGrade   Int      @default(70)
+  updatedAt      DateTime @updatedAt
+  programId      String?  @unique
+  signatoryName  String?
+  validityMonths Int?
+  signatoryTitle String?
+  program        Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
+}
 
-  program         Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
+model Article {
+  id             String   @id @default(uuid())
+  title          String
+  slug           String   @unique
+  author         String
+  content        String
+  imageUrl       String?
+  version        String   @default("1.0")
+  publishDate    DateTime @default(now())
+  seoDescription String?
+  seoKeywords    String?
+  isPublished    Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model AiBrain {
+  id           String   @id @default(uuid())
+  purpose      String   @unique
+  systemPrompt String
+  updatedAt    DateTime @updatedAt
 }
 
 enum Role {
@@ -230,27 +252,4 @@ enum AttendanceStatus {
   PRESENT
   LATE
   ABSENT
-}
-
-model Article {
-  id              String   @id @default(uuid())
-  title           String
-  slug            String   @unique
-  author          String
-  content         String   @db.Text
-  imageUrl        String?
-  version         String   @default("1.0")
-  publishDate     DateTime @default(now())
-  seoDescription  String?
-  seoKeywords     String?
-  isPublished     Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-}
-
-model AiBrain {
-  id          String   @id @default(uuid())
-  purpose     String   @unique // e.g., "SEO_METADATA", "ARTICLE_GENERATOR"
-  systemPrompt String   @db.Text
-  updatedAt   DateTime @updatedAt
 }
