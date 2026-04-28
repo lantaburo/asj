@@ -2,6 +2,12 @@
 ALTER TABLE "Attendance" DROP CONSTRAINT IF EXISTS "Attendance_sessionId_fkey";
 
 -- DropForeignKey
+ALTER TABLE "CertificateConfig" DROP CONSTRAINT IF EXISTS "CertificateConfig_programId_fkey";
+
+-- DropForeignKey
+ALTER TABLE "ClassSession" DROP CONSTRAINT IF EXISTS "ClassSession_assessorId_fkey";
+
+-- DropForeignKey
 ALTER TABLE "Batch" DROP CONSTRAINT IF EXISTS "Batch_assessorId_fkey";
 
 -- DropForeignKey
