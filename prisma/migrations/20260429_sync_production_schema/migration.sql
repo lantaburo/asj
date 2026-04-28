@@ -1,40 +1,40 @@
 -- DropForeignKey
-ALTER TABLE "Attendance" DROP CONSTRAINT "Attendance_sessionId_fkey";
+ALTER TABLE "Attendance" DROP CONSTRAINT IF EXISTS "Attendance_sessionId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Batch" DROP CONSTRAINT "Batch_assessorId_fkey";
+ALTER TABLE "Batch" DROP CONSTRAINT IF EXISTS "Batch_assessorId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Batch" DROP CONSTRAINT "Batch_classroomId_fkey";
+ALTER TABLE "Batch" DROP CONSTRAINT IF EXISTS "Batch_classroomId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Batch" DROP CONSTRAINT "Batch_programId_fkey";
+ALTER TABLE "Batch" DROP CONSTRAINT IF EXISTS "Batch_programId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "ClassSession" DROP CONSTRAINT "ClassSession_batchId_fkey";
+ALTER TABLE "ClassSession" DROP CONSTRAINT IF EXISTS "ClassSession_batchId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Enrollment" DROP CONSTRAINT "Enrollment_batchId_fkey";
+ALTER TABLE "Enrollment" DROP CONSTRAINT IF EXISTS "Enrollment_batchId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "K3Log" DROP CONSTRAINT "K3Log_enrollmentId_fkey";
+ALTER TABLE "K3Log" DROP CONSTRAINT IF EXISTS "K3Log_enrollmentId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "UnitSchema" DROP CONSTRAINT "UnitSchema_programId_fkey";
+ALTER TABLE "UnitSchema" DROP CONSTRAINT IF EXISTS "UnitSchema_programId_fkey";
 
 -- AlterTable
-ALTER TABLE "CertificateConfig" ADD COLUMN     "programId" TEXT,
-ADD COLUMN     "signatoryName" TEXT,
-ADD COLUMN     "signatoryTitle" TEXT,
-ADD COLUMN     "validityMonths" INTEGER,
+ALTER TABLE "CertificateConfig" ADD COLUMN IF NOT EXISTS "programId" TEXT,
+ADD COLUMN IF NOT EXISTS "signatoryName" TEXT,
+ADD COLUMN IF NOT EXISTS "signatoryTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "validityMonths" INTEGER,
 ALTER COLUMN "id" DROP DEFAULT;
 
 -- AlterTable
-ALTER TABLE "ClassSession" ADD COLUMN     "assessorId" TEXT,
-ADD COLUMN     "jp" INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE "ClassSession" ADD COLUMN IF NOT EXISTS "assessorId" TEXT,
+ADD COLUMN IF NOT EXISTS "jp" INTEGER NOT NULL DEFAULT 1;
 
 -- CreateTable
-CREATE TABLE "AiBrain" (
+CREATE TABLE IF NOT EXISTS "AiBrain" (
     "id" TEXT NOT NULL,
     "purpose" TEXT NOT NULL,
     "systemPrompt" TEXT NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE "AiBrain" (
 );
 
 -- CreateTable
-CREATE TABLE "Article" (
+CREATE TABLE IF NOT EXISTS "Article" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -63,13 +63,13 @@ CREATE TABLE "Article" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "AiBrain_purpose_key" ON "AiBrain"("purpose");
+CREATE UNIQUE INDEX IF NOT EXISTS "AiBrain_purpose_key" ON "AiBrain"("purpose");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Article_slug_key" ON "Article"("slug");
+CREATE UNIQUE INDEX IF NOT EXISTS "Article_slug_key" ON "Article"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CertificateConfig_programId_key" ON "CertificateConfig"("programId");
+CREATE UNIQUE INDEX IF NOT EXISTS "CertificateConfig_programId_key" ON "CertificateConfig"("programId");
 
 -- AddForeignKey
 ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "ClassSession"("id") ON DELETE CASCADE ON UPDATE CASCADE;
