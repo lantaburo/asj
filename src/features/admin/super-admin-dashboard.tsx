@@ -67,27 +67,6 @@ export function SuperAdminDashboard({ data }: { data: any }) {
 
   return (
     <div style={{ display: 'grid', gap: '30px' }}>
-      {/* Row 1: Revenue, Program, Batch */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
-        <MetricCard title="Revenue" value={formatCurrency(metrics.revenue)} icon={<TrendingUp size={24} />} color="#283593" />
-        <MetricCard title="Program" value={metrics.programs} icon={<BookOpen size={24} />} color="#5C6BC0" />
-        <MetricCard title="Batch" value={metrics.batches} icon={<Layers size={24} />} color="#26A69A" />
-      </div>
-
-      {/* Row 2: Total Peserta, Kompeten, Tidak Kompeten */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
-        <MetricCard title="Total Peserta" value={metrics.participants} icon={<Users size={24} />} color="#00ACC1" />
-        <MetricCard title="Kompeten" value={metrics.competent} icon={<CheckCircle size={24} />} color="#43A047" />
-        <MetricCard title="Tidak Kompeten" value={metrics.notCompetent} icon={<XCircle size={24} />} color="#EF5350" />
-      </div>
-
-      {/* Row 3: Instruktur, Asesor, Total JP */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
-        <MetricCard title="Instruktur" value={metrics.instructors} icon={<UserCheck size={24} />} color="#7E57C2" />
-        <MetricCard title="Asesor" value={metrics.assessors} icon={<UserCheck size={24} />} color="#AB47BC" />
-        <MetricCard title="Total JP" value={`${metrics.totalJP} JP`} icon={<Clock size={24} />} color="#FB8C00" />
-      </div>
-
       {/* Chart Section */}
       <div className="britsafe-card" style={{ padding: '32px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
@@ -138,7 +117,7 @@ export function SuperAdminDashboard({ data }: { data: any }) {
             <LineChart data={timeSeries}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E0E0E0" />
               <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis yAxisId="left" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `Rp${(val/1000000).toFixed(0)}M`} />
+              <YAxis yAxisId="left" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => \`Rp\${(val/1000000).toFixed(0)}M\`} />
               <YAxis yAxisId="right" orientation="right" fontSize={12} tickLine={false} axisLine={false} />
               <Tooltip 
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
@@ -157,6 +136,27 @@ export function SuperAdminDashboard({ data }: { data: any }) {
             </LineChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Row 1: Revenue, Program, Batch */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+        <MetricCard title="Revenue" value={formatCurrency(metrics.revenue)} icon={<TrendingUp size={24} />} color="#283593" />
+        <MetricCard title="Program" value={metrics.programs} icon={<BookOpen size={24} />} color="#5C6BC0" />
+        <MetricCard title="Batch" value={metrics.batches} icon={<Layers size={24} />} color="#26A69A" />
+      </div>
+
+      {/* Row 2: Total Peserta, Kompeten, Tidak Kompeten */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+        <MetricCard title="Total Peserta" value={metrics.participants} icon={<Users size={24} />} color="#00ACC1" />
+        <MetricCard title="Kompeten" value={metrics.competent} icon={<CheckCircle size={24} />} color="#43A047" />
+        <MetricCard title="Tidak Kompeten" value={metrics.notCompetent} icon={<XCircle size={24} />} color="#EF5350" />
+      </div>
+
+      {/* Row 3: Instruktur, Asesor, Total JP */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+        <MetricCard title="Instruktur" value={metrics.instructors} icon={<UserCheck size={24} />} color="#7E57C2" />
+        <MetricCard title="Asesor" value={metrics.assessors} icon={<UserCheck size={24} />} color="#AB47BC" />
+        <MetricCard title="Total JP" value={`${metrics.totalJP} JP`} icon={<Clock size={24} />} color="#FB8C00" />
       </div>
 
       {/* Row 4: Pareto */}
