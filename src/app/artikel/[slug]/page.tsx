@@ -1,7 +1,6 @@
 import { getArticleBySlug } from "@/features/cms/article.service";
 import { notFound } from "next/navigation";
-import { TopNavigationBar } from "@/features/landing-page/components/top-navigation-bar";
-import { LandingFooter } from "@/features/landing-page/components/landing-footer";
+import { LandingHeader } from "@/features/landing-page/landing-header";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Metadata } from 'next';
@@ -38,7 +37,7 @@ export default async function PublicArticlePage({ params }: { params: { slug: st
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#F8F9FA' }}>
-      <TopNavigationBar />
+      <LandingHeader />
       
       <main style={{ flex: 1, padding: '120px 20px 60px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
         <article className="britsafe-card" style={{ padding: '40px', background: 'white' }}>
@@ -77,7 +76,14 @@ export default async function PublicArticlePage({ params }: { params: { slug: st
         </article>
       </main>
 
-      <LandingFooter />
+      <footer className="britsafe-footer">
+        <div className="container">
+          <div className="britsafe-footer__bottom" style={{ textAlign: 'center', padding: '40px 20px', background: 'var(--ajs-navy)', color: 'white' }}>
+            <p>&copy; {new Date().getFullYear()} ARKAMA JAYA SERTIFIKASI. Semua hak dilindungi.</p>
+            <p style={{ opacity: 0.5 }}>Excellence in Safety Certification</p>
+          </div>
+        </div>
+      </footer>
 
       <style dangerouslySetInnerHTML={{__html: `
         .article-content h2 { margin-top: 32px; margin-bottom: 16px; font-size: 24px; color: var(--ajs-navy); }

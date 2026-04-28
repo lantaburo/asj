@@ -23,23 +23,6 @@ export default async function AdminDashboardPage() {
         <SuperAdminDashboard data={overviewData} />
       )}
 
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginTop: '20px' }}>
-        <Link href="/admin/master-data" className="britsafe-card" style={{ padding: '20px', textAlign: 'center', fontWeight: '700', textDecoration: 'none', color: 'var(--ajs-navy)' }}>
-          Master Data
-        </Link>
-        <Link href="/admin/unit-skema" className="britsafe-card" style={{ padding: '20px', textAlign: 'center', fontWeight: '700', textDecoration: 'none', color: 'var(--ajs-teal)' }}>
-          Unit Skema
-        </Link>
-        <Link href="/admin/sertifikasi" className="britsafe-card" style={{ padding: '20px', textAlign: 'center', fontWeight: '700', textDecoration: 'none', color: 'var(--ajs-orange)' }}>
-          Sertifikasi
-        </Link>
-        <Link href="/admin/artikel" className="britsafe-card" style={{ padding: '20px', textAlign: 'center', fontWeight: '700', textDecoration: 'none', color: '#7E57C2' }}>
-          Artikel AI
-        </Link>
-        <Link href="/admin/ai-brain" className="britsafe-card" style={{ padding: '20px', textAlign: 'center', fontWeight: '700', textDecoration: 'none', color: '#EF5350' }}>
-          AI Brain
-        </Link>
-      </section>
     </div>
   );
 }
