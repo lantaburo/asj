@@ -68,7 +68,7 @@ export function ArticleForm() {
   return (
     <div className="britsafe-card" style={{ padding: '40px' }}>
       <div style={{ display: 'grid', gap: '24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        <div className="responsive-grid-2">
           <div style={{ display: 'grid', gap: '8px' }}>
             <label style={{ fontWeight: '700', fontSize: '13px' }}>Model AI</label>
             <select 
@@ -157,7 +157,7 @@ export function ArticleForm() {
 
         <form action={handleSubmit} style={{ display: 'grid', gap: '24px' }}>
           <input type="hidden" name="author" id="hidden-author" />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div className="responsive-grid-2">
             <div style={{ display: 'grid', gap: '8px' }}>
               <label style={{ fontWeight: '700', fontSize: '13px' }}>Versi / Revisi</label>
               <input name="version" defaultValue="1.0" style={{ padding: '12px', borderRadius: '8px', border: '1px solid var(--ajs-border)' }} />

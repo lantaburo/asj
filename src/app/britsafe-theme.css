@@ -562,7 +562,7 @@ button {
   z-index: 1010;
   position: absolute;
   right: 16px;
-  top: 28px;
+  top: 8px;
 }
 
 .mobile-menu-button span {
@@ -596,6 +596,32 @@ button {
   .admin-layout-hero {
     grid-template-columns: 1fr;
   }
+}
+
+.admin-portal-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.admin-portal-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px;
+  z-index: 10;
+}
+
+.responsive-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.responsive-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
 @media (max-width: 768px) {
@@ -647,6 +673,19 @@ button {
 
   .footer-col-wide {
     grid-column: 1 / -1;
+  }
+
+  .admin-portal-layout {
+    flex-direction: column;
+  }
+
+  .admin-portal-sidebar {
+    width: 100%;
+    position: static;
+  }
+
+  .responsive-grid-2, .responsive-grid-3 {
+    grid-template-columns: 1fr;
   }
 
   .britsafe-hero__grid {

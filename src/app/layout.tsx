@@ -4,9 +4,20 @@ import "@/app/britsafe-theme.css";
 import { env } from "@/lib/env";
 
 export const metadata: Metadata = {
-  title: `${env.NEXT_PUBLIC_APP_NAME} | Sistem Informasi Pelatihan K3`,
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
+  title: `${env.NEXT_PUBLIC_APP_NAME} | Lembaga Pelatihan & Sertifikasi K3`,
   description:
-    "Platform AJS untuk pengelolaan pelatihan, batch, pendaftaran, dan absensi K3 yang terintegrasi dengan landing page publik."
+    "Lembaga pelatihan dan sertifikasi K3 resmi Kemnaker RI. Arkama Jaya Sertifikasi membantu meningkatkan kompetensi keselamatan kerja Anda secara profesional.",
+  keywords: [
+    "Pelatihan K3",
+    "Sertifikasi K3",
+    "K3 Kemnaker",
+    "Ahli K3 Umum",
+    "Arkama Jaya Sertifikasi",
+    "AJS",
+    "Keselamatan Kerja"
+  ],
+  authors: [{ name: "Arkama Jaya Sertifikasi" }],
 };
 
 export default function RootLayout({

@@ -52,8 +52,8 @@ export default async function AdminLayout({
       </header>
 
       <main className="britsafe-gray" style={{ minHeight: 'calc(100vh - 140px)', padding: '40px 0' }}>
-        <div className="container" style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
-          <aside style={{ width: '260px', flexShrink: 0, position: 'sticky', top: '100px', zIndex: 10 }}>
+        <div className="container admin-portal-layout">
+          <aside className="admin-portal-sidebar">
             <div style={{ marginBottom: '24px' }}>
               <AdminNav canOpenMasterData={canOpenMasterData} canOpenLandingSettings={canOpenLandingSettings} />
             </div>

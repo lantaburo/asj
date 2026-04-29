@@ -103,7 +103,7 @@ export function PaymentSettingsClient({ initialSettings }: { initialSettings: Pa
           <h3 style={{ marginTop: 0, color: 'var(--ajs-navy)', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Building2 size={20} /> {isEditing ? "Edit Rekening" : "Tambah Rekening Baru"}
           </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+          <div className="responsive-grid-2" style={{ marginTop: '20px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '13px' }}>Nama Bank (misal: BCA, Mandiri)</label>
               <input 

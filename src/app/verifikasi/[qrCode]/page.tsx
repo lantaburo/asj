@@ -62,7 +62,7 @@ export default async function VerificationPage({ params }: VerificationPageProps
 
         <section className="section-padding">
           <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '40px' }}>
+            <div className="admin-layout-hero">
               <article className="britsafe-card" style={{ borderTop: '4px solid var(--ajs-green)' }}>
                 <span className="britsafe-card__category" style={{ color: 'var(--ajs-green)' }}>
                   {certificate.issued ? "Verified Certificate" : certificate.assessmentStatus}

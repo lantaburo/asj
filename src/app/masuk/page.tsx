@@ -55,7 +55,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <main>
         <section className="britsafe-hero" style={{ paddingBlock: '80px' }}>
           <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '60px', alignItems: 'center' }}>
+            <div className="admin-layout-hero" style={{ alignItems: 'center' }}>
               <div className="britsafe-hero__content">
                 <span className="britsafe-hero__kicker">Internal Workspace Access</span>
                 <h1 className="britsafe-hero__title" style={{ fontSize: '48px' }}>
