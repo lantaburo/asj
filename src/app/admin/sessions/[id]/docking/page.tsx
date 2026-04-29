@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { getCurrentSessionUser } from "@/features/auth/auth.service";
 import { getSessionDetail } from "@/features/sessions/session.service";
 import { QRCodeSVG } from "qrcode.react";
@@ -28,7 +29,11 @@ export default async function SessionDockingPage({
     redirect("/admin/buat-program");
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") || headersList.get("host") || "localhost:3000";
+  const protocol = headersList.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
+  
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
   const attendanceUrl = `${baseUrl}/absen?sessionId=${session.id}`;
 
   return (
