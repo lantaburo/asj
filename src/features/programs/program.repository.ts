@@ -147,6 +147,14 @@ export async function findActiveProgramsWithOpenBatches() {
   });
 }
 
+export async function findComingSoonPrograms() {
+  return prisma.program.findMany({
+    where: { isActive: false },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, title: true, category: true, customCategory: true, industryType: true, description: true }
+  });
+}
+
 export async function deleteProgram(programId: string) {
   return prisma.program.delete({
     where: { id: programId }
@@ -163,7 +171,7 @@ export async function listProgramStatisticsAdmin() {
           instructor: { select: { fullName: true } },
           enrollments: {
             include: {
-              user: { select: { fullName: true, email: true } }
+              user: { select: { fullName: true, email: true, participantDocuments: true } }
             }
           },
           sessions: {

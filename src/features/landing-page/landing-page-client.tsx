@@ -163,12 +163,14 @@ const faqsData = [
   }
 ];
 
-export function LandingPageClient({ 
-  programs, 
-  totalParticipants 
-}: { 
+export function LandingPageClient({
+  programs,
+  totalParticipants,
+  comingSoonPrograms
+}: {
   programs: Awaited<ReturnType<typeof getPublicPrograms>>,
-  totalParticipants: number
+  totalParticipants: number,
+  comingSoonPrograms: { id: string; title: string; categoryLabel: string; industryType: string; description: string | null }[]
 }) {
     const openBatches = countOpenBatches(programs);
     const availableSeats = countAvailableSeats(programs);
@@ -285,6 +287,52 @@ export function LandingPageClient({
               </div>
             </div>
           </section>
+
+          {comingSoonPrograms.length > 0 && (
+            <section className="section-padding britsafe-gray">
+              <div className="container">
+                <div style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 48px" }}>
+                  <h2 className="britsafe-section-title">Segera Hadir</h2>
+                  <p className="britsafe-section-subtitle">
+                    Program pelatihan baru yang sedang kami persiapkan. Daftarkan minat Anda lebih awal.
+                  </p>
+                </div>
+                <div className="britsafe-grid">
+                  {comingSoonPrograms.map((program) => (
+                    <article
+                      key={program.id}
+                      className="britsafe-card"
+                      style={{ opacity: 0.85, position: "relative", overflow: "hidden" }}
+                    >
+                      <div style={{
+                        position: "absolute",
+                        top: "16px",
+                        right: "16px",
+                        background: "var(--ajs-navy)",
+                        color: "white",
+                        fontSize: "11px",
+                        fontWeight: "700",
+                        padding: "4px 10px",
+                        borderRadius: "20px",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px"
+                      }}>
+                        Segera Hadir
+                      </div>
+                      <span className="britsafe-card__category">{formatLabel(program.categoryLabel)}</span>
+                      <h3 className="britsafe-card__title">{program.title}</h3>
+                      <p className="britsafe-card__copy">
+                        {program.description ?? "Program pelatihan ini sedang dalam persiapan. Informasi lengkap akan segera tersedia."}
+                      </p>
+                      <div style={{ fontSize: "13px", color: "var(--ajs-muted)", fontStyle: "italic" }}>
+                        Jadwal akan diumumkan segera
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
 
           <section id="categories" className="section-padding britsafe-gray">
             <div className="container">

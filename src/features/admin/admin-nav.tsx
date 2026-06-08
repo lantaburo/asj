@@ -63,6 +63,18 @@ const verifikasiPembayaranLink = {
   description: "Cek dan setujui bukti transfer."
 } as const;
 
+const pesertaLink = {
+  href: "/admin/peserta",
+  label: "Peserta",
+  description: "Daftar peserta dan kelengkapan dokumen."
+} as const;
+
+const pelatihanPopLink = {
+  href: "/admin/pelatihan/pop",
+  label: "Pelatihan POP",
+  description: "Monitor pendaftar, pembayaran, dan dokumen POP."
+} as const;
+
 function isActivePath(pathname: string, href: string) {
   if (href === "/admin") {
     return pathname === href;
@@ -77,7 +89,7 @@ export function AdminNav({ canOpenMasterData, canOpenLandingSettings }: AdminNav
   let links: NavLink[] = [...baseLinks];
 
   if (canOpenMasterData) {
-    links = [baseLinks[0], masterDataLink, unitSkemaLink, buatProgramLink, baseLinks[1], verifikasiPembayaranLink, pengaturanSertifikatLink, pengaturanPembayaranLink];
+    links = [baseLinks[0], masterDataLink, unitSkemaLink, buatProgramLink, baseLinks[1], pesertaLink, pelatihanPopLink, verifikasiPembayaranLink, pengaturanSertifikatLink, pengaturanPembayaranLink];
   }
 
   if (canOpenLandingSettings) {

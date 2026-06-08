@@ -394,6 +394,86 @@ export default async function PesertaDashboardPage() {
             </article>
           </section>
 
+          {enrollments.length > 0 && (
+            <section className="britsafe-card" style={{ padding: "24px" }}>
+              <h2 className="britsafe-card__title" style={{ fontSize: "20px", marginBottom: "6px" }}>
+                Persyaratan Pendaftaran
+              </h2>
+              <p style={{ fontSize: "13px", color: "var(--ajs-muted)", marginBottom: "20px" }}>
+                Pastikan semua dokumen berikut telah disiapkan dan diunggah sebelum pelaksanaan diklat.
+              </p>
+              <a
+                href="#dokumen-saya"
+                className="btn btn-primary"
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "24px" }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 5v14M5 12l7 7 7-7" />
+                </svg>
+                Tambah Dokumen
+              </a>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
+                <div>
+                  <p style={{ fontSize: "12px", fontWeight: 700, color: "var(--ajs-muted)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>
+                    Dokumen Wajib
+                  </p>
+                  {[
+                    "KTP (Kartu Tanda Penduduk)",
+                    "CV (Curriculum Vitae)",
+                    "Pas Foto Background Merah",
+                    "Surat Pengalaman Kerja / Paklaring",
+                  ].map((item) => {
+                    const uploaded = participantDocuments.some((d) =>
+                      d.label?.toLowerCase().includes(item.split(" ")[0].toLowerCase())
+                    );
+                    return (
+                      <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "10px" }}>
+                        <div style={{
+                          width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0, marginTop: "1px",
+                          background: uploaded ? "rgba(0,166,81,0.15)" : "rgba(0,0,0,0.06)",
+                          display: "flex", alignItems: "center", justifyContent: "center"
+                        }}>
+                          {uploaded ? (
+                            <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                              <path d="M2 6l3 3 5-5" stroke="#00A651" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          ) : (
+                            <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--ajs-muted)" }} />
+                          )}
+                        </div>
+                        <span style={{ fontSize: "14px", color: uploaded ? "var(--ajs-navy)" : "var(--ajs-muted)" }}>{item}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div>
+                  <p style={{ fontSize: "12px", fontWeight: 700, color: "var(--ajs-muted)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>
+                    Pendidikan & Pengalaman Kerja
+                  </p>
+                  {[
+                    "Ijazah SMA + Pengalaman Kerja Min. 10 Tahun",
+                    "Ijazah D3 + Pengalaman Kerja Min. 3 Tahun",
+                    "Ijazah S1 + Pengalaman Kerja Min. 1 Tahun",
+                  ].map((item) => (
+                    <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "10px" }}>
+                      <div style={{
+                        width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0, marginTop: "1px",
+                        background: "rgba(234,115,25,0.1)",
+                        display: "flex", alignItems: "center", justifyContent: "center"
+                      }}>
+                        <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--ajs-orange)" }} />
+                      </div>
+                      <span style={{ fontSize: "14px", color: "var(--ajs-muted)" }}>{item}</span>
+                    </div>
+                  ))}
+                  <p style={{ fontSize: "12px", color: "var(--ajs-muted)", marginTop: "8px", fontStyle: "italic" }}>
+                    * Pilih salah satu yang sesuai dengan latar belakang pendidikan Anda.
+                  </p>
+                </div>
+              </div>
+            </section>
+          )}
+
           <ParticipantDocumentsPanel initialDocuments={participantDocuments} />
         </div>
       </main>

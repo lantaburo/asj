@@ -23,6 +23,7 @@ type ProgramStats = {
       userName: string;
       userEmail: string;
       assessmentStatus: string;
+      documentCount: number;
     }>;
     sessions: Array<{
       id: string;
@@ -34,7 +35,18 @@ type ProgramStats = {
   }>;
 };
 
-export function ProgramStatisticsTree({ programs }: { programs: ProgramStats[] }) {
+type ClassroomOption = { id: string; roomName: string };
+type InstructorOption = { id: string; fullName: string };
+
+export function ProgramStatisticsTree({
+  programs,
+  classrooms = [],
+  instructors = []
+}: {
+  programs: ProgramStats[];
+  classrooms?: ClassroomOption[];
+  instructors?: InstructorOption[];
+}) {
   const [openPrograms, setOpenPrograms] = useState<Record<string, boolean>>({});
   const [openBatches, setOpenBatches] = useState<Record<string, boolean>>({});
 
@@ -146,9 +158,16 @@ export function ProgramStatisticsTree({ programs }: { programs: ProgramStats[] }
                           <span style={{ color: "var(--ajs-orange)", fontSize: "12px", textTransform: "uppercase" }}>{batch.status}</span>
                           <span>| Batch: {formatDateRange(new Date(batch.startDate), new Date(batch.endDate))}</span>
                         </div>
-                        <div style={{ fontSize: "12px", color: "var(--ajs-text)", display: "flex", gap: "12px" }}>
+                        <div style={{ fontSize: "12px", color: "var(--ajs-text)", display: "flex", gap: "12px", alignItems: "center" }}>
                           <span>{batch.sessions.length} Session</span>
                           <span>{batch.enrollments.length}/{batch.quota} Peserta</span>
+                          <a
+                            href="/admin/peserta"
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ fontSize: "11px", fontWeight: 700, color: "var(--ajs-orange)", textDecoration: "none", padding: "2px 8px", border: "1px solid var(--ajs-orange)", borderRadius: "4px" }}
+                          >
+                            Peserta & Dokumen →
+                          </a>
                         </div>
                       </div>
 
@@ -207,15 +226,33 @@ export function ProgramStatisticsTree({ programs }: { programs: ProgramStats[] }
                                         </a>
                                       </div>
                                       <div style={{ marginTop: "8px" }}>
-                                        <CrudActions 
-                                          endpoint={`/api/sessions/${session.id}`} 
-                                          itemName="Session" 
+                                        <CrudActions
+                                          endpoint={`/api/sessions/${session.id}`}
+                                          itemName="Session"
                                           initialData={session}
                                           editFields={[
                                             { name: "title", label: "Judul Sesi", type: "text", required: true },
                                             { name: "sessionDate", label: "Tanggal Sesi", type: "datetime-local", required: true },
                                             { name: "startTime", label: "Waktu Mulai", type: "datetime-local", required: true },
-                                            { name: "endTime", label: "Waktu Selesai", type: "datetime-local", required: true }
+                                            { name: "endTime", label: "Waktu Selesai", type: "datetime-local", required: true },
+                                            ...(classrooms.length > 0 ? [{
+                                              name: "classroomId",
+                                              label: "Ruang Kelas",
+                                              type: "select" as const,
+                                              options: [
+                                                { value: "", label: "— Pilih Ruang Kelas —" },
+                                                ...classrooms.map(c => ({ value: c.id, label: c.roomName }))
+                                              ]
+                                            }] : []),
+                                            ...(instructors.length > 0 ? [{
+                                              name: "instructorId",
+                                              label: "Instruktur",
+                                              type: "select" as const,
+                                              options: [
+                                                { value: "", label: "— Pilih Instruktur —" },
+                                                ...instructors.map(i => ({ value: i.id, label: i.fullName }))
+                                              ]
+                                            }] : [])
                                           ]}
                                         />
                                       </div>
@@ -238,7 +275,13 @@ export function ProgramStatisticsTree({ programs }: { programs: ProgramStats[] }
                                         <div style={{ fontWeight: "600", color: "var(--ajs-navy)" }}>{index + 1}. {enrollment.userName}</div>
                                         <div style={{ color: "var(--ajs-muted)", fontSize: "11px" }}>{enrollment.userEmail}</div>
                                       </div>
-                                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "4px", fontWeight: "700",
+                                          background: enrollment.documentCount > 0 ? "rgba(0,166,81,0.1)" : "rgba(227,30,36,0.1)",
+                                          color: enrollment.documentCount > 0 ? "var(--ajs-green)" : "#e31e24"
+                                        }}>
+                                          {enrollment.documentCount > 0 ? `${enrollment.documentCount} dok` : "0 dok"}
+                                        </span>
                                         <span style={{ fontSize: "10px", padding: "2px 6px", background: "var(--ajs-gray)", borderRadius: "4px", fontWeight: "700", color: enrollment.assessmentStatus === "KOMPETEN" ? "var(--ajs-green)" : "var(--ajs-text)" }}>
                                           {enrollment.assessmentStatus}
                                         </span>

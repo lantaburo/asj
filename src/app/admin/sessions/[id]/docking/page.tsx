@@ -34,7 +34,7 @@ export default async function SessionDockingPage({
   const protocol = headersList.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
   
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
-  const attendanceUrl = `${baseUrl}/absen?sessionId=${session.id}`;
+  const attendanceUrl = `${baseUrl}/absen/foto?sessionId=${session.id}`;
 
   return (
     <div style={{
@@ -70,7 +70,7 @@ export default async function SessionDockingPage({
             display: 'block',
             marginBottom: '8px'
           }}>
-            Scan untuk Presensi Kehadiran
+            Scan QR → Foto → Kehadiran Tercatat
           </span>
           <h1 style={{ 
             fontSize: '32px', 
@@ -144,7 +144,7 @@ export default async function SessionDockingPage({
       </div>
       
       <p style={{ marginTop: '20px', opacity: 0.7, fontSize: '13px' }}>
-        Pastikan GPS perangkat aktif saat melakukan scan. Link ini terenkripsi khusus untuk sesi ini.
+        Peserta scan QR → kamera terbuka otomatis → foto → kehadiran tercatat.
       </p>
     </div>
   );

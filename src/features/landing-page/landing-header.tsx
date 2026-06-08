@@ -24,6 +24,7 @@ export function LandingHeader() {
           <nav className="britsafe-nav">
             <a href="#programs">Programs</a>
             <a href="#jadwal">Schedule</a>
+            <Link href="/tentang-kami">Tentang Kami</Link>
             <Link href="/daftar">Daftar Pelatihan</Link>
             <button 
               onClick={() => setIsModalOpen(true)}

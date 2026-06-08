@@ -25,7 +25,7 @@ export async function findSessionById(sessionId: string) {
 export async function createAttendance(input: {
   sessionId: string;
   userId: string;
-  gpsCoordinates: Prisma.InputJsonValue;
+  gpsCoordinates?: Prisma.InputJsonValue;
   selfieUrl?: string;
   deviceInfo?: string;
   status?: AttendanceStatus;

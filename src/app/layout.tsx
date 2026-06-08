@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import "@/app/britsafe-theme.css";
 import { env } from "@/lib/env";
+import { WAFloatingButton } from "@/features/landing-page/wa-floating-button";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
@@ -27,7 +28,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}
+        <WAFloatingButton />
+      </body>
     </html>
   );
 }

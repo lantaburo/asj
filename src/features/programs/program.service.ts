@@ -8,12 +8,24 @@ import {
 import {
   createProgram,
   findActiveProgramsWithOpenBatches,
+  findComingSoonPrograms,
   findProgramById,
   listProgramsAdmin,
   updateProgram,
   deleteProgram,
   listProgramStatisticsAdmin
 } from "@/features/programs/program.repository";
+
+export async function getComingSoonPrograms() {
+  const programs = await findComingSoonPrograms();
+  return programs.map((p) => ({
+    id: p.id,
+    title: p.title,
+    categoryLabel: p.customCategory ?? p.category,
+    industryType: p.industryType,
+    description: p.description,
+  }));
+}
 
 function mapAdminProgram(program: Awaited<ReturnType<typeof listProgramsAdmin>>[number]) {
   const categoryLabel = program.customCategory ?? program.category;
@@ -161,7 +173,8 @@ export async function getProgramStatisticsList() {
         id: e.id,
         userName: e.user.fullName,
         userEmail: e.user.email,
-        assessmentStatus: e.assessmentStatus
+        assessmentStatus: e.assessmentStatus,
+        documentCount: Array.isArray(e.user.participantDocuments) ? (e.user.participantDocuments as unknown[]).length : 0
       })),
       sessions: batch.sessions.map(s => ({
         id: s.id,

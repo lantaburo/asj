@@ -87,13 +87,28 @@ export default async function AdminBuatProgramPage() {
 
       <section style={{ marginBottom: '40px' }}>
         <div style={{ marginBottom: '32px' }}>
+          <span className="britsafe-card__category">Statistik & Presensi</span>
+          <h2 className="britsafe-card__title" style={{ fontSize: '24px', margin: '8px 0 0' }}>Program, Batch & Sesi</h2>
+          <p style={{ fontSize: '14px', color: 'var(--ajs-muted)', marginTop: '6px' }}>
+            Kelola sesi, lihat peserta, dan buka QR presensi kamera.
+          </p>
+        </div>
+        <ProgramStatisticsTree
+          programs={programStats}
+          classrooms={classrooms.map(c => ({ id: c.id, roomName: c.roomName }))}
+          instructors={internalMembers.map(m => ({ id: m.id, fullName: m.fullName }))}
+        />
+      </section>
+
+      <section style={{ marginBottom: '40px' }}>
+        <div style={{ marginBottom: '32px' }}>
           <span className="britsafe-card__category">Explorer Data</span>
           <h2 className="britsafe-card__title" style={{ fontSize: '24px', margin: '8px 0 0' }}>Manajemen Program, Batch & Sesi</h2>
         </div>
-        <MasterDataExplorer 
-          programs={programs} 
-          batches={batches} 
-          sessions={sessions} 
+        <MasterDataExplorer
+          programs={programs}
+          batches={batches}
+          sessions={sessions}
         />
       </section>
 
