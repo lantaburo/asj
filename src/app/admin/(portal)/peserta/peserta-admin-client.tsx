@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ParticipantDocumentRecord } from "@/features/participant-documents/participant-document.types";
 
 type Participant = {
+  enrollmentId: string;
   userId: string;
   fullName: string;
   email: string | null;
