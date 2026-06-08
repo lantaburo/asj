@@ -9,9 +9,9 @@ export function AJSLogo() {
     <div className={`britsafe-logo ${hasError ? "text-logo-fallback" : ""}`} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
       {!hasError && (
         <img
-          src="/logo.png"
+          src="/images/logoajs.jpeg"
           alt="AJS Logo"
-          style={{ height: "45px", width: "auto", transition: 'transform 0.3s ease' }}
+          style={{ height: "48px", width: "auto", transition: 'transform 0.3s ease' }}
           onError={() => setHasError(true)}
           className="header-logo-img"
         />
