@@ -417,17 +417,15 @@ export default async function PesertaDashboardPage() {
                   <p style={{ fontSize: "12px", fontWeight: 700, color: "var(--ajs-muted)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>
                     Dokumen Wajib
                   </p>
-                  {[
-                    "KTP (Kartu Tanda Penduduk)",
-                    "CV (Curriculum Vitae)",
-                    "Pas Foto Background Merah",
-                    "Surat Pengalaman Kerja / Paklaring",
-                  ].map((item) => {
-                    const uploaded = participantDocuments.some((d) =>
-                      d.label?.toLowerCase().includes(item.split(" ")[0].toLowerCase())
-                    );
+                  {([
+                    { label: "KTP (Kartu Tanda Penduduk)",       type: "KTP"        },
+                    { label: "CV (Curriculum Vitae)",             type: "CV"         },
+                    { label: "Pas Foto Background Merah",         type: "PAS_FOTO"   },
+                    { label: "Surat Pengalaman Kerja / Paklaring",type: "SURAT_KERJA"},
+                  ] as const).map((item) => {
+                    const uploaded = participantDocuments.some((d) => d.type === item.type);
                     return (
-                      <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "10px" }}>
+                      <div key={item.type} style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "10px" }}>
                         <div style={{
                           width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0, marginTop: "1px",
                           background: uploaded ? "rgba(0,166,81,0.15)" : "rgba(0,0,0,0.06)",
@@ -441,7 +439,7 @@ export default async function PesertaDashboardPage() {
                             <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--ajs-muted)" }} />
                           )}
                         </div>
-                        <span style={{ fontSize: "14px", color: uploaded ? "var(--ajs-navy)" : "var(--ajs-muted)" }}>{item}</span>
+                        <span style={{ fontSize: "14px", color: uploaded ? "var(--ajs-navy)" : "var(--ajs-muted)" }}>{item.label}</span>
                       </div>
                     );
                   })}
