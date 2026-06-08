@@ -74,8 +74,11 @@ export default function POPPage() {
         {/* Hero */}
         <section
           style={{
-            background: "linear-gradient(135deg, #0d1b2a 0%, #1b365d 60%, #0d1b2a 100%)",
-            padding: "80px 0 60px",
+            backgroundImage: `linear-gradient(135deg, rgba(13,27,42,0.88) 0%, rgba(27,54,93,0.78) 55%, rgba(13,27,42,0.92) 100%), url('/images/hero-k3.png')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center 40%",
+            backgroundRepeat: "no-repeat",
+            padding: "100px 0 80px",
             position: "relative",
             overflow: "hidden",
           }}
@@ -84,7 +87,7 @@ export default function POPPage() {
             style={{
               position: "absolute",
               inset: 0,
-              background: "radial-gradient(ellipse at 70% 50%, rgba(234,115,25,0.12) 0%, transparent 60%)",
+              background: "radial-gradient(ellipse at 65% 50%, rgba(234,115,25,0.18) 0%, transparent 55%)",
             }}
           />
           <div className="container" style={{ position: "relative", zIndex: 1 }}>
