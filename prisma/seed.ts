@@ -15,6 +15,7 @@ async function main() {
   const instructorId = "00000000-0000-0000-0000-000000000011";
   const traineeId = "00000000-0000-0000-0000-000000000012";
   const assessorId = "00000000-0000-0000-0000-000000000013";
+  const mujahidaId = "00000000-0000-0000-0000-000000000014";
   const programId = "00000000-0000-0000-0000-000000000021";
   const batchId = "00000000-0000-0000-0000-000000000031";
   const classroomId = "00000000-0000-0000-0000-000000000041";
@@ -39,6 +40,24 @@ async function main() {
       fullName: superAdminName,
       role: Role.SUPER_ADMIN,
       passwordHash: superAdminPasswordHash
+    }
+  });
+
+  const mujahidaEmail = "mujahida@ajs.local";
+  const mujahidaPasswordHash = hashPassword("Ajs@Mujahida2024");
+  await prisma.user.upsert({
+    where: { email: mujahidaEmail },
+    update: {
+      fullName: "Mujahida",
+      role: Role.ADMIN,
+      passwordHash: mujahidaPasswordHash
+    },
+    create: {
+      id: mujahidaId,
+      email: mujahidaEmail,
+      fullName: "Mujahida",
+      role: Role.ADMIN,
+      passwordHash: mujahidaPasswordHash
     }
   });
 

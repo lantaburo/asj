@@ -44,11 +44,24 @@ export async function toggleArticlePublish(id: string, currentStatus: boolean) {
   return prisma.$executeRaw`UPDATE "Article" SET "isPublished" = ${!currentStatus}, "updatedAt" = NOW() WHERE id = ${id}`;
 }
 
-export async function updateArticle(id: string, data: any) {
-  // Simplification for raw update: usually we build query dynamically
-  // But for now, let's just do a basic one if needed
-  console.log("Updating article via raw query:", id, data);
-  return { success: true };
+export async function updateArticle(id: string, data: {
+  title: string;
+  content: string;
+  author: string;
+  version: string;
+}) {
+  const seo = await generateSeoMetadata(data.title, data.content);
+  return prisma.$executeRaw`
+    UPDATE "Article" SET
+      title = ${data.title},
+      content = ${data.content},
+      author = ${data.author},
+      version = ${data.version},
+      "seoDescription" = ${seo.description},
+      "seoKeywords" = ${seo.keywords},
+      "updatedAt" = NOW()
+    WHERE id = ${id}
+  `;
 }
 
 export async function submitToGoogle(articleUrl: string) {
