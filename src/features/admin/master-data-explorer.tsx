@@ -294,7 +294,7 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
                     {s.attendanceCount} hadir
                   </span>
                   <a href={`/api/sessions/${s.id}/attendance/download`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ajs-navy)' }}>
-                    ↓ Download CSV
+                    ↓ Download PDF
                   </a>
                   <a href={`/admin/sessions/${s.id}/docking`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ajs-orange)' }}>
                     Launch Docking QR

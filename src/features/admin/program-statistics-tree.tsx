@@ -231,7 +231,7 @@ export function ProgramStatisticsTree({
                                               fontSize: "11px"
                                             }}
                                           >
-                                            ↓ Download CSV
+                                            ↓ Download PDF
                                           </a>
                                           <a 
                                             href={`/admin/sessions/${session.id}/docking`} 
