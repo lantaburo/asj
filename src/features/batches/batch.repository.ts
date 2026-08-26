@@ -105,6 +105,7 @@ export async function findBatchById(batchId: string) {
 }
 
 export async function createBatch(data: {
+  title?: string | null;
   programId: string;
   instructorId?: string | null;
   assessorId?: string | null;
@@ -118,6 +119,7 @@ export async function createBatch(data: {
 }) {
   return prisma.batch.create({
     data: {
+      title: data.title,
       programId: data.programId,
       instructorId: data.instructorId,
       assessorId: data.assessorId,

@@ -26,6 +26,7 @@ const optionalPrice = z.preprocess((value) => {
 }, z.coerce.number().int().nonnegative().nullable().optional());
 
 const batchBaseSchema = z.object({
+  title: z.string().nullable().optional(),
   programId: z.string().uuid(),
   instructorId: optionalUuid,
   assessorId: optionalUuid,

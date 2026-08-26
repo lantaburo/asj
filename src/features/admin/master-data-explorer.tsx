@@ -189,7 +189,7 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                   <div style={{ fontSize: '15px', fontWeight: 800, color: 'var(--ajs-orange)' }}>
-                    {formatDateRange(new Date(b.startDate), new Date(b.endDate))}
+                    {(b as any).title ? `${(b as any).title} (${formatDateRange(new Date(b.startDate), new Date(b.endDate))})` : formatDateRange(new Date(b.startDate), new Date(b.endDate))}
                   </div>
                   <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', background: b.status === "ARCHIVED" ? 'var(--ajs-border)' : 'var(--ajs-navy)', color: b.status === "ARCHIVED" ? 'var(--ajs-muted)' : 'white' }}>
                     {b.status}
@@ -214,6 +214,7 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
                       itemName="Batch" 
                       initialData={b}
                       editFields={[
+                        { name: "title", label: "Nama Batch (Opsional)", type: "text" },
                         { name: "startDate", label: "Tanggal Mulai", type: "datetime-local", required: true },
                         { name: "endDate", label: "Tanggal Selesai", type: "datetime-local", required: true },
                         { name: "quota", label: "Kuota Peserta", type: "number", required: true },
@@ -266,23 +267,24 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
               <div 
                 key={s.id} 
                 style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center', 
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
                   padding: '20px 24px', 
                   border: '1px solid var(--ajs-border)', 
                   borderRadius: '16px' 
                 }}
               >
-                <div>
-                  <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--ajs-navy)', margin: '0 0 4px 0' }}>{s.title}</h3>
-                  <div style={{ fontSize: '13px', color: 'var(--ajs-muted)' }}>
-                    {new Date(s.sessionDate).toLocaleDateString("id-ID", { weekday: 'long', day: 'numeric', month: 'long' })} • 
-                    {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
-                    {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                  <div>
+                    <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--ajs-navy)', margin: '0 0 4px 0' }}>{s.title}</h3>
+                    <div style={{ fontSize: '13px', color: 'var(--ajs-muted)' }}>
+                      {new Date(s.sessionDate).toLocaleDateString("id-ID", { weekday: 'long', day: 'numeric', month: 'long' })} • 
+                      {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
+                      {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
                   </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <span style={{ fontSize: '13px', color: 'var(--ajs-green)', fontWeight: 700, padding: '4px 8px', background: 'rgba(0,166,81,0.1)', borderRadius: '4px' }}>
                     {s.attendanceCount} hadir
                   </span>
@@ -309,6 +311,45 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
                     ]}
                   />
                 </div>
+                </div>
+                
+                <details style={{ width: '100%' }}>
+                  <summary style={{ fontSize: '12px', fontWeight: 700, cursor: 'pointer', color: 'var(--ajs-orange)', userSelect: 'none' }}>
+                    Lihat Data Peserta Hadir
+                  </summary>
+                  <div style={{ marginTop: '12px', padding: '16px', background: 'var(--ajs-gray)', borderRadius: '12px', fontSize: '12px' }}>
+                    {(!s.attendances || s.attendances.length === 0) ? (
+                      <div style={{ color: 'var(--ajs-muted)' }}>Belum ada peserta yang memindai QR Code untuk sesi ini.</div>
+                    ) : (
+                      <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '1px solid var(--ajs-border)' }}>
+                            <th style={{ padding: '8px 12px', color: 'var(--ajs-navy)' }}>Peserta</th>
+                            <th style={{ padding: '8px 12px', color: 'var(--ajs-navy)' }}>Waktu Check-in</th>
+                            <th style={{ padding: '8px 12px', color: 'var(--ajs-navy)' }}>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {s.attendances.map((a: any) => (
+                            <tr key={a.id} style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                              <td style={{ padding: '8px 12px' }}>
+                                <div style={{ fontWeight: 700, color: 'var(--ajs-navy)' }}>{a.userName}</div>
+                                <div style={{ fontSize: '10px', color: 'var(--ajs-muted)' }}>{a.userEmail}</div>
+                              </td>
+                              <td style={{ padding: '8px 12px' }}>{new Date(a.checkInTime).toLocaleTimeString('id-ID')}</td>
+                              <td style={{ padding: '8px 12px' }}>
+                                <span style={{ padding: '2px 6px', background: 'rgba(0,166,81,0.1)', color: 'var(--ajs-green)', borderRadius: '4px', fontWeight: 700 }}>
+                                  {a.status}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </details>
+
               </div>
             ))
           )}

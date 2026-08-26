@@ -47,6 +47,7 @@ model Attendance {
 
 model Batch {
   id            String         @id @default(uuid())
+  title         String?
   programId     String
   instructorId  String?
   startDate     DateTime

@@ -82,6 +82,7 @@ async function getProgramsWithBatchesAndParticipants() {
     title: p.title,
     batches: p.batches.map((b) => ({
       id: b.id,
+      title: b.title,
       startDate: b.startDate.toISOString(),
       endDate: b.endDate.toISOString(),
       status: b.status,

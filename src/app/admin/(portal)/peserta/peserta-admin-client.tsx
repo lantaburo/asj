@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ParticipantDocumentRecord } from "@/features/participant-documents/participant-document.types";
 import { CrudActions } from "@/features/admin/crud-actions";
 
@@ -32,6 +32,7 @@ type GlobalParticipant = {
 
 type BatchData = {
   id: string;
+  title?: string | null;
   startDate: string;
   endDate: string;
   status: string;
@@ -199,6 +200,19 @@ export function PesertaAdminClient({
   const [search, setSearch] = useState("");
   const [expandedBatch, setExpandedBatch] = useState<string | null>(null);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const bId = params.get("batchId");
+    if (bId) {
+      setActiveTab("program");
+      setExpandedBatch(bId);
+      setTimeout(() => {
+        const el = document.getElementById(`batch-section-${bId}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
+  }, []);
+
   const filtered = allParticipants.filter((p) => {
     const q = search.toLowerCase();
     return (
@@ -305,7 +319,7 @@ export function PesertaAdminClient({
                 {program.batches.map((batch) => {
                   const isOpen = expandedBatch === batch.id;
                   return (
-                    <div key={batch.id} style={{ border: "1px solid var(--ajs-border)", borderRadius: "8px", overflow: "hidden" }}>
+                    <div id={`batch-section-${batch.id}`} key={batch.id} style={{ border: "1px solid var(--ajs-border)", borderRadius: "8px", overflow: "hidden" }}>
                       <button
                         onClick={() => setExpandedBatch(isOpen ? null : batch.id)}
                         style={{
@@ -316,7 +330,7 @@ export function PesertaAdminClient({
                       >
                         <div style={{ textAlign: "left" }}>
                           <strong style={{ fontSize: "13px", color: "var(--ajs-navy)" }}>
-                            Batch {formatDate(batch.startDate)} – {formatDate(batch.endDate)}
+                            {batch.title ? `${batch.title} (${formatDate(batch.startDate)} – ${formatDate(batch.endDate)})` : `Batch ${formatDate(batch.startDate)} – ${formatDate(batch.endDate)}`}
                           </strong>
                           <span style={{ display: "block", fontSize: "12px", color: "var(--ajs-muted)" }}>
                             {batch.participants.length} peserta · {batch.status}

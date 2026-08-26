@@ -39,6 +39,19 @@ export async function listSessionsAdmin() {
         select: {
           attendances: true
         }
+      },
+      attendances: {
+        select: {
+          id: true,
+          checkInTime: true,
+          status: true,
+          user: {
+            select: {
+              fullName: true,
+              email: true
+            }
+          }
+        }
       }
     }
   });
@@ -75,6 +88,16 @@ export async function findSessionByIdForAdmin(sessionId: string) {
       },
       _count: {
         select: { attendances: true }
+      },
+      attendances: {
+        select: {
+          id: true,
+          checkInTime: true,
+          status: true,
+          user: {
+            select: { fullName: true, email: true }
+          }
+        }
       }
     }
   });

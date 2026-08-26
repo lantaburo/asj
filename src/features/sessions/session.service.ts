@@ -26,7 +26,14 @@ function mapSession(session: Awaited<ReturnType<typeof listSessionsAdmin>>[numbe
     batch: session.batch,
     classroom: session.classroom,
     instructor: session.instructor,
-    assessor: session.assessor
+    assessor: session.assessor,
+    attendances: session.attendances.map(a => ({
+      id: a.id,
+      checkInTime: a.checkInTime.toISOString(),
+      status: a.status,
+      userName: a.user.fullName,
+      userEmail: a.user.email
+    }))
   };
 }
 

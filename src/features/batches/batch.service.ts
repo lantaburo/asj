@@ -109,6 +109,7 @@ export async function createBatchRecord(payload: unknown) {
     parsed.status ?? inferBatchStatus(parsed.startDate, parsed.endDate);
 
   const batch = await createBatch({
+    title: parsed.title ?? null,
     programId: parsed.programId,
     instructorId: parsed.instructorId ?? null,
     assessorId: parsed.assessorId ?? null,

@@ -156,13 +156,13 @@ export function ProgramStatisticsTree({
                         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <span style={{ transition: 'transform 0.2s', transform: openBatches[batch.id] ? 'rotate(90deg)' : 'rotate(0deg)', fontSize: '8px' }}>▶</span>
                           <span style={{ color: "var(--ajs-orange)", fontSize: "12px", textTransform: "uppercase" }}>{batch.status}</span>
-                          <span>| Batch: {formatDateRange(new Date(batch.startDate), new Date(batch.endDate))}</span>
+                          <span>| {batch.title ? `${batch.title} (${formatDateRange(new Date(batch.startDate), new Date(batch.endDate))})` : `Batch: ${formatDateRange(new Date(batch.startDate), new Date(batch.endDate))}`}</span>
                         </div>
                         <div style={{ fontSize: "12px", color: "var(--ajs-text)", display: "flex", gap: "12px", alignItems: "center" }}>
                           <span>{batch.sessions.length} Session</span>
                           <span>{batch.enrollments.length}/{batch.quota} Peserta</span>
                           <a
-                            href="/admin/peserta"
+                            href={`/admin/peserta?batchId=${batch.id}`}
                             onClick={(e) => e.stopPropagation()}
                             style={{ fontSize: "11px", fontWeight: 700, color: "var(--ajs-orange)", textDecoration: "none", padding: "2px 8px", border: "1px solid var(--ajs-orange)", borderRadius: "4px" }}
                           >

@@ -391,11 +391,12 @@ export function MasterDataApiPanel({ programs, batches, classrooms, internalMemb
                   const fd = new FormData(e.currentTarget);
                   runSubmit({
                     step: "batch", endpoint: "/api/batches",
-                    body: { programId: fd.get("programId"), classroomId: fd.get("classroomId"), startDate: fd.get("startDate"), endDate: fd.get("endDate"), quota: fd.get("quota"), price: fd.get("price") },
+                    body: { title: getOptionalString(fd.get("title")), programId: fd.get("programId"), classroomId: fd.get("classroomId"), startDate: fd.get("startDate"), endDate: fd.get("endDate"), quota: fd.get("quota"), price: fd.get("price") },
                     successMessage: "Berhasil.", resetForm: () => (e.target as HTMLFormElement).reset(), nextStep: "session"
                   });
                 }}>
                   <h3>Create Batch</h3>
+                  <label className="field-group"><span>Nama Batch (Opsional)</span><input className="text-input" name="title" placeholder="Cth: Reguler 1 Agustus" /></label>
                   <label className="field-group"><span>Program</span>
                     <select className="text-input" name="programId" required>
                       {programs.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
