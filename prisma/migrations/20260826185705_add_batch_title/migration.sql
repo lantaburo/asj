@@ -1,0 +1,1 @@
+ALTER TABLE "Batch" ADD COLUMN "title" TEXT;
