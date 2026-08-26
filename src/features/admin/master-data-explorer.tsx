@@ -293,6 +293,9 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
                   <span style={{ fontSize: '13px', color: 'var(--ajs-green)', fontWeight: 700, padding: '4px 8px', background: 'rgba(0,166,81,0.1)', borderRadius: '4px' }}>
                     {s.attendanceCount} hadir
                   </span>
+                  <a href={`/api/sessions/${s.id}/attendance/download`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ajs-navy)' }}>
+                    ↓ Download CSV
+                  </a>
                   <a href={`/admin/sessions/${s.id}/docking`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ajs-orange)' }}>
                     Launch Docking QR
                   </a>

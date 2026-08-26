@@ -219,19 +219,34 @@ export function ProgramStatisticsTree({
                                       <div style={{ color: "var(--ajs-muted)", marginBottom: "4px" }}>{new Date(session.sessionDate).toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "long" })} • {session.instructorName}</div>
                                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                         <span style={{ color: "var(--ajs-green)", fontWeight: "600" }}>{session.attendanceCount} hadir</span>
-                                        <a 
-                                          href={`/admin/sessions/${session.id}/docking`} 
-                                          target="_blank" 
-                                          rel="noopener noreferrer"
-                                          style={{ 
-                                            color: "var(--ajs-orange)", 
-                                            fontWeight: "700", 
-                                            textDecoration: "underline",
-                                            fontSize: "11px"
-                                          }}
-                                        >
-                                          Launch Docking (QR)
-                                        </a>
+                                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                                          <a 
+                                            href={`/api/sessions/${session.id}/attendance/download`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                              color: "var(--ajs-navy)",
+                                              fontWeight: "700",
+                                              textDecoration: "underline",
+                                              fontSize: "11px"
+                                            }}
+                                          >
+                                            ↓ Download CSV
+                                          </a>
+                                          <a 
+                                            href={`/admin/sessions/${session.id}/docking`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={{ 
+                                              color: "var(--ajs-orange)", 
+                                              fontWeight: "700", 
+                                              textDecoration: "underline",
+                                              fontSize: "11px"
+                                            }}
+                                          >
+                                            Launch Docking (QR)
+                                          </a>
+                                        </div>
                                       </div>
                                       <div style={{ marginTop: "8px" }}>
                                         <CrudActions
