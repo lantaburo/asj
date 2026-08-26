@@ -31,6 +31,7 @@ function inferBatchStatus(startDate: Date, endDate: Date, now: Date = new Date()
 function mapBatchAdmin(batch: Awaited<ReturnType<typeof listBatchesAdmin>>[number]) {
   return {
     id: batch.id,
+    title: batch.title,
     startDate: batch.startDate.toISOString(),
     endDate: batch.endDate.toISOString(),
     quota: batch.quota,

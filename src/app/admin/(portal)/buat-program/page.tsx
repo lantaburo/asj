@@ -63,8 +63,8 @@ export default async function AdminBuatProgramPage() {
         batches={batches.map((batch) => ({
           id: batch.id,
           title: batch.title,
-          startDate: batch.startDate.toISOString(),
-          endDate: batch.endDate.toISOString(),
+          startDate: batch.startDate,
+          endDate: batch.endDate,
           status: batch.status,
           programTitle: batch.program.title
         }))}
