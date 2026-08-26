@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import PDFDocument from "pdfkit";
 
-import { requireAuthenticatedSessionUser } from "@/features/auth/auth.service";
+import { requireAuthenticatedSessionUser, canAccessAdminPortal } from "@/features/auth/auth.service";
 import { handleApiError } from "@/lib/handle-api-error";
 import { AppError } from "@/lib/app-error";
 import { prisma } from "@/lib/prisma";
@@ -166,8 +166,8 @@ export async function GET(
 ) {
   try {
     const currentUser = await requireAuthenticatedSessionUser();
-    if (currentUser.role !== "ADMIN" && currentUser.role !== "INSTRUCTOR") {
-      throw new AppError("Akses ditolak.", { statusCode: 403 });
+    if (!canAccessAdminPortal(currentUser.role)) {
+      throw new AppError("Akses ditolak. Anda tidak memiliki izin untuk mengunduh.", { statusCode: 403 });
     }
 
     const { sessionId } = await params;
