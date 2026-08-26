@@ -423,7 +423,7 @@ export function MasterDataApiPanel({ programs, batches, classrooms, internalMemb
                   const fd = new FormData(e.currentTarget);
                   runSubmit({
                     step: "session", endpoint: "/api/sessions",
-                    body: { batchId: fd.get("batchId"), title: fd.get("title"), sessionDate: fd.get("sessionDate"), startTime: fd.get("startTime"), endTime: fd.get("endTime") },
+                    body: { batchId: fd.get("batchId"), title: fd.get("title"), sessionDate: fd.get("sessionDate"), startTime: fd.get("startTime"), endTime: fd.get("endTime"), classroomId: getOptionalString(fd.get("classroomId")), instructorId: getOptionalString(fd.get("instructorId")) },
                     successMessage: "Berhasil.", resetForm: () => (e.target as HTMLFormElement).reset(), nextStep: "member"
                   });
                 }}>
@@ -443,6 +443,18 @@ export function MasterDataApiPanel({ programs, batches, classrooms, internalMemb
                     <label className="field-group"><span>Mulai</span><input className="text-input" type="datetime-local" name="startTime" required /></label>
                     <label className="field-group"><span>Selesai</span><input className="text-input" type="datetime-local" name="endTime" required /></label>
                   </div>
+                  <label className="field-group"><span>Ruang Kelas (Opsional)</span>
+                    <select className="text-input" name="classroomId">
+                      <option value="">-- Menunggu Ruangan --</option>
+                      {classrooms.map(c => <option key={c.id} value={c.id}>{c.roomName}</option>)}
+                    </select>
+                  </label>
+                  <label className="field-group"><span>Instruktur (Opsional)</span>
+                    <select className="text-input" name="instructorId">
+                      <option value="">-- TBA --</option>
+                      {internalMembers.map(m => <option key={m.id} value={m.id}>{m.fullName}</option>)}
+                    </select>
+                  </label>
                   <button className="cta-primary" type="submit" disabled={isPending} style={{ width: '100%' }}>Create</button>
                   <FlashBanner flash={flashes.session} />
                 </form>
