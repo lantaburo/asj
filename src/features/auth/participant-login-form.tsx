@@ -92,7 +92,9 @@ export function ParticipantLoginForm() {
           autoComplete="current-password"
           placeholder="••••••••"
           required
+          minLength={6}
         />
+        <span className="field-helper">Password minimal 6 karakter.</span>
       </label>
 
       {error ? <div className="error-banner">{error}</div> : null}

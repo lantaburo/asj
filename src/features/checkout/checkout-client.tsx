@@ -12,14 +12,35 @@ type PaymentSetting = any; // Also pass active payment settings
 export function CheckoutClient({ invoice, paymentSettings }: { invoice: InvoiceDetail, paymentSettings: PaymentSetting[] }) {
   const router = useRouter();
   const [proofUrl, setProofUrl] = useState("");
+  const [previewSrc, setPreviewSrc] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // In a real app we'd use a file upload service (S3/Cloudinary), 
-  // but for MVP we can just ask for an image URL or simulate an upload.
-  const handleSimulateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Just simulating a file upload for MVP
-    setProofUrl("https://example.com/mock-receipt.jpg");
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Show local preview immediately
+    const reader = new FileReader();
+    reader.onload = (ev) => setPreviewSrc(ev.target?.result as string);
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/payment-proof", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || "Upload gagal.");
+      setProofUrl(data.data.url);
+    } catch (err: any) {
+      alert(err.message || "Gagal mengunggah file. Coba lagi.");
+      setPreviewSrc("");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -129,16 +150,29 @@ export function CheckoutClient({ invoice, paymentSettings }: { invoice: InvoiceD
           
           <div style={{ marginBottom: '24px' }}>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Unggah Bukti Transfer (JPG/PNG)</label>
-            <div style={{ border: '2px dashed var(--ajs-border)', padding: '30px', textAlign: 'center', borderRadius: '12px', background: 'var(--ajs-gray)' }}>
-              {!proofUrl ? (
-                <>
-                  <Upload size={32} style={{ color: 'var(--ajs-muted)', margin: '0 auto 12px' }} />
-                  <input type="file" onChange={handleSimulateUpload} style={{ display: 'block', margin: '0 auto' }} required />
-                </>
-              ) : (
-                <div style={{ color: 'var(--ajs-green)', fontWeight: 'bold' }}>
-                  ✓ Bukti Transfer Siap Diunggah (Simulasi: {proofUrl})
+            <div style={{ border: '2px dashed var(--ajs-border)', padding: '20px', textAlign: 'center', borderRadius: '12px', background: 'var(--ajs-gray)' }}>
+              {previewSrc ? (
+                <div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={previewSrc} alt="Preview bukti transfer" style={{ maxWidth: '100%', maxHeight: '240px', borderRadius: '8px', objectFit: 'contain', display: 'block', margin: '0 auto 12px' }} />
+                  {uploading ? (
+                    <span style={{ color: 'var(--ajs-muted)', fontSize: '13px' }}>⏳ Mengunggah...</span>
+                  ) : proofUrl ? (
+                    <span style={{ color: 'var(--ajs-green)', fontWeight: 'bold', fontSize: '13px' }}>✓ File berhasil diunggah</span>
+                  ) : null}
+                  <div style={{ marginTop: '10px' }}>
+                    <label style={{ cursor: 'pointer', fontSize: '13px', color: 'var(--ajs-navy)', textDecoration: 'underline' }}>
+                      Ganti foto
+                      <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+                    </label>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  <Upload size={32} style={{ color: 'var(--ajs-muted)', margin: '0 auto 12px', display: 'block' }} />
+                  <p style={{ color: 'var(--ajs-muted)', fontSize: '13px', margin: '0 0 12px' }}>Klik untuk memilih foto bukti transfer</p>
+                  <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'block', margin: '0 auto' }} required />
+                </>
               )}
             </div>
           </div>

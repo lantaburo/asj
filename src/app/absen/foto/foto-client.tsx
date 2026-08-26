@@ -33,12 +33,20 @@ export function FotoAbsenClient({
   const startCamera = useCallback(async () => {
     setStatus("starting");
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }
-      });
+      // Try front camera first
+      let mediaStream: MediaStream;
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+      } catch {
+        // Fallback: any camera without constraints
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
       streamRef.current = mediaStream;
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+        await videoRef.current.play();
       }
       setStatus("camera");
     } catch {

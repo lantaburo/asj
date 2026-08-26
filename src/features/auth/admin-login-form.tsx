@@ -106,7 +106,7 @@ export function AdminLoginForm() {
           </button>
         </div>
         <span className="field-helper">
-          Session admin akan aktif selama 12 jam setelah autentikasi berhasil.
+          Password minimal 6 karakter. Session admin akan aktif selama 12 jam setelah autentikasi berhasil.
         </span>
       </label>
 
