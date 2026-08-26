@@ -145,12 +145,22 @@ const FLOW_STEPS: Array<{
   {
     key: "batch",
     label: "Step 2 · Batch & Lokasi",
-    hint: "Batch ditautkan ke program & ruangan."
+    hint: "Batch ditautkan ke program."
   },
   {
     key: "session",
-    label: "Step 3 · Session & Member",
-    hint: "Jadwal sesi & daftarkan instruktur/asesor."
+    label: "Step 3 · Session",
+    hint: "Sesi harian dengan jam spesifik."
+  },
+  {
+    key: "classroom",
+    label: "Step 4 · Ruang Kelas (Master)",
+    hint: "Daftarkan ruangan sebelum dipakai sesi."
+  },
+  {
+    key: "member",
+    label: "Step 5 · Instruktur (Master)",
+    hint: "Daftarkan staf/instruktur baru."
   }
 ];
 
