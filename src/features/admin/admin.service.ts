@@ -71,7 +71,7 @@ export async function getSuperAdminOverview() {
     // Batch Pareto
     const batchId = enrollment.batch.id;
     const batchData = batchRevenueMap.get(batchId) ?? { 
-      title: `${enrollment.batch.program.title} - Batch ${batchId.slice(0, 4)}`, 
+      title: enrollment.batch.title ? enrollment.batch.title : `${enrollment.batch.program.title} - Batch ${batchId.slice(0, 4)}`, 
       revenue: 0 
     };
     batchData.revenue += price;

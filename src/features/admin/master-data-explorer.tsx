@@ -68,7 +68,7 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
           <>
             <span style={{ color: 'var(--ajs-border)' }}>/</span>
             <span style={{ color: 'var(--ajs-orange)', fontWeight: 700 }}>
-              BATCH {selectedBatchId?.slice(-4).toUpperCase()}
+              {selectedBatch?.title ? selectedBatch.title.toUpperCase() : `BATCH ${selectedBatchId?.slice(-4).toUpperCase()}`}
             </span>
           </>
         )}
