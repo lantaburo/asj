@@ -284,9 +284,9 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
                   <div>
                     <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--ajs-navy)', margin: '0 0 4px 0' }}>{s.title}</h3>
                     <div style={{ fontSize: '13px', color: 'var(--ajs-muted)' }}>
-                      {new Date(s.sessionDate).toLocaleDateString("id-ID", { weekday: 'long', day: 'numeric', month: 'long' })} • 
-                      {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
-                      {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(s.sessionDate).toLocaleDateString("id-ID", { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Makassar' })} • 
+                      {new Date(s.startTime).toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar' })} - 
+                      {new Date(s.endTime).toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar' })}
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

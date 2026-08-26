@@ -3,6 +3,13 @@
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+// Helper: convert datetime-local string (YYYY-MM-DDTHH:mm) to WITA ISO string
+function toWita(localStr: unknown): string | null {
+  if (!localStr || typeof localStr !== "string" || localStr.trim() === "") return null;
+  // datetime-local doesn't have timezone info – we treat it as WITA (UTC+8)
+  return `${localStr}:00+08:00`;
+}
+
 type ProgramOption = {
   id: string;
   title: string;
@@ -394,7 +401,7 @@ export function MasterDataApiPanel({ programs, batches, classrooms, internalMemb
                   const fd = new FormData(e.currentTarget);
                   runSubmit({
                     step: "batch", endpoint: "/api/batches",
-                    body: { title: getOptionalString(fd.get("title")), programId: fd.get("programId"), classroomId: fd.get("classroomId"), startDate: fd.get("startDate"), endDate: fd.get("endDate"), quota: fd.get("quota"), price: fd.get("price") },
+                    body: { title: getOptionalString(fd.get("title")), programId: fd.get("programId"), classroomId: fd.get("classroomId"), startDate: toWita(fd.get("startDate")), endDate: toWita(fd.get("endDate")), quota: fd.get("quota"), price: fd.get("price") },
                     successMessage: "Berhasil.", resetForm: () => (e.target as HTMLFormElement).reset(), nextStep: "session"
                   });
                 }}>
@@ -423,7 +430,7 @@ export function MasterDataApiPanel({ programs, batches, classrooms, internalMemb
                   const fd = new FormData(e.currentTarget);
                   runSubmit({
                     step: "session", endpoint: "/api/sessions",
-                    body: { batchId: fd.get("batchId"), title: fd.get("title"), sessionDate: fd.get("sessionDate"), startTime: fd.get("startTime"), endTime: fd.get("endTime"), classroomId: getOptionalString(fd.get("classroomId")), instructorId: getOptionalString(fd.get("instructorId")) },
+                    body: { batchId: fd.get("batchId"), title: fd.get("title"), sessionDate: toWita(fd.get("sessionDate")), startTime: toWita(fd.get("startTime")), endTime: toWita(fd.get("endTime")), classroomId: getOptionalString(fd.get("classroomId")), instructorId: getOptionalString(fd.get("instructorId")) },
                     successMessage: "Berhasil.", resetForm: () => (e.target as HTMLFormElement).reset(), nextStep: "member"
                   });
                 }}>

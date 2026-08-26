@@ -129,15 +129,16 @@ export default async function SessionDockingPage({
             <div style={{ fontSize: '13px', color: 'var(--ajs-muted)', marginBottom: '2px' }}>Tanggal</div>
             <div style={{ fontSize: '18px', color: 'var(--ajs-navy)', fontWeight: 600 }}>
               {new Date(session.sessionDate).toLocaleDateString("id-ID", {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                timeZone: 'Asia/Makassar'
               })}
             </div>
           </div>
           <div>
             <div style={{ fontSize: '13px', color: 'var(--ajs-muted)', marginBottom: '2px' }}>Waktu</div>
             <div style={{ fontSize: '18px', color: 'var(--ajs-navy)', fontWeight: 600 }}>
-              {new Date(session.startTime).toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' })} - 
-              {new Date(session.endTime).toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' })}
+              {new Date(session.startTime).toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar' })} - 
+              {new Date(session.endTime).toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar' })}
             </div>
           </div>
         </div>

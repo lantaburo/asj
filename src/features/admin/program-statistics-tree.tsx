@@ -216,7 +216,7 @@ export function ProgramStatisticsTree({
                                   {batch.sessions.map((session) => (
                                     <div key={session.id} style={{ padding: "12px", background: "var(--ajs-gray)", borderRadius: "var(--radius-sm)", fontSize: "12px" }}>
                                       <div style={{ fontWeight: "700", marginBottom: "4px", color: "var(--ajs-navy)" }}>{session.title}</div>
-                                      <div style={{ color: "var(--ajs-muted)", marginBottom: "4px" }}>{new Date(session.sessionDate).toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "long" })} • {session.instructorName}</div>
+                                      <div style={{ color: "var(--ajs-muted)", marginBottom: "4px" }}>{new Date(session.sessionDate).toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "long", timeZone: "Asia/Makassar" })} • {session.instructorName}</div>
                                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                         <span style={{ color: "var(--ajs-green)", fontWeight: "600" }}>{session.attendanceCount} hadir</span>
                                         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>

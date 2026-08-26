@@ -128,7 +128,8 @@ export function FotoAbsenClient({
     weekday: "long",
     day: "numeric",
     month: "long",
-    year: "numeric"
+    year: "numeric",
+    timeZone: "Asia/Makassar"
   });
 
   return (
