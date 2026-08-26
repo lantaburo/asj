@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ParticipantDocumentRecord } from "@/features/participant-documents/participant-document.types";
+import { CrudActions } from "@/features/admin/crud-actions";
 
 type Participant = {
   enrollmentId: string;
@@ -120,13 +121,30 @@ function ParticipantRow({ p, labels, showPrograms }: {
             {p.email ?? p.phone ?? "—"}
           </span>
         </div>
-        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: "flex-end" }}>
+        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: "flex-end", alignItems: "center" }}>
           {p.documents.length === 0 ? (
             <span style={{ fontSize: "11px", color: "#e31e24", fontWeight: 600 }}>Belum ada dokumen</span>
           ) : (
             <span style={{ fontSize: "11px", color: "#00a651", fontWeight: 600 }}>{p.documents.length} dokumen</span>
           )}
           {"assessmentStatus" in p && p.assessmentStatus && statusBadge(p.assessmentStatus as string)}
+          {!isGlobal && "enrollmentId" in p && (
+            <div onClick={(e) => e.stopPropagation()} style={{ marginLeft: "8px" }}>
+              <CrudActions
+                endpoint={`/api/enrollments/${p.enrollmentId}`}
+                itemName="Status"
+                compact
+                initialData={{ assessmentStatus: p.assessmentStatus }}
+                editFields={[
+                  { name: "assessmentStatus", label: "Status Verifikasi", type: "select", options: [
+                    { value: "PENDING", label: "Pending" },
+                    { value: "KOMPETEN", label: "Kompeten" },
+                    { value: "BELUM_KOMPETEN", label: "Belum Kompeten" }
+                  ]}
+                ]}
+              />
+            </div>
+          )}
         </div>
         <svg
           width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ajs-muted)" strokeWidth="2"

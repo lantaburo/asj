@@ -285,7 +285,19 @@ export function ProgramStatisticsTree({
                                         <span style={{ fontSize: "10px", padding: "2px 6px", background: "var(--ajs-gray)", borderRadius: "4px", fontWeight: "700", color: enrollment.assessmentStatus === "KOMPETEN" ? "var(--ajs-green)" : "var(--ajs-text)" }}>
                                           {enrollment.assessmentStatus}
                                         </span>
-                                        <CrudActions endpoint={`/api/enrollments/${enrollment.id}`} itemName="Peserta" compact />
+                                        <CrudActions 
+                                          endpoint={`/api/enrollments/${enrollment.id}`} 
+                                          itemName="Status Peserta" 
+                                          compact 
+                                          initialData={{ assessmentStatus: enrollment.assessmentStatus }}
+                                          editFields={[
+                                            { name: "assessmentStatus", label: "Status Verifikasi", type: "select", options: [
+                                              { value: "PENDING", label: "Pending" },
+                                              { value: "KOMPETEN", label: "Kompeten" },
+                                              { value: "BELUM_KOMPETEN", label: "Belum Kompeten" }
+                                            ]}
+                                          ]}
+                                        />
                                       </div>
                                     </div>
                                   ))}
