@@ -8,9 +8,11 @@ type ExplorerProps = {
   programs: any[];
   batches: any[];
   sessions: any[];
+  classrooms: any[];
+  instructors: any[];
 };
 
-export function MasterDataExplorer({ programs, batches, sessions }: ExplorerProps) {
+export function MasterDataExplorer({ programs, batches, sessions, classrooms, instructors }: ExplorerProps) {
   const [level, setLevel] = useState<1 | 2 | 3>(1);
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null);
   const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
@@ -292,7 +294,15 @@ export function MasterDataExplorer({ programs, batches, sessions }: ExplorerProp
                       { name: "title", label: "Judul Sesi", type: "text", required: true },
                       { name: "sessionDate", label: "Tanggal Sesi", type: "datetime-local", required: true },
                       { name: "startTime", label: "Waktu Mulai", type: "datetime-local", required: true },
-                      { name: "endTime", label: "Waktu Selesai", type: "datetime-local", required: true }
+                      { name: "endTime", label: "Waktu Selesai", type: "datetime-local", required: true },
+                      { name: "classroomId", label: "Ruang Kelas", type: "select", options: [
+                        { value: "", label: "--- Pilih Ruang Kelas ---" },
+                        ...classrooms.map(c => ({ value: c.id, label: c.roomName }))
+                      ]},
+                      { name: "instructorId", label: "Instruktur", type: "select", options: [
+                        { value: "", label: "--- Pilih Instruktur ---" },
+                        ...instructors.map(i => ({ value: i.id, label: i.fullName }))
+                      ]}
                     ]}
                   />
                 </div>

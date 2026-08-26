@@ -109,6 +109,8 @@ export default async function AdminBuatProgramPage() {
           programs={programs}
           batches={batches}
           sessions={sessions}
+          classrooms={classrooms}
+          instructors={internalMembers}
         />
       </section>
 

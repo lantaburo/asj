@@ -20,7 +20,7 @@ export default async function AbsenFotoPage({
 
   const currentUser = await getCurrentSessionUser();
   if (!currentUser) {
-    redirect(`/masuk?next=${encodeURIComponent(`/absen/foto?sessionId=${sessionId}`)}`);
+    redirect(`/peserta/masuk?next=${encodeURIComponent(`/absen/foto?sessionId=${sessionId}`)}`);
   }
 
   const session = await findSessionById(sessionId);
