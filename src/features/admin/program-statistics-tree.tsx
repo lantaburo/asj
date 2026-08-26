@@ -122,12 +122,14 @@ export function ProgramStatisticsTree({
                   editFields={[
                     { name: "title", label: "Judul Program", type: "text", required: true },
                     { name: "category", label: "Kategori", type: "select", options: [
-                      { value: "KEPEMIMPINAN", label: "Kepemimpinan" },
-                      { value: "TEKNIS", label: "Teknis" },
-                      { value: "K3", label: "K3" },
-                      { value: "SOFT_SKILL", label: "Soft Skill" },
-                      { value: "LAINNYA", label: "Lainnya" }
+                      { value: "BNSP", label: "BNSP" },
+                      { value: "KEMENAKER", label: "KEMENAKER" },
+                      { value: "INHOUSE", label: "INHOUSE" },
+                      { value: "SERTIFIKASI", label: "SERTIFIKASI" },
+                      { value: "AUDIT", label: "AUDIT" },
+                      { value: "LAINNYA", label: "LAINNYA" }
                     ]},
+                    { name: "customCategory", label: "Kategori Custom (Bila LAINNYA)", type: "text" },
                     { name: "industryType", label: "Tipe Industri", type: "text" },
                     { name: "isActive", label: "Status Aktif", type: "checkbox" }
                   ]}

@@ -136,6 +136,7 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
                       { value: "AUDIT", label: "AUDIT" },
                       { value: "LAINNYA", label: "LAINNYA" }
                     ]},
+                    { name: "customCategory", label: "Kategori Custom (Bila LAINNYA)", type: "text" },
                     { name: "industryType", label: "Tipe Industri", type: "text" },
                     { name: "isActive", label: "Status Aktif", type: "checkbox" }
                   ]}
