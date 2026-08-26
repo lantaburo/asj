@@ -28,7 +28,7 @@ export async function GET(
             user: true
           },
           orderBy: {
-            createdAt: 'asc'
+            checkInTime: 'asc'
           }
         }
       }
@@ -48,7 +48,7 @@ export async function GET(
     ];
 
     const rows = session.attendances.map((att, idx) => {
-      const timeStr = new Date(att.createdAt).toLocaleString("id-ID");
+      const timeStr = new Date(att.checkInTime).toLocaleString("id-ID");
       // Add base url if selfieUrl is relative
       const hostUrl = request.headers.get("host") || "localhost:3000";
       const protocol = request.headers.get("x-forwarded-proto") || "https";
