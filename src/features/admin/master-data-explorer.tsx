@@ -217,6 +217,10 @@ export function MasterDataExplorer({ programs, batches, sessions, classrooms, in
                         { name: "title", label: "Nama Batch (Opsional)", type: "text" },
                         { name: "startDate", label: "Tanggal Mulai", type: "datetime-local", required: true },
                         { name: "endDate", label: "Tanggal Selesai", type: "datetime-local", required: true },
+                        { name: "classroomId", label: "Ruang Kelas", type: "select", options: [
+                          { value: "", label: "--- Menunggu Ruangan ---" },
+                          ...classrooms.map(c => ({ value: c.id, label: c.roomName }))
+                        ]},
                         { name: "quota", label: "Kuota Peserta", type: "number", required: true },
                         { name: "price", label: "Harga Dasar", type: "number" },
                         { name: "status", label: "Status Batch", type: "select", options: [
