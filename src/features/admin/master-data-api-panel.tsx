@@ -11,6 +11,9 @@ type ProgramOption = {
 
 type BatchOption = {
   id: string;
+  title?: string | null;
+  startDate: string;
+  endDate: string;
   status: string;
   programTitle: string;
 };
@@ -426,7 +429,13 @@ export function MasterDataApiPanel({ programs, batches, classrooms, internalMemb
                 }}>
                   <h3>Create Session</h3>
                   <label className="field-group"><span>Batch</span>
-                    <select className="text-input" name="batchId" required>{batches.map(b => <option key={b.id} value={b.id}>{b.programTitle}</option>)}</select>
+                    <select className="text-input" name="batchId" required>
+                      {batches.map(b => (
+                        <option key={b.id} value={b.id}>
+                          {b.programTitle} — {b.title ? `${b.title} (${new Date(b.startDate).toLocaleDateString('id-ID')} - ${new Date(b.endDate).toLocaleDateString('id-ID')})` : `Batch ${new Date(b.startDate).toLocaleDateString('id-ID')} - ${new Date(b.endDate).toLocaleDateString('id-ID')}`}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                   <label className="field-group"><span>Judul Sesi</span><input className="text-input" name="title" required /></label>
                   <label className="field-group"><span>Tanggal</span><input className="text-input" type="datetime-local" name="sessionDate" required /></label>

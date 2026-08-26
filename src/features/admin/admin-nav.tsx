@@ -89,7 +89,7 @@ export function AdminNav({ canOpenMasterData, canOpenLandingSettings }: AdminNav
   let links: NavLink[] = [...baseLinks];
 
   if (canOpenMasterData) {
-    links = [baseLinks[0], masterDataLink, unitSkemaLink, buatProgramLink, baseLinks[1], pesertaLink, pelatihanPopLink, verifikasiPembayaranLink, pengaturanSertifikatLink, pengaturanPembayaranLink];
+    links = [baseLinks[0], masterDataLink, unitSkemaLink, buatProgramLink, baseLinks[1], pesertaLink, verifikasiPembayaranLink, pengaturanSertifikatLink, pengaturanPembayaranLink];
   }
 
   if (canOpenLandingSettings) {
