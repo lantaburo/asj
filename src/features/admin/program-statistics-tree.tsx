@@ -12,6 +12,7 @@ type ProgramStats = {
   isActive: boolean;
   batches: Array<{
     id: string;
+    title?: string | null;
     startDate: string;
     endDate: string;
     quota: number;

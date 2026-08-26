@@ -163,6 +163,7 @@ export async function getProgramStatisticsList() {
     isActive: program.isActive,
     batches: program.batches.map(batch => ({
       id: batch.id,
+      title: batch.title,
       startDate: batch.startDate.toISOString(),
       endDate: batch.endDate.toISOString(),
       quota: batch.quota,
