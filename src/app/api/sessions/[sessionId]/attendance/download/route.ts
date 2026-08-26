@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ sessionId: string }> }
 ) {
   try {
     const currentUser = await requireAuthenticatedSessionUser();
@@ -16,9 +16,9 @@ export async function GET(
       throw new AppError("Akses ditolak.", { statusCode: 403 });
     }
 
-    const { id } = await params;
+    const { sessionId } = await params;
     const session = await prisma.classSession.findUnique({
-      where: { id },
+      where: { id: sessionId },
       include: {
         batch: {
           include: { program: true }
