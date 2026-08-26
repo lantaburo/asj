@@ -15,7 +15,7 @@
     "db:local:status": "bash scripts/local-postgres.sh status",
     "db:local:prepare": "bash scripts/local-postgres.sh prepare",
     "db:push": "prisma db push",
-    "db:seed": "prisma db seed",
+    "db:seed": "node ./node_modules/prisma/build/index.js db seed",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:status": "prisma migrate status",
@@ -23,7 +23,7 @@
     "ops:bootstrap:superadmin": "tsx scripts/bootstrap-superadmin.ts"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
