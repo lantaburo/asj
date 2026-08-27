@@ -48,14 +48,43 @@ async function buildPdf(session: Awaited<ReturnType<typeof getSession>>): Promis
 
     const W = doc.page.width - 80;
 
-    // ── Header ──────────────────────────────────────────────────────────
-    doc.fontSize(18).font("Helvetica-Bold")
-      .text("DAFTAR HADIR PESERTA", { align: "center" });
+    // ── Kop Surat ───────────────────────────────────────────────────────
+    const logoPath = path.join(process.cwd(), "public", "logo.png");
+    let logoH = 0;
+    if (existsSync(logoPath)) {
+      doc.image(logoPath, 40, 40, { width: 70 });
+      logoH = 70; // rough estimation, usually logo is roughly square
+    }
+
+    const kopTextX = 120;
+    const kopTextW = doc.page.width - 40 - kopTextX;
+    
+    doc.fontSize(16).font("Helvetica-Bold")
+      .text("PT ARKAMA JAYA SERTIFIKASI", kopTextX, 42, { align: "center", width: kopTextW });
     doc.moveDown(0.3);
-    doc.fontSize(13).font("Helvetica-Bold")
-      .text(session.title, { align: "center" });
+    doc.fontSize(9).font("Helvetica")
+      .text("Alamat: Kompleks Graha Diva Mediterania Blok B16, Kelurahan Bitowa, Kec. Manggala, Kota Makassar, Prov. Sulawesi Selatan, Kode Pos: 90234", kopTextX, doc.y, { align: "center", width: kopTextW });
+    doc.moveDown(0.3);
+    doc.fontSize(9)
+      .text("Tlp: 082396792362   |   Email: arkamajaya25@gmail.com", kopTextX, doc.y, { align: "center", width: kopTextW });
+
+    const afterKopY = Math.max(doc.y, 40 + logoH) + 12;
+    
+    // Draw double line separator
+    doc.moveTo(40, afterKopY).lineTo(doc.page.width - 40, afterKopY).lineWidth(2).stroke();
+    doc.moveTo(40, afterKopY + 3).lineTo(doc.page.width - 40, afterKopY + 3).lineWidth(1).stroke();
+    doc.lineWidth(1); // reset stroke width
+
+    doc.y = afterKopY + 20;
+
+    // ── Header ──────────────────────────────────────────────────────────
+    doc.fontSize(14).font("Helvetica-Bold")
+      .text("DAFTAR HADIR PESERTA", 40, doc.y, { align: "center", width: doc.page.width - 80 });
+    doc.moveDown(0.3);
+    doc.fontSize(12).font("Helvetica-Bold")
+      .text(session.title, { align: "center", width: doc.page.width - 80 });
     doc.fontSize(10).font("Helvetica")
-      .text(`Program: ${session.batch.program.title}`, { align: "center" });
+      .text(`Program: ${session.batch.program.title}`, { align: "center", width: doc.page.width - 80 });
     doc.moveDown(0.3);
 
     // ── Info grid ───────────────────────────────────────────────────────
