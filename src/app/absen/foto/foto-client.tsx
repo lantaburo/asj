@@ -110,13 +110,13 @@ export function FotoAbsenClient({
 
       const data = await response.json();
 
-      if (response.status === 409 && data.code === "DUPLICATE_ATTENDANCE") {
+      if (response.status === 409 && data.error?.code === "DUPLICATE_ATTENDANCE") {
         setStatus("already");
         return;
       }
 
       if (!response.ok) {
-        setErrorMsg(data.message || "Gagal merekam kehadiran. Coba lagi.");
+        setErrorMsg(data.error?.message || "Gagal merekam kehadiran. Coba lagi.");
         setStatus("error");
         return;
       }
