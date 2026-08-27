@@ -40,9 +40,9 @@ async function buildPdf(session: Awaited<ReturnType<typeof getSession>>): Promis
   );
 
   return new Promise<Buffer>((resolve, reject) => {
-    const chunks: Buffer[] = [];
+    const chunks: Uint8Array[] = [];
     const doc = new PDFDocument({ margin: 40, size: "A4" });
-    doc.on("data", (chunk: Buffer) => chunks.push(chunk));
+    doc.on("data", (chunk: Uint8Array) => chunks.push(chunk));
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
 
@@ -178,7 +178,7 @@ export async function GET(
     const safeTitle = session.title.replace(/[^a-z0-9]/gi, "_").toLowerCase();
     const filename = `presensi_${safeTitle}_${session.id.slice(-4)}.pdf`;
 
-    return new Response(pdfBuffer, {
+    return new Response(pdfBuffer as any, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${filename}"`,

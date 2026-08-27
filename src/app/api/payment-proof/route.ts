@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     }
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const buffer = new Uint8Array(bytes);
     const ext = (file as File).name?.split(".").pop() || "jpg";
     const filename = `payment-${currentUser.id}-${randomUUID()}.${ext}`;
     const uploadDir = path.join(process.cwd(), "public", "uploads", "payment-proofs");
