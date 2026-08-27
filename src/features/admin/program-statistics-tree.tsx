@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CrudActions } from "@/features/admin/crud-actions";
+import { CreateModal } from "@/features/admin/create-modal";
 import { formatCurrency, formatDateRange } from "@/features/landing-page/landing-page.service";
 
 type ProgramStats = {
@@ -50,6 +51,7 @@ export function ProgramStatisticsTree({
 }) {
   const [openPrograms, setOpenPrograms] = useState<Record<string, boolean>>({});
   const [openBatches, setOpenBatches] = useState<Record<string, boolean>>({});
+  const [createSessionForBatch, setCreateSessionForBatch] = useState<string | null>(null);
 
   const toggleProgram = (id: string) => {
     setOpenPrograms(prev => ({ ...prev, [id]: !prev[id] }));
@@ -208,7 +210,24 @@ export function ProgramStatisticsTree({
                           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
                             {/* Kolom Sessions */}
                             <div>
-                              <h4 style={{ fontSize: "13px", fontWeight: "700", marginBottom: "12px", color: "var(--ajs-navy)" }}>Daftar Session</h4>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                                <h4 style={{ fontSize: "13px", fontWeight: "700", color: "var(--ajs-navy)", margin: 0 }}>Daftar Session</h4>
+                                <button
+                                  onClick={() => setCreateSessionForBatch(batch.id)}
+                                  style={{
+                                    fontSize: "11px",
+                                    padding: "4px 8px",
+                                    background: "var(--ajs-green)",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "4px",
+                                    fontWeight: 700,
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  + Tambah Session
+                                </button>
+                              </div>
                               {batch.sessions.length === 0 ? (
                                 <div style={{ fontSize: "12px", color: "var(--ajs-muted)" }}>Belum ada session.</div>
                               ) : (
@@ -338,6 +357,41 @@ export function ProgramStatisticsTree({
           )}
         </div>
       ))}
+      
+      {createSessionForBatch && (
+        <CreateModal
+          isOpen={true}
+          onClose={() => setCreateSessionForBatch(null)}
+          title="Session"
+          endpoint="/api/sessions"
+          defaultValues={{ batchId: createSessionForBatch }}
+          fields={[
+            { name: "title", label: "Judul Sesi", type: "text", required: true },
+            { name: "sessionDate", label: "Tanggal Sesi", type: "datetime-local", required: true },
+            { name: "startTime", label: "Waktu Mulai", type: "datetime-local", required: true },
+            { name: "endTime", label: "Waktu Selesai", type: "datetime-local", required: true },
+            ...(classrooms.length > 0 ? [{
+              name: "classroomId",
+              label: "Ruang Kelas",
+              type: "select" as const,
+              options: [
+                { value: "", label: "— Pilih Ruang Kelas —" },
+                ...classrooms.map(c => ({ value: c.id, label: c.roomName }))
+              ]
+            }] : []),
+            ...(instructors.length > 0 ? [{
+              name: "instructorId",
+              label: "Instruktur",
+              type: "select" as const,
+              options: [
+                { value: "", label: "— Pilih Instruktur —" },
+                ...instructors.map(i => ({ value: i.id, label: i.fullName }))
+              ]
+            }] : [])
+          ]}
+        />
+      )}
+
       <style jsx>{`
         @keyframes accordionFade {
           from { opacity: 0; transform: translateY(-5px); }
