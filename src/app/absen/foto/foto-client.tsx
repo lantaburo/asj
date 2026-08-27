@@ -44,10 +44,6 @@ export function FotoAbsenClient({
         mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
       }
       streamRef.current = mediaStream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        await videoRef.current.play();
-      }
       setStatus("camera");
     } catch {
       setErrorMsg("Tidak dapat mengakses kamera. Pastikan izin kamera sudah diberikan dan coba refresh halaman.");
@@ -60,6 +56,14 @@ export function FotoAbsenClient({
     return () => stopCamera();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Attach stream to video element once it mounts
+  useEffect(() => {
+    if (status === "camera" && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.play().catch(console.error);
+    }
+  }, [status]);
 
   const takePhoto = useCallback(() => {
     const video = videoRef.current;
