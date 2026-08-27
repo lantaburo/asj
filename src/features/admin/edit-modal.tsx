@@ -49,9 +49,12 @@ export function EditModal({ isOpen, onClose, title, endpoint, initialData, field
     const body: any = {};
 
     fields.forEach(field => {
-      const val = formData.get(field.name);
+      const val = formData.get(field.name) as string;
       if (field.type === "number") body[field.name] = val ? Number(val) : null;
       else if (field.type === "checkbox") body[field.name] = val === "on";
+      else if (field.type === "datetime-local") {
+        body[field.name] = val ? `${val}+08:00` : null;
+      }
       else body[field.name] = val || null;
     });
 
@@ -225,7 +228,7 @@ export function EditModal({ isOpen, onClose, title, endpoint, initialData, field
                     className="text-input" 
                     type={field.type} 
                     name={field.name} 
-                    defaultValue={field.type === "datetime-local" && initialData[field.name] ? new Date(initialData[field.name]).toISOString().slice(0, 16) : initialData[field.name]}
+                    defaultValue={field.type === "datetime-local" && initialData[field.name] ? new Date(new Date(initialData[field.name]).getTime() + 8 * 3600 * 1000).toISOString().slice(0, 16) : initialData[field.name]}
                     required={field.required}
                     style={{ borderRadius: '16px', padding: '0 16px', height: '52px' }}
                   />
